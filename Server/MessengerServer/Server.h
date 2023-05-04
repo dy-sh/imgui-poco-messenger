@@ -37,15 +37,15 @@ using Poco::Util::Option;
 using Poco::Util::OptionSet;
 using Poco::Util::HelpFormatter;
 
-class MessengerServer : public Poco::Util::ServerApplication
+class Server : public Poco::Util::ServerApplication
 {
 public:
-    MessengerServer(): _helpRequested(false)
+    Server(): _helpRequested(false)
     {
     }
 
 
-    ~MessengerServer()
+    ~Server()
     {
     }
 

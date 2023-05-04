@@ -11,7 +11,7 @@
 
 using Poco::FIFOBuffer;
 
-class MessengerSimpleProtocol:public IProtocol
+class SimpleProtocol:public IProtocol
 {
 public:
     const char delimiter = ';';

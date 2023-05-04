@@ -1,27 +1,27 @@
 ﻿// Copyright 2023 Dmitry Savosh <d.savosh@gmail.com>
 
-#include "MessengerServer.h"
+#include "Server.h"
 
-#include "MessengerServerSocketHandler.h"
-#include "MessengerSocketAcceptor.h"
-#include "../Protocol/IProtocol.h"
-#include "../Protocol/MessengerSimpleProtocol.h"
+#include "ServerHandler.h"
+#include "ServerAcceptor.h"
+#include "Protocol/IProtocol.h"
+#include "Protocol/SimpleProtocol.h"
 
 
-void MessengerServer::initialize(Application& self)
+void Server::initialize(Application& self)
 {
     loadConfiguration(); // load default configuration files, if present
     ServerApplication::initialize(self);
 }
 
 
-void MessengerServer::uninitialize()
+void Server::uninitialize()
 {
     ServerApplication::uninitialize();
 }
 
 
-void MessengerServer::defineOptions(Poco::Util::OptionSet& options)
+void Server::defineOptions(Poco::Util::OptionSet& options)
 {
     ServerApplication::defineOptions(options);
 
@@ -32,7 +32,7 @@ void MessengerServer::defineOptions(Poco::Util::OptionSet& options)
 }
 
 
-void MessengerServer::handleOption(const std::string& name, const std::string& value)
+void Server::handleOption(const std::string& name, const std::string& value)
 {
     ServerApplication::handleOption(name, value);
 
@@ -41,7 +41,7 @@ void MessengerServer::handleOption(const std::string& name, const std::string& v
 }
 
 
-void MessengerServer::displayHelp()
+void Server::displayHelp()
 {
     HelpFormatter helpFormatter(options());
     helpFormatter.setCommand(commandName());
@@ -51,7 +51,7 @@ void MessengerServer::displayHelp()
 }
 
 
-int MessengerServer::main(const std::vector<std::string>& args)
+int Server::main(const std::vector<std::string>& args)
 {
     if (_helpRequested)
     {
@@ -62,17 +62,19 @@ int MessengerServer::main(const std::vector<std::string>& args)
     // get parameters from configuration file
     unsigned short port = (unsigned short)config().getInt("MessengerServer.port", 9977);
 
-    MessengerSimpleProtocol protocol;
-    MessengerServerController controller;
+    SimpleProtocol protocol;
+    Messenger messenger;
 
     ServerSocket svs(port);
     SocketReactor reactor;
-    MessengerSocketAcceptor acceptor(svs, reactor, protocol,controller);
+    ServerAcceptor acceptor(svs, reactor, protocol,messenger);
 
 
     // run the reactor in its own thread so that we can wait for a termination request
     Thread thread;
     thread.start(reactor);
+
+    std::cout << "Server started" << std::endl;
 
     // wait for CTRL-C or kill
     waitForTerminationRequest();

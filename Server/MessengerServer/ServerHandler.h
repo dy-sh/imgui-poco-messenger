@@ -18,8 +18,8 @@
 #include "Poco/Util/HelpFormatter.h"
 #include <iostream>
 
-#include "MessengerServerController.h"
-#include "../Protocol/IProtocol.h"
+#include "Messenger.h"
+#include "Protocol/IProtocol.h"
 
 
 using Poco::Net::SocketReactor;
@@ -40,7 +40,7 @@ using Poco::Util::Option;
 using Poco::Util::OptionSet;
 using Poco::Util::HelpFormatter;
 
-class MessengerServerSocketHandler
+class ServerHandler
 {
 private:
     enum
@@ -54,12 +54,12 @@ private:
     FIFOBuffer _fifoOut;
 
     IProtocol* protocol;
-    MessengerServerController* controller;
+    Messenger* messenger;
 
 public:
-    MessengerServerSocketHandler(StreamSocket& socket, SocketReactor& reactor, IProtocol& protocol, MessengerServerController& controller);
+    ServerHandler(StreamSocket& socket, SocketReactor& reactor, IProtocol& protocol, Messenger& messenger);
 
-    ~MessengerServerSocketHandler();
+    ~ServerHandler();
 
     void onFIFOOutReadable(bool& b);
 
@@ -71,7 +71,7 @@ public:
 
     void onSocketShutdown(const AutoPtr<ShutdownNotification>& pNf);
 private:
-    MessengerServerSocketHandler(StreamSocket& socket, SocketReactor& reactor):_socket(socket),
+    ServerHandler(StreamSocket& socket, SocketReactor& reactor):_socket(socket),
 _reactor(reactor),
 _fifoIn(BUFFER_SIZE, true),
 _fifoOut(BUFFER_SIZE, true),
@@ -80,5 +80,5 @@ protocol(nullptr)
         throw std::logic_error("Dont use MessengerServerSocketHandler deprecated constructor!");
     }
 
-    friend SocketAcceptor<MessengerServerSocketHandler>;
+    friend SocketAcceptor<ServerHandler>;
 };

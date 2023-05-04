@@ -3,12 +3,12 @@
 #include <iostream>
 
 #include "EchoServer/EchoServer.h"
-#include "MessengerServer/MessengerServer.h"
+#include "MessengerServer/Server.h"
 
 
 int main(int argc, char** argv)
 {
     // EchoServer app;
-    MessengerServer app;
+    Server app;
     return app.run(argc, argv);
 }

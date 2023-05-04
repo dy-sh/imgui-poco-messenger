@@ -1,7 +1,7 @@
-﻿#include "MessengerSimpleProtocol.h"
+﻿#include "SimpleProtocol.h"
 
 
-std::vector<std::string> MessengerSimpleProtocol::parse(FIFOBuffer& buffer)
+std::vector<std::string> SimpleProtocol::parse(FIFOBuffer& buffer)
 {
     std::vector<std::string> messages;
 

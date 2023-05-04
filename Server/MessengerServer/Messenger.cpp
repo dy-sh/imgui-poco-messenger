@@ -1,9 +1,9 @@
-﻿#include "MessengerServerController.h"
+﻿#include "Messenger.h"
 
 #include <iostream>
 
 
-void MessengerServerController::receiveMessages(std::vector<std::string> messages)
+void Messenger::receiveMessages(std::vector<std::string> messages)
 {
     for (auto m : messages)
     {
