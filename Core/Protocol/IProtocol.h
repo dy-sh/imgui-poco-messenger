@@ -4,8 +4,7 @@
 #include <string>
 #include <vector>
 #include <Poco/FIFOBuffer.h>
-
-#include "../Messages/RawMessage.h"
+struct RawMessage;
 
 struct IProtocol
 {

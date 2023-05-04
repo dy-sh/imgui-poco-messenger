@@ -4,9 +4,11 @@
 #include "Protocol/SimpleProtocol.h"
 #include "Messenger.h"
 #include "Protocol/IProtocol.h"
+#include "Protocol/RawMessage.h"
+
 
 ServerSocketHandler::ServerSocketHandler(StreamSocket& socket, SocketReactor& reactor,
-                             IProtocol& protocol, Messenger& messenger):
+                                         IProtocol& protocol, Messenger& messenger):
     _socket(socket),
     _reactor(reactor),
     _fifoIn(BUFFER_SIZE, true),
@@ -94,8 +96,8 @@ void ServerSocketHandler::onSocketReadable(const AutoPtr<ReadableNotification>& 
             RawMessage message(_fifoIn);
             while (protocol->parseMessage(message))
             {
-                messenger->receiveMessage(message,this);
-                message.buffer.drain(message.size);
+                messenger->receiveMessage(message, this);
+                message.buffer.drain(message.from + message.size);
             }
         }
         else

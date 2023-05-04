@@ -157,9 +157,10 @@
     <ClCompile Include="Protocol\SimpleProtocol.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Messages\RawMessage.h" />
-    <ClInclude Include="Messages\TextMessage.h" />
     <ClInclude Include="Protocol\IProtocol.h" />
+    <ClInclude Include="Protocol\Messages\ConnectMessage.h" />
+    <ClInclude Include="Protocol\Messages\TextMessage.h" />
+    <ClInclude Include="Protocol\RawMessage.h" />
     <ClInclude Include="Protocol\SimpleProtocol.h" />
     <ClInclude Include="User\User.h" />
   </ItemGroup>
