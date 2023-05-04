@@ -5,8 +5,10 @@
 #include <vector>
 #include <Poco/FIFOBuffer.h>
 
+#include "../Messages/RawMessage.h"
+
 struct IProtocol
 {
     virtual ~IProtocol() = default;
-    virtual std::vector<std::string> parse(Poco::FIFOBuffer& buffer) =0;
+    virtual bool parseMessage(RawMessage& outMessage)=0;
 };

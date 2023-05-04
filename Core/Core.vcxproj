@@ -154,11 +154,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Messages\TextMessage.cpp" />
     <ClCompile Include="Protocol\SimpleProtocol.cpp" />
-    <ClCompile Include="User\User.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Messages\RawMessage.h" />
     <ClInclude Include="Messages\TextMessage.h" />
     <ClInclude Include="Protocol\IProtocol.h" />
     <ClInclude Include="Protocol\SimpleProtocol.h" />

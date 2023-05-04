@@ -1,34 +1,18 @@
 ﻿#include "SimpleProtocol.h"
+#include "../Messages/RawMessage.h"
 
 
-std::vector<std::string> SimpleProtocol::parse(FIFOBuffer& buffer)
+bool SimpleProtocol::parseMessage(RawMessage& outMessage)
 {
-    std::vector<std::string> messages;
-
-    std::stringstream ss;
-    bool parsing = true;
-    while (parsing)
+    for (size_t i = 0; i < outMessage.buffer.used(); i++)
     {
-        parsing = false;
-        for (int i = 0; i < buffer.used(); i++)
+        if (outMessage.buffer[i] == delimiter)
         {
-            if (buffer[i] == delimiter)
-            {
-                std::string message = ss.str();
-                size_t size = message.size() + 1;
-                buffer.drain(size);
-                ss.str(""); // clear stringstream
-                // std::cout << "Received message: " << message << std::endl;
-                messages.push_back(message);
-                parsing = true;
-                break;
-            }
-            else
-            {
-                ss << buffer[i];
-            }
+            outMessage.type = (MessageType)outMessage.buffer[0];
+            outMessage.from = 0;
+            outMessage.size = i + 1;
+            return true;
         }
     }
-
-    return messages;
+    return false;
 }

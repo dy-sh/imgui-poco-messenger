@@ -1,12 +1,12 @@
 ﻿#include "Messenger.h"
+#include "ServerSocketHandler.h"
+#include "Messages/RawMessage.h"
 
-#include <iostream>
 
 
-void Messenger::receiveMessages(std::vector<std::string> messages)
+
+
+void Messenger::receiveMessage(RawMessage& message, ServerSocketHandler* socketHandler)
 {
-    for (auto m : messages)
-    {
-        std::cout << "Received message: " << m << std::endl;
-    }
+    std::cout << "Received message: " << message.to_str() << std::endl;
 }

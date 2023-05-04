@@ -7,7 +7,7 @@
 
 using namespace Poco::Net;
 
-class ServerAcceptor : public SocketAcceptor<ServerHandler>
+class ServerAcceptor : public SocketAcceptor<ServerSocketHandler>
 {
     IProtocol& protocol;
     Messenger& messenger;
@@ -15,13 +15,13 @@ class ServerAcceptor : public SocketAcceptor<ServerHandler>
     
 public:
     ServerAcceptor(ServerSocket& socket, SocketReactor& reactor, IProtocol& protocol,Messenger& messenger)
-        : SocketAcceptor<ServerHandler>(socket, reactor), protocol{protocol}, messenger{messenger}, reactor{reactor}
+        : SocketAcceptor<ServerSocketHandler>(socket, reactor), protocol{protocol}, messenger{messenger}, reactor{reactor}
     {
     }
 
 protected:
-    ServerHandler* createServiceHandler(StreamSocket& socket) override
+    ServerSocketHandler* createServiceHandler(StreamSocket& socket) override
     {
-        return new ServerHandler(socket, reactor,protocol,messenger);
+        return new ServerSocketHandler(socket, reactor,protocol,messenger);
     }
 };

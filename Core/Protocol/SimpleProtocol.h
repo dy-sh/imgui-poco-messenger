@@ -9,12 +9,11 @@
 
 #include "IProtocol.h"
 
-using Poco::FIFOBuffer;
 
 class SimpleProtocol:public IProtocol
 {
 public:
     const char delimiter = ';';
 
-    std::vector<std::string> parse(FIFOBuffer& buffer) override;
+    bool SimpleProtocol::parseMessage(RawMessage& outMessage);
 };
