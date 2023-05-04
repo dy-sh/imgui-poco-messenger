@@ -2,7 +2,10 @@
 
 #include "MessengerServer.h"
 
-#include "MessengerServiceHandler.h"
+#include "MessengerServerSocketHandler.h"
+#include "MessengerSocketAcceptor.h"
+#include "../Protocol/IProtocol.h"
+#include "../Protocol/MessengerSimpleProtocol.h"
 
 
 void MessengerServer::initialize(Application& self)
@@ -59,9 +62,13 @@ int MessengerServer::main(const std::vector<std::string>& args)
     // get parameters from configuration file
     unsigned short port = (unsigned short)config().getInt("MessengerServer.port", 9977);
 
+    MessengerSimpleProtocol protocol;
+    MessengerServerController controller;
+
     ServerSocket svs(port);
     SocketReactor reactor;
-    SocketAcceptor<MessengerServiceHandler> acceptor(svs, reactor);
+    MessengerSocketAcceptor acceptor(svs, reactor, protocol,controller);
+
 
     // run the reactor in its own thread so that we can wait for a termination request
     Thread thread;
@@ -74,4 +81,3 @@ int MessengerServer::main(const std::vector<std::string>& args)
 
     return Application::EXIT_OK;
 }
-
