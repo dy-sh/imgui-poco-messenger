@@ -77,7 +77,11 @@ void MessengerServiceHandler::onSocketReadable(const AutoPtr<ReadableNotificatio
         int len = _socket.receiveBytes(_fifoIn);
         if (len > 0)
         {
-            _fifoIn.drain(_fifoOut.write(_fifoIn.buffer(), _fifoIn.used()));
+            std::string s(_fifoIn.begin(), _fifoIn.used());
+            Application::instance().logger().information("RECEIVED: "+s);
+            
+            size_t size = _fifoOut.write(_fifoIn.buffer(), _fifoIn.used());
+            _fifoIn.drain(size);
         }
         else
         {
@@ -97,9 +101,8 @@ void MessengerServiceHandler::onSocketWritable(const AutoPtr<WritableNotificatio
 {
     try
     {
-        // Application& app = Application::instance();
-        // std::string s(_fifoOut.begin(), _fifoOut.used());
-        // app.logger().information(s);
+        std::string s(_fifoOut.begin(), _fifoOut.used());
+        Application::instance().logger().information("SENDING: "+s);
 
         _socket.sendBytes(_fifoOut);
     }
