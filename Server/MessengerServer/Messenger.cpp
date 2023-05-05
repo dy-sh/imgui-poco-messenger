@@ -56,5 +56,5 @@ void Messenger::receiveText(TextMessage& message, ServerSocketHandler* socketHan
     }
 
     std::cout << "TEXT from [" << user->nickname << "] : " << message.text << std::endl;
-    socketHandler->Send("RECEIVED|" + std::to_string(message.text.size()) + ";\r\n");
+    socketHandler->Send("TEXT|" + std::to_string(message.text.size()) + ";\r\n");
 }

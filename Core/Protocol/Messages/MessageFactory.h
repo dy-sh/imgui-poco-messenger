@@ -23,4 +23,6 @@ struct MessageRegistrar
     }
 };
 
-#define REGISTER_MESSAGE(Type, Prefix) static MessageRegistrar<Type> Type##Registrar(Prefix);
+#define REGISTER_MESSAGE(TypeName, Prefix, Name) \
+const std::string TypeName::Type = Name;\
+static MessageRegistrar<TypeName> TypeName##Registrar(Prefix);
