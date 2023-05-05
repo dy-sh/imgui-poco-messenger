@@ -2,10 +2,7 @@
 
 #pragma once
 #include <Poco/Net/SocketAcceptor.h>
-
 #include "Protocol/IProtocol.h"
-
-using namespace Poco::Net;
 
 class ServerAcceptor : public SocketAcceptor<ServerSocketHandler>
 {

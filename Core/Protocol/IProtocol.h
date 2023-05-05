@@ -1,13 +1,13 @@
 ﻿// Copyright 2023 Dmitry Savosh <d.savosh@gmail.com>
 
 #pragma once
-#include <string>
-#include <vector>
-#include <Poco/FIFOBuffer.h>
-struct RawMessage;
+#include <memory>
+
+#include "Messages/Message.h"
+
 
 struct IProtocol
 {
     virtual ~IProtocol() = default;
-    virtual bool parseMessage(RawMessage& outMessage)=0;
+    virtual std::pair<std::unique_ptr<Message>, size_t> parseMessage(const char* buffer, size_t buffer_size)=0;
 };

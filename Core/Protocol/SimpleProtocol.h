@@ -2,18 +2,12 @@
 
 #pragma once
 
-#include <sstream>
-#include <Poco/FIFOBuffer.h>
-#include <string>
-#include <vector>
-
 #include "IProtocol.h"
 
 
-class SimpleProtocol:public IProtocol
-{
-public:
-    const char delimiter = ';';
+constexpr char DELIMITER = ';';
 
-    bool SimpleProtocol::parseMessage(RawMessage& outMessage);
+struct SimpleProtocol : public IProtocol
+{
+    std::pair<std::unique_ptr<Message>, size_t> parseMessage(const char* buffer, size_t buffer_size) override;
 };

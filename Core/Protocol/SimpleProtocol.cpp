@@ -1,17 +1,23 @@
-﻿#include "SimpleProtocol.h"
-#include "RawMessage.h"
+﻿// Copyright 2023 Dmitry Savosh <d.savosh@gmail.com>
+
+#include "SimpleProtocol.h"
+
+#include <stdexcept>
+
+#include "Messages/MessageFactory.h"
 
 
-bool SimpleProtocol::parseMessage(RawMessage& outMessage)
+std::pair<std::unique_ptr<Message>, size_t> SimpleProtocol::parseMessage(const char* buffer, size_t buffer_size)
 {
-    outMessage.from = 0;
+    size_t from = 0;
+    size_t size = 0;
 
     // find start (skip all '\r' and '\n')
-    for (size_t i = 0; i < outMessage.buffer.used(); i++)
+    for (size_t i = 0; i < buffer_size; i++)
     {
-        if (outMessage.buffer[i] == '\r' || outMessage.buffer[i] == '\n')
+        if (buffer[i] == '\r' || buffer[i] == '\n' || buffer[i] == ' ')
         {
-            outMessage.from++;
+            from++;
         }
         else
         {
@@ -20,15 +26,36 @@ bool SimpleProtocol::parseMessage(RawMessage& outMessage)
     }
 
     // find end
-    for (size_t i = outMessage.from; i < outMessage.buffer.used(); i++)
+    for (size_t i = from; i < buffer_size; ++i)
     {
-        if (outMessage.buffer[i] == delimiter)
+        if (buffer[i] == DELIMITER)
         {
-            outMessage.type = (RawMessageType)outMessage.buffer[outMessage.from];
-            outMessage.from++;
-            outMessage.size = i + 1 - outMessage.from;
-            return true;
+            size = i + 1 - from;
+            break;
+        }        
+    }
+    if (size==0)
+    {
+        return {nullptr, 0}; // end not found
+    }
+
+    //check parsers
+    if (MessageFactory::messageFactory.empty())
+    {
+        throw std::logic_error("No message types registered. Use REGISTER_MESSAGE macro to register message types.");
+    }
+
+    // parse message
+    for (auto& [type, messageCreator] : MessageFactory::messageFactory)
+    {
+        if (messageCreator()->matches(buffer, from, size)) //todo don't create new instances each time to match
+        {
+            auto message = std::move(messageCreator());
+            message->parse(buffer, from, size);
+            return {std::move(message), from + size};
         }
     }
-    return false;
+
+    return {nullptr, 0};
 }
+

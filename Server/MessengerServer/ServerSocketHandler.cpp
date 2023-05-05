@@ -1,10 +1,9 @@
 ﻿// Copyright 2023 Dmitry Savosh <d.savosh@gmail.com>
 
 #include "ServerSocketHandler.h"
-#include "Protocol/SimpleProtocol.h"
 #include "Messenger.h"
 #include "Protocol/IProtocol.h"
-#include "Protocol/RawMessage.h"
+
 
 
 ServerSocketHandler::ServerSocketHandler(StreamSocket& socket, SocketReactor& reactor,
@@ -82,6 +81,8 @@ void ServerSocketHandler::onFIFOInWritable(bool& b)
 }
 
 
+
+
 void ServerSocketHandler::onSocketReadable(const AutoPtr<ReadableNotification>& pNf)
 {
     try
@@ -93,11 +94,15 @@ void ServerSocketHandler::onSocketReadable(const AutoPtr<ReadableNotification>& 
             std::string s(_fifoIn.begin() + new_pos, len);
             Application::instance().logger().information("RECEIVED: " + s);
 
-            RawMessage message(_fifoIn);
-            while (protocol->parseMessage(message))
+            while (true)
             {
-                messenger->receiveMessage(message, this);
-                message.buffer.drain(message.from + message.size);
+                auto [message, size] = protocol->parseMessage(_fifoIn.begin(),_fifoIn.used());
+                if (size>0)
+                {
+                    messenger->receiveMessage(message.get(), this);
+                    _fifoIn.drain(size);
+                }
+                else break;
             }
         }
         else

@@ -1,31 +1,30 @@
-﻿#include "Messenger.h"
+﻿// Copyright 2023 Dmitry Savosh <d.savosh@gmail.com>
+
+#include "Messenger.h"
 #include "ServerSocketHandler.h"
-#include "Protocol/RawMessage.h"
-#include "Protocol/Messages/ConnectMessage.h"
+#include "Protocol/Messages/AuthorizeMessage.h"
 #include "Protocol/Messages/TextMessage.h"
 #include "User/User.h"
 
 
-void Messenger::receiveMessage(RawMessage& message, ServerSocketHandler* socketHandler)
+void Messenger::receiveMessage(Message* message, ServerSocketHandler* socketHandler)
 {
-    if (message.type == RawMessageType::Connect)
+    if (auto authorizeMessage = dynamic_cast<AuthorizeMessage*>(message))
     {
-        ConnectMessage m(message);
-        connectUser(m, socketHandler);
+        connectUser(*authorizeMessage, socketHandler);
     }
-    else if (message.type == RawMessageType::TextMessage)
+    else if (auto textMessage = dynamic_cast<TextMessage*>(message))
     {
-        TextMessage m(message);
-        receiveText(m, socketHandler);
+        receiveText(*textMessage, socketHandler);
     }
     else
     {
-        std::cout << "Received message: " << message.to_str() << std::endl;
+        std::cout << "Received unknown message" << std::endl;
     }
 }
 
 
-void Messenger::connectUser(ConnectMessage& message, ServerSocketHandler* socketHandler)
+void Messenger::connectUser(AuthorizeMessage& message, ServerSocketHandler* socketHandler)
 {
     User* user = new User();
     user->id = ++last_user_id;

@@ -94,6 +94,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -109,6 +110,7 @@
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -126,6 +128,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -145,6 +148,7 @@
       <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -154,13 +158,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Protocol\Messages\AuthorizeMessage.cpp" />
+    <ClCompile Include="Protocol\Messages\Message.cpp" />
+    <ClCompile Include="Protocol\Messages\MessageFactory.cpp" />
+    <ClCompile Include="Protocol\Messages\TextMessage.cpp" />
     <ClCompile Include="Protocol\SimpleProtocol.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Protocol\IProtocol.h" />
-    <ClInclude Include="Protocol\Messages\ConnectMessage.h" />
+    <ClInclude Include="Protocol\Messages\AuthorizeMessage.h" />
+    <ClInclude Include="Protocol\Messages\Message.h" />
+    <ClInclude Include="Protocol\Messages\MessageFactory.h" />
     <ClInclude Include="Protocol\Messages\TextMessage.h" />
-    <ClInclude Include="Protocol\RawMessage.h" />
     <ClInclude Include="Protocol\SimpleProtocol.h" />
     <ClInclude Include="User\User.h" />
   </ItemGroup>

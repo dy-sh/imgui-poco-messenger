@@ -5,7 +5,6 @@
 #include "Messenger.h"
 #include "ServerSocketHandler.h"
 #include "ServerAcceptor.h"
-#include "Protocol/IProtocol.h"
 #include "Protocol/SimpleProtocol.h"
 
 

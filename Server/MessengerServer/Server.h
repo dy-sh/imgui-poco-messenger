@@ -65,3 +65,4 @@ protected:
 private:
     bool _helpRequested;
 };
+
