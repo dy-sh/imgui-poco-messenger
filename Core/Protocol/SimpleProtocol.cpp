@@ -4,6 +4,7 @@
 
 #include <stdexcept>
 
+#include "Messages/InvalidMessage.h"
 #include "Messages/MessageFactory.h"
 
 
@@ -32,9 +33,9 @@ std::pair<std::unique_ptr<Message>, size_t> SimpleProtocol::parseMessage(const c
         {
             size = i + 1 - from;
             break;
-        }        
+        }
     }
-    if (size==0)
+    if (size == 0)
     {
         return {nullptr, 0}; // end not found
     }
@@ -56,6 +57,7 @@ std::pair<std::unique_ptr<Message>, size_t> SimpleProtocol::parseMessage(const c
         }
     }
 
-    return {nullptr, 0};
-}
+    auto message = std::make_unique<InvalidMessage>(buffer, from, size);
 
+    return {std::move(message), from + size};
+}

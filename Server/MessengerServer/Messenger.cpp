@@ -3,19 +3,24 @@
 #include "Messenger.h"
 #include "ServerSocketHandler.h"
 #include "Protocol/Messages/AuthorizeMessage.h"
+#include "Protocol/Messages/InvalidMessage.h"
 #include "Protocol/Messages/TextMessage.h"
 #include "User/User.h"
 
 
 void Messenger::receiveMessage(Message* message, ServerSocketHandler* socketHandler)
 {
-    if (auto authorizeMessage = dynamic_cast<AuthorizeMessage*>(message))
+    if (auto authMess = dynamic_cast<AuthorizeMessage*>(message))
     {
-        connectUser(*authorizeMessage, socketHandler);
+        authorizeUser(*authMess, socketHandler);
     }
-    else if (auto textMessage = dynamic_cast<TextMessage*>(message))
+    else if (auto textMess = dynamic_cast<TextMessage*>(message))
     {
-        receiveText(*textMessage, socketHandler);
+        receiveText(*textMess, socketHandler);
+    }
+    else if (auto invMess = dynamic_cast<InvalidMessage*>(message))
+    {
+        std::cout << invMess->to_str() << std::endl;
     }
     else
     {
@@ -24,7 +29,7 @@ void Messenger::receiveMessage(Message* message, ServerSocketHandler* socketHand
 }
 
 
-void Messenger::connectUser(AuthorizeMessage& message, ServerSocketHandler* socketHandler)
+void Messenger::authorizeUser(AuthorizeMessage& message, ServerSocketHandler* socketHandler)
 {
     User* user = new User();
     user->id = ++last_user_id;
@@ -33,10 +38,10 @@ void Messenger::connectUser(AuthorizeMessage& message, ServerSocketHandler* sock
 
     users.push_back(user);
 
-    std::cout << "User connected. Id: [" << user->id << "], name: [" << user->nickname << "]" << std::endl;
+    std::cout << "User authorized. Id: [" << user->id << "], name: [" << user->nickname << "]" << std::endl;
 
     socketHandler->SetUser(user);
-    socketHandler->Send("LOGINED|" + std::to_string(user->id) + "|" + user->nickname + ";\r\n");
+    socketHandler->Send("AUTHORIZED|" + std::to_string(user->id) + "|" + user->nickname + ";\r\n");
 }
 
 
