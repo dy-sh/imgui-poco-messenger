@@ -44,6 +44,13 @@ void Messenger::connectUser(ConnectMessage& message, ServerSocketHandler* socket
 void Messenger::receiveText(TextMessage& message, ServerSocketHandler* socketHandler)
 {
     User* user = socketHandler->GetUser();
+    if (!user)
+    {
+        std::cout << "ERROR: Received text message from unauthorized user." << std::endl;
+        socketHandler->Send("ERROR|NOT_AUTHORIZED;\r\n");
+        return;
+    }
 
     std::cout << "TEXT from [" << user->nickname << "] : " << message.text << std::endl;
+    socketHandler->Send("RECEIVED|" + std::to_string(message.text.size()) + ";\r\n");
 }
