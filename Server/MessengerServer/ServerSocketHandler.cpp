@@ -136,3 +136,9 @@ void ServerSocketHandler::onSocketShutdown(const AutoPtr<ShutdownNotification>& 
 {
     delete this;
 }
+
+
+void ServerSocketHandler::Send(std::string text)
+{
+    _fifoOut.write(text.c_str(), text.size());
+}

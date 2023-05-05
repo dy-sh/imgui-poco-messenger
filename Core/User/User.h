@@ -5,6 +5,7 @@
 
 struct User
 {
-    std::string id; 
-    std::string nickname; 
+    size_t id; 
+    std::string nickname;
+    std::vector<ServerSocketHandler*> socketHandlers;
 };

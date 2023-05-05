@@ -19,6 +19,7 @@
 #include <iostream>
 
 
+struct User;
 class Messenger;
 struct IProtocol;
 using Poco::Net::SocketReactor;
@@ -54,6 +55,7 @@ private:
 
     IProtocol* protocol;
     Messenger* messenger;
+    User* user;
 
 public:
     ServerSocketHandler(StreamSocket& socket, SocketReactor& reactor, IProtocol& protocol, Messenger& messenger);
@@ -69,15 +71,22 @@ public:
     void onSocketWritable(const AutoPtr<WritableNotification>& pNf);
 
     void onSocketShutdown(const AutoPtr<ShutdownNotification>& pNf);
+
+    void Send(std::string text);
+
+    void SetUser(User* user) { this->user = user; }
+    User* GetUser() { return user; }
+
 private:
-    ServerSocketHandler(StreamSocket& socket, SocketReactor& reactor):_socket(socket),
-_reactor(reactor),
-_fifoIn(BUFFER_SIZE, true),
-_fifoOut(BUFFER_SIZE, true),
-protocol(nullptr)
+    ServerSocketHandler(StreamSocket& socket, SocketReactor& reactor): _socket(socket),
+                                                                       _reactor(reactor),
+                                                                       _fifoIn(BUFFER_SIZE, true),
+                                                                       _fifoOut(BUFFER_SIZE, true),
+                                                                       protocol(nullptr)
     {
         throw std::logic_error("Dont use MessengerServerSocketHandler deprecated constructor!");
     }
+
 
     friend SocketAcceptor<ServerSocketHandler>;
 };
