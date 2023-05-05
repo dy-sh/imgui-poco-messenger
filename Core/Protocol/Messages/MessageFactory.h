@@ -1,4 +1,4 @@
-﻿// // Copyright 2023 Dmitry Savosh <d.savosh@gmail.com>
+﻿// Copyright 2023 Dmitry Savosh <d.savosh@gmail.com>
 
 #pragma once
 #include <functional>

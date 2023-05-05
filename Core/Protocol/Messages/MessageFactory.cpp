@@ -1,4 +1,6 @@
-﻿#include "MessageFactory.h"
+﻿// Copyright 2023 Dmitry Savosh <d.savosh@gmail.com>
+
+#include "MessageFactory.h"
 
 std::map<std::string, std::function<std::unique_ptr<Message>()>> MessageFactory::messageFactory;
 

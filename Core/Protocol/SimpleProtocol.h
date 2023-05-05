@@ -11,7 +11,7 @@
 // Thello; - send text message "hello"
 // Auser1;Thello; - authotize "user1" and say "hello"
 // 
-// To avoid problems with garbage in communications that terminal ping programs can send,
+// To avoid problems with garbage in communications that terminal programs can send,
 // it is better to start and end a message with a ";'
 // Example:
 // ;Auser1;Thello; - authotize "user1" and say "hello"
