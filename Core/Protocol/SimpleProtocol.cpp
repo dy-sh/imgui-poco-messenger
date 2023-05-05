@@ -16,7 +16,7 @@ std::pair<std::unique_ptr<Message>, size_t> SimpleProtocol::parseMessage(const c
     // find start (skip all '\r' and '\n')
     for (size_t i = 0; i < buffer_size; i++)
     {
-        if (buffer[i] == '\r' || buffer[i] == '\n' || buffer[i] == ' ')
+        if (buffer[i] == '\r' || buffer[i] == '\n' || buffer[i] == ' ' || buffer[i] == DELIMITER)
         {
             from++;
         }

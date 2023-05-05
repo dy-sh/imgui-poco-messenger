@@ -13,8 +13,9 @@ class ServerSocketHandler;
 class Messenger
 {
 public:
+    std::vector<User*> getAllAuthorizedUsers();
+    
     void receiveMessage(Message* message, ServerSocketHandler* socketHandler);
-
 private:
     size_t last_user_id{0};
     std::vector<User*> users;

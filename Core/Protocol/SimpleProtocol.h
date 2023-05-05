@@ -4,6 +4,18 @@
 
 #include "IProtocol.h"
 
+// This is simple text protocol for client-server communication
+// Examples:
+// Auser1; - authotize "user1"
+// Aguest; - authotize "guest"
+// Thello; - send text message "hello"
+// Auser1;Thello; - authotize "user1" and say "hello"
+// 
+// To avoid problems with garbage in communications that terminal ping programs can send,
+// it is better to start and end a message with a ";'
+// Example:
+// ;Auser1;Thello; - authotize "user1" and say "hello"
+// ;;;;Auser1;;;Thello; - also valid messages, ";" will be ignored
 
 constexpr char DELIMITER = ';';
 

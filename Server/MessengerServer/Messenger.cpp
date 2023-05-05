@@ -8,6 +8,19 @@
 #include "User/User.h"
 
 
+std::vector<User*> Messenger::getAllAuthorizedUsers()
+{
+    std::vector<User*> result;
+
+    copy_if(users.begin(), users.end(), back_inserter(result), [](const User* user)
+    {
+        return user->IsAuthorized();
+    });
+
+    return result;
+}
+
+
 void Messenger::receiveMessage(Message* message, ServerSocketHandler* socketHandler)
 {
     if (auto authMess = dynamic_cast<AuthorizeMessage*>(message))
@@ -47,14 +60,33 @@ void Messenger::authorizeUser(AuthorizeMessage& message, ServerSocketHandler* so
 
 void Messenger::receiveText(TextMessage& message, ServerSocketHandler* socketHandler)
 {
-    User* user = socketHandler->GetUser();
-    if (!user)
+    const User* user = socketHandler->GetUser();
+    if (!user || !user->IsAuthorized())
     {
         std::cout << "ERROR: Received text message from unauthorized user." << std::endl;
         socketHandler->Send("ERROR|NOT_AUTHORIZED;\r\n");
         return;
     }
 
+    //send message back to user
     std::cout << "TEXT from [" << user->nickname << "] : " << message.text << std::endl;
-    socketHandler->Send("TEXT|" + std::to_string(message.text.size()) + ";\r\n");
+    socketHandler->Send("TEXT_RECEIVED|" + std::to_string(message.text.size()) + ";\r\n");
+
+    //broadcast message to all users
+    const std::vector<User*> auth_users = getAllAuthorizedUsers();
+    for (const auto* auth_user : auth_users)
+    {
+        if (!auth_user) continue;
+
+        for (auto* auth_user_socket : auth_user->socketHandlers)
+        {
+            if (!auth_user_socket) continue;
+
+            auth_user_socket->Send(
+                "TEXT|"
+                + std::to_string(user->id) + "|"
+                + user->nickname + "|"
+                + message.text + ";\r\n");
+        }
+    }
 }
