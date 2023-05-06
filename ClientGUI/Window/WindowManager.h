@@ -16,17 +16,17 @@ public:
     {
         for (auto& window : m_windows)
         {
-            if (window->isModal())
+            if (!window->isModal())
             {
-                window->render();
+                window->Render();
             }
         }
 
         for (auto& window : m_windows)
         {
-            if (!window->isModal())
+            if (window->isModal())
             {
-                window->render();
+                window->Render();
             }
         }
     }

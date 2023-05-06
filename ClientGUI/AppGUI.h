@@ -42,10 +42,9 @@ public:
     AppGUI()
     {
         style = std::make_unique<DefaultStyle>();
-        windowManager.addWindow(std::make_unique<Window>("Window 1"));
-        // windowManager.addWindow(std::make_unique<ModalWindow>("Modal Window"));
-        windowManager.addWindow(std::make_unique<ResizableWindow>("Resizable Window"));
-        windowManager.addWindow(std::make_unique<MainWindow>("Main Window 1"));
+        windowManager.addWindow(std::make_unique<Window>("Simple"));
+        // windowManager.addWindow(std::make_unique<ModalWindow>("Modal"));
+        windowManager.addWindow(std::make_unique<MainWindow>("Main"));
     }
 
 
