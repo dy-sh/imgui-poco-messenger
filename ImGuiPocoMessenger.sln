@@ -8,6 +8,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client_DX12", "Client_DX12\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client_glfw_opengl3", "Client_glfw_opengl3\Client_glfw_opengl3.vcxproj", "{4A1FB5EA-22F5-42A8-AB92-1D2DF5D47FB9}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client", "Client\Client.vcxproj", "{B14918E3-DE3E-488A-8DAD-504A546E40D3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -48,5 +50,13 @@ Global
 		{4A1FB5EA-22F5-42A8-AB92-1D2DF5D47FB9}.Release|Win32.Build.0 = Release|Win32
 		{4A1FB5EA-22F5-42A8-AB92-1D2DF5D47FB9}.Release|x64.ActiveCfg = Release|x64
 		{4A1FB5EA-22F5-42A8-AB92-1D2DF5D47FB9}.Release|x64.Build.0 = Release|x64
+		{B14918E3-DE3E-488A-8DAD-504A546E40D3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B14918E3-DE3E-488A-8DAD-504A546E40D3}.Debug|Win32.Build.0 = Debug|Win32
+		{B14918E3-DE3E-488A-8DAD-504A546E40D3}.Debug|x64.ActiveCfg = Debug|x64
+		{B14918E3-DE3E-488A-8DAD-504A546E40D3}.Debug|x64.Build.0 = Debug|x64
+		{B14918E3-DE3E-488A-8DAD-504A546E40D3}.Release|Win32.ActiveCfg = Release|Win32
+		{B14918E3-DE3E-488A-8DAD-504A546E40D3}.Release|Win32.Build.0 = Release|Win32
+		{B14918E3-DE3E-488A-8DAD-504A546E40D3}.Release|x64.ActiveCfg = Release|x64
+		{B14918E3-DE3E-488A-8DAD-504A546E40D3}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 EndGlobal
