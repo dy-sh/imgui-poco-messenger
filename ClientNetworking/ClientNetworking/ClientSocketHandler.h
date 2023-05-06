@@ -19,7 +19,7 @@
 #include <iostream>
 
 
-struct User;
+struct ClientUser;
 class MessengerClient;
 struct IProtocol;
 using Poco::Net::SocketReactor;
@@ -55,7 +55,7 @@ private:
 
     IProtocol* protocol{nullptr};
     MessengerClient* messenger{nullptr};
-    User* user{nullptr};
+    ClientUser* user{nullptr};
 
 public:
     ClientSocketHandler(StreamSocket& socket, SocketReactor& reactor, IProtocol& protocol, MessengerClient& messenger);
@@ -74,8 +74,8 @@ public:
 
     void Send(std::string text);
 
-    void SetUser(User* user) { this->user = user; }
-    User* GetUser() { return user; }
+    void SetUser(ClientUser* user) { this->user = user; }
+    ClientUser* GetUser() { return user; }
 
 private:
     ClientSocketHandler(StreamSocket& socket, SocketReactor& reactor): _socket(socket),

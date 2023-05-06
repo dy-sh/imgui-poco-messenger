@@ -9,6 +9,7 @@
 #include "main_window.h"
 #include "../debug.h"
 #include "imgui.h"
+#include "ClientNetworking/Client.h"
 
 using namespace std;  
 using namespace Poco::Net;  
@@ -19,6 +20,7 @@ extern bool show_login_window;
 extern bool show_main_window;
 extern bool show_app_log;
 extern bool show_app_console;
+Client client;
 
 static float OriginalWindowRounding;
 
@@ -46,22 +48,11 @@ void FinishMaximizeMainWindow()
 }
 
 
-void TryToConnect()
-{
-    StreamSocket socket;  
-	  
-    SocketAddress address("127.0.0.1", 9977);  
-    socket.connect(address);  
-	  
-    string message = "Atest;";  
-    socket.sendBytes(message.data(), (int)message.size());  
-	  
-    char buffer[1024];  
-    int n = socket.receiveBytes(buffer, sizeof(buffer));  
-    cout << "Server response: " << string(buffer, n) << endl;  
-	  
-    socket.close();  
-};
+
+
+
+
+
 
 
 void ShowMainWindow()
@@ -87,7 +78,11 @@ void ShowMainWindow()
     
     if( ImGui::Button( "Connect" ) )
     {
-        TryToConnect();
+        client.Connect();
+    }
+    if( ImGui::Button( "Send" ) )
+    {
+        client.Send("THello;");
     }
 
     if( ImGui::Button( "Simple Button" ) )
