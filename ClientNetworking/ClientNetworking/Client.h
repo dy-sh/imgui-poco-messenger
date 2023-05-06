@@ -53,7 +53,7 @@ public:
     {
         std::cerr << "THREAD STARTED"<< std::endl;
         try {
-            Poco::Net::SocketAddress address("localhost", 9977); // замените localhost и 1234 на свои данные
+            Poco::Net::SocketAddress address("localhost", 9977);
             StreamSocket socket(address);
             SocketReactor reactor;
             handler = new ClientHandler(socket, reactor);
@@ -63,7 +63,7 @@ public:
             reactor.run(); // thread will be blocked here
         
         } catch (Poco::Exception& e) {
-            std::cerr << "Ошибка: " << e.displayText() << std::endl;
+            std::cerr << "ERROR: " << e.displayText() << std::endl;
         }
     }
 

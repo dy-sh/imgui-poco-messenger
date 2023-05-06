@@ -184,6 +184,14 @@
       <Project>{b14918e3-de3e-488a-8dad-504a546e40d3}</Project>
       <Name>ClientGUI</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ClientNetworking\ClientNetworking.vcxproj">
+      <Project>{e156bee8-b683-4cc5-bdef-5a071de8ec2f}</Project>
+      <Name>ClientNetworking</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Core\Core.vcxproj">
+      <Project>{cd7ddb61-4448-4cd4-8f09-c0f4c282ccc3}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
