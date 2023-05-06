@@ -22,8 +22,8 @@
 #pragma comment(lib, "dxguid.lib")
 #endif
 
-#include "../Client/app.h"
-#include "../Client/style.h"
+#include "app.h"
+#include "style.h"
 
 struct FrameContext
 {

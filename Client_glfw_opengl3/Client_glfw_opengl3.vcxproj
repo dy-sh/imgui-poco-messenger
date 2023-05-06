@@ -89,7 +89,7 @@
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(_ZVcpkgCurrentInstalledDir)include;..\Core;..\Lib\imgui-1.89.5;..\Lib\imgui-1.89.5\backends;..\Lib\glfw\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(_ZVcpkgCurrentInstalledDir)include;..\Core;..\Lib\imgui-1.89.5;..\Lib\imgui-1.89.5\backends;..\Lib\glfw\include;..\ClientGUI;..\ClientNetworking;</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -104,7 +104,7 @@
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(_ZVcpkgCurrentInstalledDir)include;..\Core;..\Lib\imgui-1.89.5;..\Lib\imgui-1.89.5\backends;..\Lib\glfw\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(_ZVcpkgCurrentInstalledDir)include;..\Core;..\Lib\imgui-1.89.5;..\Lib\imgui-1.89.5\backends;..\Lib\glfw\include;..\ClientGUI;..\ClientNetworking;</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -121,7 +121,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(_ZVcpkgCurrentInstalledDir)include;..\Core;..\Lib\imgui-1.89.5;..\Lib\imgui-1.89.5\backends;..\Lib\glfw\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(_ZVcpkgCurrentInstalledDir)include;..\Core;..\Lib\imgui-1.89.5;..\Lib\imgui-1.89.5\backends;..\Lib\glfw\include;..\ClientGUI;..\ClientNetworking;</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
@@ -142,7 +142,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(_ZVcpkgCurrentInstalledDir)include;..\Core;..\Lib\imgui-1.89.5;..\Lib\imgui-1.89.5\backends;..\Lib\glfw\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(_ZVcpkgCurrentInstalledDir)include;..\Core;..\Lib\imgui-1.89.5;..\Lib\imgui-1.89.5\backends;..\Lib\glfw\include;..\ClientGUI;..\ClientNetworking;</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
@@ -180,9 +180,9 @@
     <None Include="..\Lib\imgui-1.89.5\misc\debuggers\imgui.natvis" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Client\Client.vcxproj">
+    <ProjectReference Include="..\ClientGUI\ClientGUI.vcxproj">
       <Project>{b14918e3-de3e-488a-8dad-504a546e40d3}</Project>
-      <Name>Client</Name>
+      <Name>ClientGUI</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
