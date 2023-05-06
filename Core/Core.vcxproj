@@ -173,7 +173,6 @@
     <ClInclude Include="Protocol\Messages\MessageFactory.h" />
     <ClInclude Include="Protocol\Messages\TextMessage.h" />
     <ClInclude Include="Protocol\SimpleProtocol.h" />
-    <ClInclude Include="User\User.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -5,14 +5,14 @@
 #include "Protocol/Messages/AuthorizeMessage.h"
 #include "Protocol/Messages/InvalidMessage.h"
 #include "Protocol/Messages/TextMessage.h"
-#include "User/User.h"
+#include "ServerUser.h"
 
 
-std::vector<User*> MessengerServer::getAllAuthorizedUsers()
+std::vector<ServerUser*> MessengerServer::getAllAuthorizedUsers()
 {
-    std::vector<User*> result;
+    std::vector<ServerUser*> result;
 
-    copy_if(users.begin(), users.end(), back_inserter(result), [](const User* user)
+    copy_if(users.begin(), users.end(), back_inserter(result), [](const ServerUser* user)
     {
         return user->IsAuthorized();
     });
@@ -44,7 +44,7 @@ void MessengerServer::receiveMessage(Message* message, ServerSocketHandler* sock
 
 void MessengerServer::authorizeUser(AuthorizeMessage& message, ServerSocketHandler* socketHandler)
 {
-    User* user = new User();
+    ServerUser* user = new ServerUser();
     user->id = ++last_user_id;
     user->nickname = message.userName;
     user->socketHandlers.push_back(socketHandler);
@@ -60,7 +60,7 @@ void MessengerServer::authorizeUser(AuthorizeMessage& message, ServerSocketHandl
 
 void MessengerServer::receiveText(TextMessage& message, ServerSocketHandler* socketHandler)
 {
-    const User* user = socketHandler->GetUser();
+    const ServerUser* user = socketHandler->GetUser();
     if (!user || !user->IsAuthorized())
     {
         std::cout << "ERROR: Received text message from unauthorized user." << std::endl;
@@ -73,7 +73,7 @@ void MessengerServer::receiveText(TextMessage& message, ServerSocketHandler* soc
     socketHandler->Send("TEXT_RECEIVED|" + std::to_string(message.text.size()) + ";\r\n");
 
     //broadcast message to all users
-    const std::vector<User*> auth_users = getAllAuthorizedUsers();
+    const std::vector<ServerUser*> auth_users = getAllAuthorizedUsers();
     for (const auto* auth_user : auth_users)
     {
         if (!auth_user) continue;

@@ -2,8 +2,11 @@
 
 #pragma once
 #include <string>
+#include <vector>
 
-struct User
+class ServerSocketHandler;
+
+struct ServerUser
 {
     size_t id;
     std::string nickname;
