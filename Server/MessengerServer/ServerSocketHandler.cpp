@@ -1,13 +1,13 @@
 ﻿// Copyright 2023 Dmitry Savosh <d.savosh@gmail.com>
 
 #include "ServerSocketHandler.h"
-#include "Messenger.h"
+#include "MessengerServer.h"
 #include "Protocol/IProtocol.h"
 
 
 
 ServerSocketHandler::ServerSocketHandler(StreamSocket& socket, SocketReactor& reactor,
-                                         IProtocol& protocol, Messenger& messenger):
+                                         IProtocol& protocol, MessengerServer& messenger):
     _socket(socket),
     _reactor(reactor),
     _fifoIn(BUFFER_SIZE, true),

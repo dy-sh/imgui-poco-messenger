@@ -19,13 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ClientNetworking\Messenger.h" />
+    <ClInclude Include="ClientNetworking\MessengerClient.h" />
     <ClInclude Include="ClientNetworking\Client.h" />
-    <ClInclude Include="ClientNetworking\ClientAcceptor.h" />
+    <ClInclude Include="ClientNetworking\ClientSocketAcceptor.h" />
     <ClInclude Include="ClientNetworking\ClientSocketHandler.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ClientNetworking\Messenger.cpp" />
+    <ClCompile Include="ClientNetworking\MessengerClient.cpp" />
     <ClCompile Include="ClientNetworking\Client.cpp" />
     <ClCompile Include="ClientNetworking\ClientSocketHandler.cpp" />
   </ItemGroup>

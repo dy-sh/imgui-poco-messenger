@@ -1,6 +1,6 @@
 ﻿// Copyright 2023 Dmitry Savosh <d.savosh@gmail.com>
 
-#include "Messenger.h"
+#include "MessengerServer.h"
 #include "ServerSocketHandler.h"
 #include "Protocol/Messages/AuthorizeMessage.h"
 #include "Protocol/Messages/InvalidMessage.h"
@@ -8,7 +8,7 @@
 #include "User/User.h"
 
 
-std::vector<User*> Messenger::getAllAuthorizedUsers()
+std::vector<User*> MessengerServer::getAllAuthorizedUsers()
 {
     std::vector<User*> result;
 
@@ -21,7 +21,7 @@ std::vector<User*> Messenger::getAllAuthorizedUsers()
 }
 
 
-void Messenger::receiveMessage(Message* message, ServerSocketHandler* socketHandler)
+void MessengerServer::receiveMessage(Message* message, ServerSocketHandler* socketHandler)
 {
     if (auto authMess = dynamic_cast<AuthorizeMessage*>(message))
     {
@@ -42,7 +42,7 @@ void Messenger::receiveMessage(Message* message, ServerSocketHandler* socketHand
 }
 
 
-void Messenger::authorizeUser(AuthorizeMessage& message, ServerSocketHandler* socketHandler)
+void MessengerServer::authorizeUser(AuthorizeMessage& message, ServerSocketHandler* socketHandler)
 {
     User* user = new User();
     user->id = ++last_user_id;
@@ -58,7 +58,7 @@ void Messenger::authorizeUser(AuthorizeMessage& message, ServerSocketHandler* so
 }
 
 
-void Messenger::receiveText(TextMessage& message, ServerSocketHandler* socketHandler)
+void MessengerServer::receiveText(TextMessage& message, ServerSocketHandler* socketHandler)
 {
     const User* user = socketHandler->GetUser();
     if (!user || !user->IsAuthorized())

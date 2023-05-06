@@ -4,14 +4,14 @@
 #include <Poco/Net/SocketAcceptor.h>
 #include "Protocol/IProtocol.h"
 
-class ServerAcceptor : public SocketAcceptor<ServerSocketHandler>
+class ServerSocketAcceptor : public SocketAcceptor<ServerSocketHandler>
 {
     IProtocol& protocol;
-    Messenger& messenger;
+    MessengerServer& messenger;
     SocketReactor& reactor;
     
 public:
-    ServerAcceptor(ServerSocket& socket, SocketReactor& reactor, IProtocol& protocol,Messenger& messenger)
+    ServerSocketAcceptor(ServerSocket& socket, SocketReactor& reactor, IProtocol& protocol,MessengerServer& messenger)
         : SocketAcceptor<ServerSocketHandler>(socket, reactor), protocol{protocol}, messenger{messenger}, reactor{reactor}
     {
     }

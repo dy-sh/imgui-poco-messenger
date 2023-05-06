@@ -2,9 +2,9 @@
 
 #include "Client.h"
 
-#include "Messenger.h"
+#include "MessengerClient.h"
 #include "ClientSocketHandler.h"
-#include "ClientAcceptor.h"
+#include "ClientSocketAcceptor.h"
 #include "Protocol/SimpleProtocol.h"
 
 
@@ -63,11 +63,11 @@ int Client::main(const std::vector<std::string>& args)
     unsigned short port = (unsigned short)config().getInt("MessengerServer.port", 9977);
 
     SimpleProtocol protocol;
-    Messenger messenger;
+    MessengerClient messenger;
 
     ServerSocket svs(port);
     SocketReactor reactor;
-    ClientAcceptor acceptor(svs, reactor, protocol,messenger);
+    ClientSocketAcceptor acceptor(svs, reactor, protocol,messenger);
 
 
     // run the reactor in its own thread so that we can wait for a termination request

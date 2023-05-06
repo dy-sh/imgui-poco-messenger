@@ -8,18 +8,18 @@ struct Message;
 struct TextMessage;
 struct AuthorizeMessage;
 struct User;
-class ServerSocketHandler;
+class ClientSocketHandler;
 
-class Messenger
+class MessengerClient
 {
 public:
     std::vector<User*> getAllAuthorizedUsers();
     
-    void receiveMessage(Message* message, ServerSocketHandler* socketHandler);
+    void receiveMessage(Message* message, ClientSocketHandler* socketHandler);
 private:
     size_t last_user_id{0};
     std::vector<User*> users;
     // std::vector<TextMessage> messages;
-    void authorizeUser(AuthorizeMessage& message, ServerSocketHandler* socketHandler);
-    void receiveText(TextMessage& message, ServerSocketHandler* socketHandler);
+    void authorizeUser(AuthorizeMessage& message, ClientSocketHandler* socketHandler);
+    void receiveText(TextMessage& message, ClientSocketHandler* socketHandler);
 };

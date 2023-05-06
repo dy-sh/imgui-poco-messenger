@@ -160,15 +160,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="MessengerServer\Server.cpp" />
-    <ClCompile Include="MessengerServer\Messenger.cpp" />
+    <ClCompile Include="MessengerServer\MessengerServer.cpp" />
     <ClCompile Include="MessengerServer\ServerSocketHandler.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MessengerServer\Server.h" />
-    <ClInclude Include="MessengerServer\Messenger.h" />
+    <ClInclude Include="MessengerServer\MessengerServer.h" />
     <ClInclude Include="MessengerServer\ServerSocketHandler.h" />
-    <ClInclude Include="MessengerServer\ServerAcceptor.h" />
+    <ClInclude Include="MessengerServer\ServerSocketAcceptor.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.vcxproj">

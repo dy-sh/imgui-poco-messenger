@@ -20,7 +20,7 @@
 
 
 struct User;
-class Messenger;
+class MessengerClient;
 struct IProtocol;
 using Poco::Net::SocketReactor;
 using Poco::Net::SocketAcceptor;
@@ -54,11 +54,11 @@ private:
     FIFOBuffer _fifoOut;
 
     IProtocol* protocol{nullptr};
-    Messenger* messenger{nullptr};
+    MessengerClient* messenger{nullptr};
     User* user{nullptr};
 
 public:
-    ClientSocketHandler(StreamSocket& socket, SocketReactor& reactor, IProtocol& protocol, Messenger& messenger);
+    ClientSocketHandler(StreamSocket& socket, SocketReactor& reactor, IProtocol& protocol, MessengerClient& messenger);
 
     ~ClientSocketHandler();
 
