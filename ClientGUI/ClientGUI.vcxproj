@@ -161,8 +161,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Debug\Console.cpp" />
-    <ClCompile Include="Debug\Log.cpp" />
+    <ClCompile Include="Tools\Console.cpp" />
+    <ClCompile Include="Tools\Log.cpp" />
     <ClCompile Include="Window\LoginWindow.cpp" />
     <ClCompile Include="Window\MainWindow.cpp" />
     <ClCompile Include="..\Lib\imgui-1.89.5\imgui.cpp" />
@@ -256,9 +256,9 @@
     <ClInclude Include="..\Lib\imgui-1.89.5\backends\imgui_impl_opengl3.h" />
     <ClInclude Include="..\Lib\imgui-1.89.5\backends\imgui_impl_opengl3_loader.h" />
     <ClInclude Include="AppGUI.h" />
-    <ClInclude Include="Debug\Console.h" />
-    <ClInclude Include="Debug\Debug.h" />
-    <ClInclude Include="Debug\Log.h" />
+    <ClInclude Include="Tools\Console.h" />
+    <ClInclude Include="Tools\Debug.h" />
+    <ClInclude Include="Tools\Log.h" />
     <ClInclude Include="Theme\DefaultStyle.h" />
     <ClInclude Include="Theme\Style.h" />
     <ClInclude Include="Utils\Utils.h" />

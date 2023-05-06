@@ -5,7 +5,7 @@
 #include "Poco/Net/StreamSocket.h"
 #include "Poco/Net/SocketAddress.h"
 #include "MainWindow.h"
-#include "../Debug/Debug.h"
+#include "../Tools/Debug.h"
 #include "imgui.h"
 #include "WindowManager.h"
 #include "ClientNetworking/Client.h"
@@ -61,9 +61,9 @@ void MainWindow::RenderContent()
 
     if (ImGui::Button("Add Log message"))
     {
-        LOG("Simple %d message example", 123);
-        LOG(LogLevel::wrn, "wrn message example");
-        AppLog::Add(LogLevel::err, "err message example");
+        // LOG("Simple %d message example", 123);
+        // LOG(LogLevel::wrn, "wrn message example");
+        // AppLog::Add(LogLevel::err, "err message example");
 
         // show_app_log = true;
     }

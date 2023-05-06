@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "Debug\Debug.h"
+#include "Tools\Debug.h"
 #include "imgui.h"
 #include "Theme\DefaultStyle.h"
 #include "Window\WindowManager.h"
@@ -37,11 +37,10 @@ public:
     AppGUI()
     {
         style = std::make_unique<DefaultStyle>();
-        // windowManager.addWindow(std::make_unique<Window>("Simple"));
-        // windowManager.addWindow(std::make_unique<ModalWindow>("Modal"));
-        windowManager.AddWindow(std::make_unique<MainWindow>("Main", true, &windowManager));
-        windowManager.AddWindow(std::make_unique<AppConsoleWindow>("Console", true));
-        windowManager.AddWindow(std::make_unique<LoginWindow>("Login", true));
+        windowManager.AddWindow(std::make_unique<MainWindow>("Main", &windowManager,true));
+        windowManager.AddWindow(std::make_unique<AppConsoleWindow>("Console", false));
+        windowManager.AddWindow(std::make_unique<AppLogWindow>("Log", true));
+        windowManager.AddWindow(std::make_unique<LoginWindow>("Login", false));
     }
 
 
@@ -88,8 +87,6 @@ public:
         if (show_demo_window)
             ImGui::ShowDemoWindow(&show_demo_window);
 
-        if (show_app_log)
-            AppLog::Draw("Log", &show_app_log);
         if (show_app_metrics)
             ImGui::ShowMetricsWindow(&show_app_metrics);
         if (show_app_debug_log)
@@ -115,12 +112,18 @@ public:
             {
                 if (Window* console = windowManager.GetWindowByTitle("Console"))
                 {
-                    bool show_app_console = console->IsVisible();
-                    ImGui::MenuItem("Console", NULL, &show_app_console);
-                    console->SetVisible(show_app_console);
+                    bool show_console = console->IsVisible();
+                    ImGui::MenuItem("Console", NULL, &show_console);
+                    console->SetVisible(show_console);
                 }
 
-                ImGui::MenuItem("Log", NULL, &show_app_log);
+                if (Window* console = windowManager.GetWindowByTitle("Log"))
+                {
+                    bool show_log = console->IsVisible();
+                    ImGui::MenuItem("Log", NULL, &show_log);
+                    console->SetVisible(show_log);
+                }
+                
                 ImGui::MenuItem("Metrics/Debugger", NULL, &show_app_metrics);
                 ImGui::MenuItem("Debug Log", NULL, &show_app_debug_log);
                 ImGui::MenuItem("Stack Tool", NULL, &show_app_stack_tool);
