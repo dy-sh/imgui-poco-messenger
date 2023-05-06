@@ -6,15 +6,21 @@
 #include "Window.h"
 
 
+class WindowManager;
 class Client;
 
 class MainWindow : public MaximizedWindow
 {
 public:
-    MainWindow(const std::string& title, bool visible = true) :MaximizedWindow(title, visible ){  }
+    MainWindow(const std::string& title, bool visible, WindowManager* windowManager)
+        : MaximizedWindow(title, visible), windowManager(windowManager)
+    {
+    }
+
+
     void RenderContent() override;
 
 private:
-    Client* client;  
-   
+    Client* client;
+    WindowManager* windowManager;
 };

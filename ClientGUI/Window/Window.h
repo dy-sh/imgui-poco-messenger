@@ -27,7 +27,7 @@ public:
         if (visible)
         {
             ImGui::SetNextWindowSizeConstraints(size, ImVec2(FLT_MAX, FLT_MAX));
-            // ImGui::SetNextWindowSize( ImVec2( 400, 500 ), ImGuiCond_FirstUseEver );
+            // ImGui::SetNextWindowSize( size, ImGuiCond_FirstUseEver );
             ImGui::Begin(title.c_str(), &visible, resizable ? ImGuiWindowFlags_None : ImGuiWindowFlags_NoResize);
             RenderContent();
             ImGui::End();
@@ -35,16 +35,17 @@ public:
     }
 
 
-    bool isVisible() const { return visible; }
-    void setVisible(bool visible) { visible = visible; }
+    bool IsVisible() const { return visible; }
+    void SetVisible(bool vis) { visible = vis; }
+    void ToggleVisible() { visible = !visible; }
 
-    bool isResizable() const { return resizable; }
-    void setResizable(bool resizable) { resizable = resizable; }
+    bool IsResizable() const { return resizable; }
+    void SetResizable(bool res) { resizable = res; }
 
-    virtual bool isModal() const { return false; }
+    virtual bool IsModal() const { return false; }
 
-    void setTitle(std::string title) { this->title = title; }
-    std::string getTitle() { return title; }
+    void SetTitle(std::string title) { this->title = title; }
+    std::string GetTitle() { return title; }
 
 protected:
     std::string title;
@@ -66,6 +67,16 @@ public:
     {
         if (visible)
         {
+            ImGui::SetNextWindowSizeConstraints(size, ImVec2(FLT_MAX, FLT_MAX));
+            // ImGui::SetNextWindowSize( size, ImGuiCond_FirstUseEver );
+            
+            // // centered on screen
+            // SetWindowPosition();
+            // ImGui::Begin(title.c_str(), &visible,
+            //              ImGuiWindowFlags_Modal | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+            // RenderContent();
+            // ImGui::End();
+            
             ImGui::OpenPopup(title.c_str());
             if (ImGui::BeginPopupModal(title.c_str(), &visible))
             {
@@ -76,7 +87,21 @@ public:
         }
     }
 
-    bool isModal() const override { return true; }
+
+    bool IsModal() const override { return true; }
+
+
+    void SetWindowPosition()
+    {
+        ImGui::SetNextWindowSize(size);
+
+        ImVec2 window_size = ImGui::GetWindowSize();
+        ImVec2 window_center(window_size.x / 2, window_size.y / 2);
+
+        ImGui::SetNextWindowPos(
+            {window_center.x + (size.x / 2), window_center.y + (size.y / 2)},
+            ImGuiCond_Always, ImVec2(0.5f, 0.5f));
+    }
 };
 
 class MaximizedWindow : public Window

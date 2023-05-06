@@ -7,6 +7,7 @@
 #include "MainWindow.h"
 #include "../Debug/Debug.h"
 #include "imgui.h"
+#include "WindowManager.h"
 #include "ClientNetworking/Client.h"
 
 using namespace std;
@@ -49,7 +50,13 @@ void MainWindow::RenderContent()
 
     if (ImGui::Button("Authorization"))
     {
-        // show_login_window = true;
+        if (windowManager)
+        {
+            if (Window* loginWindow = windowManager->GetWindowByTitle("Login"))
+            {
+                loginWindow->ToggleVisible();
+            }
+        }
     }
 
     if (ImGui::Button("Add Log message"))
@@ -63,9 +70,9 @@ void MainWindow::RenderContent()
 
     if (ImGui::Button("Add Console message"))
     {
-        CONSOLE("Simple %d message example", 123);
-        CONSOLE(LogLevel::wrn, "wrn message example");
-        AppConsole::Add(LogLevel::err, "err message example");
+        // CONSOLE("Simple %d message example", 123);
+        // CONSOLE(LogLevel::wrn, "wrn message example");
+        // AppConsole::Add(LogLevel::err, "err message example");
 
         // show_app_console = true;
     }
