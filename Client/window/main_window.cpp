@@ -2,9 +2,16 @@
 // Created by Dmitry Savosh on 18.04.2023.
 //
 
+#include "Poco/Net/StreamSocket.h"
+#include "Poco/Net/SocketAddress.h"
+#include <iostream>
+
 #include "main_window.h"
 #include "../debug.h"
 #include "imgui.h"
+
+using namespace std;  
+using namespace Poco::Net;  
 
 bool maximize_main_window = false;
 
@@ -38,6 +45,25 @@ void FinishMaximizeMainWindow()
     style->WindowRounding = OriginalWindowRounding;
 }
 
+
+void TryToConnect()
+{
+    StreamSocket socket;  
+	  
+    SocketAddress address("127.0.0.1", 9977);  
+    socket.connect(address);  
+	  
+    string message = "Atest;";  
+    socket.sendBytes(message.data(), (int)message.size());  
+	  
+    char buffer[1024];  
+    int n = socket.receiveBytes(buffer, sizeof(buffer));  
+    cout << "Server response: " << string(buffer, n) << endl;  
+	  
+    socket.close();  
+};
+
+
 void ShowMainWindow()
 {
     if( maximize_main_window )
@@ -57,6 +83,12 @@ void ShowMainWindow()
     ImGui::Text( "Alt + C - Console" );
     ImGui::Text( "Alt + X - Log" );
     ImGui::Text( "Esc - Quit" );
+
+    
+    if( ImGui::Button( "Connect" ) )
+    {
+        TryToConnect();
+    }
 
     if( ImGui::Button( "Simple Button" ) )
     {

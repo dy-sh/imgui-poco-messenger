@@ -189,6 +189,12 @@
     <ClInclude Include="window\login_window.h" />
     <ClInclude Include="window\main_window.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.vcxproj">
+      <Project>{cd7ddb61-4448-4cd4-8f09-c0f4c282ccc3}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
