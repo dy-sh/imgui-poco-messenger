@@ -8,30 +8,32 @@
 #include "../Utils/Utils.h"
 #include <string>
 #include <vector>
+#include <iomanip>
+#include <sstream>
 
 static int TextEditCallbackStub( ImGuiInputTextCallbackData* data )
 {
-    auto* console = (AppConsoleWindow*)data->UserData;
+    auto* console = (ConsoleWindow*)data->UserData;
     return console->TextEditCallback( data );
 }
 
 
 
-AppConsoleWindow::~AppConsoleWindow()
+ConsoleWindow::~ConsoleWindow()
 {
-    ClearLog();
+    Clear();
     for( int i = 0; i < History.Size; i++ )
         free( History[i] );
 }
 
-void AppConsoleWindow::ClearLog()
+void ConsoleWindow::Clear()
 {
     for( int i = 0; i < Items.Size; i++ )
         free( Items[i] );
     Items.clear();
 }
 
-void AppConsoleWindow::Add( const char* fmt, ... )
+void ConsoleWindow::AddRaw( const char* fmt, ... )
 {
     // FIXME-OPT
     char buf[1024];
@@ -43,7 +45,45 @@ void AppConsoleWindow::Add( const char* fmt, ... )
     Items.push_back( Strdup( buf ) );
 }
 
-void AppConsoleWindow::RenderContent( )
+
+void ConsoleWindow::Add(const char* fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+
+    int length = vsnprintf(nullptr, 0, fmt, args); // Determine the length of the formatted string
+    std::string buffer(length, '\0'); // Allocate a buffer to store the formatted string
+    vsnprintf(&buffer[0], length + 1, fmt, args); // Format the string into the buffer
+    Add(LogLevel::inf, "%s", buffer.c_str()); // Add the formatted string to the log
+}
+
+
+void ConsoleWindow::Add(LogLevel level, const char* fmt, ...)
+{
+    std::ostringstream oss;
+
+    // append LogLevel
+    oss << "[" << ToString(level) << "] ";
+    // append current time
+    oss << "[" << std::fixed << std::setprecision(2) << ImGui::GetTime() << "] ";
+    // append message
+    oss << fmt << "\n";
+
+    std::string s = oss.str();
+    fmt = s.c_str();
+
+    va_list args;
+    va_start(args, fmt);
+
+    int length = vsnprintf(nullptr, 0, fmt, args); // Determine the length of the formatted string
+    std::string buffer(length, '\0'); // Allocate a buffer to store the formatted string
+    vsnprintf(&buffer[0], length + 1, fmt, args); // Format the string into the buffer
+    AddRaw("%s", buffer.c_str()); // Add the formatted string to the log
+
+    va_end(args);
+}
+
+void ConsoleWindow::RenderContent( )
 {
     // As a specific feature guaranteed by the library, after calling Begin() the last Item represent the title bar.
     // So e.g. IsItemHovered() will return true when hovering the title bar.
@@ -61,7 +101,7 @@ void AppConsoleWindow::RenderContent( )
 
     if( ImGui::SmallButton( "Clear" ) )
     {
-        ClearLog();
+        Clear();
     }
     ImGui::SameLine();
     bool copy_to_clipboard = ImGui::SmallButton( "Copy" );
@@ -76,7 +116,7 @@ void AppConsoleWindow::RenderContent( )
     if( ImGui::SmallButton( "Spam" ) )
         spam = !spam;
     if( spam )
-        Add( "Spam %f", ImGui::GetTime() );
+        AddRaw( "Spam %f", ImGui::GetTime() );
 
     //    ImGui::Separator();
 
@@ -103,7 +143,7 @@ void AppConsoleWindow::RenderContent( )
         if( ImGui::BeginPopupContextWindow() )
         {
             if( ImGui::Selectable( "Clear" ) )
-                ClearLog();
+                Clear();
             ImGui::EndPopup();
         }
 
@@ -201,9 +241,9 @@ void AppConsoleWindow::RenderContent( )
         ImGui::SetKeyboardFocusHere( -1 ); // Auto focus previous widget
 }
 
-void AppConsoleWindow::ExecCommand( const char* command_line )
+void ConsoleWindow::ExecCommand( const char* command_line )
 {
-    Add( "# %s\n", command_line );
+    AddRaw( "# %s\n", command_line );
 
     // Insert into history. First find match and delete it so it can be pushed to the back.
     // This isn't trying to be smart or optimal.
@@ -220,7 +260,7 @@ void AppConsoleWindow::ExecCommand( const char* command_line )
     // Process command
     if( Stricmp( command_line, "CLEAR" ) == 0 )
     {
-        ClearLog();
+        Clear();
     }
     else if( Stricmp( command_line, "HELP" ) == 0 )
     {
@@ -230,34 +270,34 @@ void AppConsoleWindow::ExecCommand( const char* command_line )
     {
         int first = History.Size - 10;
         for( int i = first > 0 ? first : 0; i < History.Size; i++ )
-            Add( "%3d: %s\n", i, History[i] );
+            AddRaw( "%3d: %s\n", i, History[i] );
     }
     else
     {
-        Add( "Unknown command: '%s'\n", command_line );
+        AddRaw( "Unknown command: '%s'\n", command_line );
     }
 
     // On command input, we scroll to bottom even if AutoScroll==false
     ScrollToBottom = true;
 }
-void AppConsoleWindow::Help()
+void ConsoleWindow::Help()
 {
-    Add( "This example implements a console with basic coloring, completion (TAB key) and history (Up/Down keys). A "
+    AddRaw( "This example implements a console with basic coloring, completion (TAB key) and history (Up/Down keys). A "
          "more elaborate "
          "implementation may want to store entries along with extra data such as timestamp, emitter, etc." );
-    Add( "Log levels:" );
-    Add( "[inf] something ok" );
-    Add( "[wrn] something important" );
-    Add( "[err] something critical" );
-    Add( R"(Filter syntax:  "inclide, -exclude" (example: "help, -hist, -wrn"))" );
-    Add( "Commands:" );
+    AddRaw( "Log levels:" );
+    AddRaw( "[inf] something ok" );
+    AddRaw( "[wrn] something important" );
+    AddRaw( "[err] something critical" );
+    AddRaw( R"(Filter syntax:  "inclide, -exclude" (example: "help, -hist, -wrn"))" );
+    AddRaw( "Commands:" );
     for( int i = 0; i < Commands.Size; i++ )
-        Add( "- %s", Commands[i] );
+        AddRaw( "- %s", Commands[i] );
 
     Filter.Clear();
 }
 
-int AppConsoleWindow::TextEditCallback( ImGuiInputTextCallbackData* data )
+int ConsoleWindow::TextEditCallback( ImGuiInputTextCallbackData* data )
 {
     // AddMessage("cursor: %d, selection: %d-%d", data->CursorPos, data->SelectionStart, data->SelectionEnd);
     switch( data->EventFlag )
@@ -286,7 +326,7 @@ int AppConsoleWindow::TextEditCallback( ImGuiInputTextCallbackData* data )
             if( candidates.Size == 0 )
             {
                 // No match
-                Add( "No match for \"%.*s\"!\n", (int)( word_end - word_start ), word_start );
+                AddRaw( "No match for \"%.*s\"!\n", (int)( word_end - word_start ), word_start );
             }
             else if( candidates.Size == 1 )
             {
@@ -321,9 +361,9 @@ int AppConsoleWindow::TextEditCallback( ImGuiInputTextCallbackData* data )
                 }
 
                 // List matches
-                Add( "Possible matches:\n" );
+                AddRaw( "Possible matches:\n" );
                 for( int i = 0; i < candidates.Size; i++ )
-                    Add( "- %s\n", candidates[i] );
+                    AddRaw( "- %s\n", candidates[i] );
             }
 
             break;

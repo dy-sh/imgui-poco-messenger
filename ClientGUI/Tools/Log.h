@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "Debug.h"
 #include "imgui.h"
 #include "../Window/Window.h"
 
@@ -13,9 +14,9 @@ struct AppLogColors
     ImVec4 WarningColor = ImVec4(1.0f, 0.8f, 0.6f, 1.0f);
 };
 
-struct AppLogWindow : public Window
+struct LogWindow : public Window
 {
-    AppLogWindow(const std::string& title, bool visible)
+    LogWindow(const std::string& title, bool visible)
         : Window(title, visible, true, {700, 400})
     {
         Clear();
@@ -24,13 +25,16 @@ struct AppLogWindow : public Window
 
     AppLogColors LogColors;
 
-    ImGuiTextBuffer Buf;
+    inline static ImGuiTextBuffer Buf = ImGuiTextBuffer{};
     ImGuiTextFilter Filter;
-    ImVector<int> LineOffsets; // Index to lines offset. We maintain this with AddMessage() calls.
+    inline static ImVector<int> LineOffsets = ImVector<int>{};
+    // Index to lines offset. We maintain this with AddMessage() calls.
     bool AutoScroll = true; // Keep scrolling if already at the bottom.
 
-    void Clear();
-    void Add(const char* fmt, ...) IM_FMTARGS(2);
+    static void Clear();
+    static void AddRaw(const char* fmt, ...) IM_FMTARGS(2);
+    static void Add(const char* fmt, ...) IM_FMTARGS(2);
+    static void Add(LogLevel level, const char* fmt, ...) IM_FMTARGS(3);
     void RenderContent() override;
     void DrawColorizedLine(const char* line_start, const char* line_end) const;
 };

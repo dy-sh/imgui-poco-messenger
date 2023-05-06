@@ -8,7 +8,9 @@
 #include "../Tools/Debug.h"
 #include "imgui.h"
 #include "WindowManager.h"
+#include "../Tools/Console.h"
 #include "ClientNetworking/Client.h"
+#include "../Tools/Log.h"
 
 using namespace std;
 using namespace Poco::Net;
@@ -61,19 +63,25 @@ void MainWindow::RenderContent()
 
     if (ImGui::Button("Add Log message"))
     {
-        // LOG("Simple %d message example", 123);
-        // LOG(LogLevel::wrn, "wrn message example");
-        // AppLog::Add(LogLevel::err, "err message example");
-
-        // show_app_log = true;
+        LOG("Simple %d message example", 123);
+        LOG(LogLevel::wrn, "wrn message example");
+        LogWindow::Add(LogLevel::err, "err message example");
+       
+        if (Window* log = static_cast<LogWindow*>(windowManager->GetWindowByTitle("Log")))
+        {
+            log->SetVisible(true);
+        }
     }
 
     if (ImGui::Button("Add Console message"))
     {
-        // CONSOLE("Simple %d message example", 123);
-        // CONSOLE(LogLevel::wrn, "wrn message example");
-        // AppConsole::Add(LogLevel::err, "err message example");
+        CONSOLE("Simple %d message example", 123);
+        CONSOLE(LogLevel::wrn, "wrn message example");
+        ConsoleWindow::Add(LogLevel::err, "err message example");
 
-        // show_app_console = true;
+        if (Window* log = static_cast<LogWindow*>(windowManager->GetWindowByTitle("Console")))
+        {
+            log->SetVisible(true);
+        }
     }
 }

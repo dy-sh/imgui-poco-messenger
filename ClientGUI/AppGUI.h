@@ -4,12 +4,14 @@
 
 #pragma once
 
-#include "Tools\Debug.h"
+#include "Tools/Debug.h"
 #include "imgui.h"
-#include "Theme\DefaultStyle.h"
-#include "Window\WindowManager.h"
-#include "window\LoginWindow.h"
-#include "window\MainWindow.h"
+#include "Theme/DefaultStyle.h"
+#include "Tools/Console.h"
+#include "Tools/Log.h"
+#include "Window/WindowManager.h"
+#include "Window/LoginWindow.h"
+#include "Window/MainWindow.h"
 
 // extern GLFWwindow* g_window;
 
@@ -38,8 +40,8 @@ public:
     {
         style = std::make_unique<DefaultStyle>();
         windowManager.AddWindow(std::make_unique<MainWindow>("Main", &windowManager,true));
-        windowManager.AddWindow(std::make_unique<AppConsoleWindow>("Console", false));
-        windowManager.AddWindow(std::make_unique<AppLogWindow>("Log", true));
+        windowManager.AddWindow(std::make_unique<ConsoleWindow>("Console", false));
+        windowManager.AddWindow(std::make_unique<LogWindow>("Log", true));
         windowManager.AddWindow(std::make_unique<LoginWindow>("Login", false));
     }
 
