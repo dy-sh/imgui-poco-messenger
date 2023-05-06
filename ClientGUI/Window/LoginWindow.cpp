@@ -2,7 +2,7 @@
 // Created by Dmitry Savosh on 18.04.2023.
 //
 
-#include "login_window.h"
+#include "LoginWindow.h"
 #include <string>
 
 using namespace std;

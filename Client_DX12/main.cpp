@@ -22,8 +22,8 @@
 #pragma comment(lib, "dxguid.lib")
 #endif
 
-#include "app.h"
-#include "style.h"
+#include "App.h"
+
 
 struct FrameContext
 {
@@ -58,6 +58,8 @@ void CleanupRenderTarget();
 void WaitForLastSubmittedFrame();
 FrameContext* WaitForNextFrameResources();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+App app;
 
 // Main code
 int main(int, char**)
@@ -119,7 +121,7 @@ int main(int, char**)
     bool show_another_window = false;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-    apply_custom_style( clear_color );
+    app.ApplyStyle( clear_color );
 
     // Main loop
     bool done = false;
@@ -143,7 +145,7 @@ int main(int, char**)
         ImGui_ImplWin32_NewFrame();
         ImGui::NewFrame();
 
-        ShowWindows();
+        app.ShowWindows();
 
         // Rendering
         ImGui::Render();

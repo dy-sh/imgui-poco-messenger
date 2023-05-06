@@ -161,10 +161,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="debug\console.cpp" />
-    <ClCompile Include="debug\log.cpp" />
-    <ClCompile Include="window\login_window.cpp" />
-    <ClCompile Include="window\main_window.cpp" />
+    <ClCompile Include="Debug\Console.cpp" />
+    <ClCompile Include="Debug\Log.cpp" />
+    <ClCompile Include="Window\LoginWindow.cpp" />
+    <ClCompile Include="Window\MainWindow.cpp" />
     <ClCompile Include="..\Lib\imgui-1.89.5\imgui.cpp" />
     <ClCompile Include="..\Lib\imgui-1.89.5\imgui_demo.cpp" />
     <ClCompile Include="..\Lib\imgui-1.89.5\imgui_draw.cpp" />
@@ -172,6 +172,81 @@
     <ClCompile Include="..\Lib\imgui-1.89.5\imgui_widgets.cpp" />
     <ClCompile Include="..\Lib\imgui-1.89.5\backends\imgui_impl_glfw.cpp" />
     <ClCompile Include="..\Lib\imgui-1.89.5\backends\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="Window\Window.cpp" />
+    <ClCompile Include="Window\WindowManager.cpp">
+      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <Optimization>Disabled</Optimization>
+      <SupportJustMyCode>true</SupportJustMyCode>
+      <AssemblerOutput>NoListing</AssemblerOutput>
+      <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
+      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+      <BrowseInformation>false</BrowseInformation>
+      <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
+      <CompileAs>Default</CompileAs>
+      <ConformanceMode>true</ConformanceMode>
+      <DiagnosticsFormat>Column</DiagnosticsFormat>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <ErrorReporting>Prompt</ErrorReporting>
+      <ExpandAttributedSource>false</ExpandAttributedSource>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <EnableASAN>false</EnableASAN>
+      <EnableFuzzer>false</EnableFuzzer>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <GenerateModuleDependencies>false</GenerateModuleDependencies>
+      <GenerateSourceDependencies>false</GenerateSourceDependencies>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard_C>Default</LanguageStandard_C>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
+      <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
+      <OmitDefaultLibName>false</OmitDefaultLibName>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <ObjectFileName>x64\Debug\</ObjectFileName>
+      <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>C:\Users\derwi\Documents\Develop\ImGuiPocoMessenger\x64\Debug\ClientGUI.pdb</ProgramDataBaseFileName>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>x64\Debug\ClientGUI.pch</PrecompiledHeaderOutputFile>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessKeepComments>false</PreprocessKeepComments>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+      <ShowIncludes>false</ShowIncludes>
+      <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <SpectreMitigation>false</SpectreMitigation>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <TrackerLogDirectory>x64\Debug\ClientGUI.tlog\</TrackerLogDirectory>
+      <TranslateIncludes>false</TranslateIncludes>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <UseFullPaths>true</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <IntelJCCErratum>false</IntelJCCErratum>
+      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
+      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
+      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
+      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
+      <PreprocessorDefinitions>_DEBUG;_LIB;_UNICODE;UNICODE;</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>;C:\Users\derwi\AppData\Roaming\vcpkg\installed\x64-windows\include;..\Core;..\Lib\imgui-1.89.5;..\Lib\imgui-1.89.5\backends;..\Lib\glfw\include;..\ClientNetworking;;C:\Users\derwi\AppData\Roaming\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
+      <LibCompiled>true</LibCompiled>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Lib\imgui-1.89.5\imconfig.h" />
@@ -180,14 +255,17 @@
     <ClInclude Include="..\Lib\imgui-1.89.5\backends\imgui_impl_glfw.h" />
     <ClInclude Include="..\Lib\imgui-1.89.5\backends\imgui_impl_opengl3.h" />
     <ClInclude Include="..\Lib\imgui-1.89.5\backends\imgui_impl_opengl3_loader.h" />
-    <ClInclude Include="app.h" />
-    <ClInclude Include="debug.h" />
-    <ClInclude Include="debug\console.h" />
-    <ClInclude Include="debug\log.h" />
-    <ClInclude Include="style.h" />
-    <ClInclude Include="utils.h" />
-    <ClInclude Include="window\login_window.h" />
-    <ClInclude Include="window\main_window.h" />
+    <ClInclude Include="App.h" />
+    <ClInclude Include="Debug\Console.h" />
+    <ClInclude Include="Debug\Debug.h" />
+    <ClInclude Include="Debug\Log.h" />
+    <ClInclude Include="Theme\DefaultStyle.h" />
+    <ClInclude Include="Theme\Style.h" />
+    <ClInclude Include="Utils.h" />
+    <ClInclude Include="Window\LoginWindow.h" />
+    <ClInclude Include="Window\MainWindow.h" />
+    <ClInclude Include="Window\Window.h" />
+    <ClInclude Include="Window\WindowManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ClientNetworking\ClientNetworking.vcxproj">

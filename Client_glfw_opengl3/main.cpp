@@ -25,8 +25,8 @@
 #include "../Lib/emscripten/emscripten_mainloop_stub.h"
 #endif
 
-#include "app.h"
-#include "style.h"
+#include "App.h"
+#include "Style.h"
 
 static void glfw_error_callback(int error, const char* description)
 {
