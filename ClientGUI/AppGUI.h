@@ -33,13 +33,13 @@ bool show_demo_window = false;
 static void ShowDebugToolbar();
 
 
-class App
+class AppGUI
 {
 public:
     WindowManager windowManager;
     std::unique_ptr<Style> style;
 
-    App()
+    AppGUI()
     {
         style = std::make_unique<DefaultStyle>();
         windowManager.addWindow(std::make_unique<Window>("Window 1"));

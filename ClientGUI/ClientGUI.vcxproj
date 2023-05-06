@@ -255,13 +255,13 @@
     <ClInclude Include="..\Lib\imgui-1.89.5\backends\imgui_impl_glfw.h" />
     <ClInclude Include="..\Lib\imgui-1.89.5\backends\imgui_impl_opengl3.h" />
     <ClInclude Include="..\Lib\imgui-1.89.5\backends\imgui_impl_opengl3_loader.h" />
-    <ClInclude Include="App.h" />
+    <ClInclude Include="AppGUI.h" />
     <ClInclude Include="Debug\Console.h" />
     <ClInclude Include="Debug\Debug.h" />
     <ClInclude Include="Debug\Log.h" />
     <ClInclude Include="Theme\DefaultStyle.h" />
     <ClInclude Include="Theme\Style.h" />
-    <ClInclude Include="Utils.h" />
+    <ClInclude Include="Utils\Utils.h" />
     <ClInclude Include="Window\LoginWindow.h" />
     <ClInclude Include="Window\MainWindow.h" />
     <ClInclude Include="Window\Window.h" />

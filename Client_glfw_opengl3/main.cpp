@@ -25,14 +25,14 @@
 #include "../Lib/emscripten/emscripten_mainloop_stub.h"
 #endif
 
-#include "App.h"
+#include "AppGUI.h"
 
 static void glfw_error_callback(int error, const char* description)
 {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
 }
 
-App app;
+AppGUI app;
 
 // Main code
 int main(int, char**)

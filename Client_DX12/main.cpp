@@ -22,7 +22,7 @@
 #pragma comment(lib, "dxguid.lib")
 #endif
 
-#include "App.h"
+#include "AppGUI.h"
 
 
 struct FrameContext
@@ -59,7 +59,7 @@ void WaitForLastSubmittedFrame();
 FrameContext* WaitForNextFrameResources();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-App app;
+AppGUI app;
 
 // Main code
 int main(int, char**)
