@@ -56,7 +56,7 @@ public:
     }
 
 
-    void ShowWindows()
+    void Render()
     {
         // if( use_esc_key && ImGui::IsKeyPressed( ImGuiKey::ImGuiKey_Escape ) )
         //     glfwSetWindowShouldClose( g_window, true );

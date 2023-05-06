@@ -641,3 +641,5 @@ FodyWeavers.xsd
 
 # End of https://www.toptal.com/developers/gitignore/api/jetbrains,visualstudio,clion,rider
 .idea
+Client_DX12/imgui.ini
+Client_glfw_opengl3/imgui.ini

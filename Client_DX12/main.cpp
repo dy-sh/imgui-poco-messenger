@@ -145,7 +145,7 @@ int main(int, char**)
         ImGui_ImplWin32_NewFrame();
         ImGui::NewFrame();
 
-        app.ShowWindows();
+        app.Render();
 
         // Rendering
         ImGui::Render();

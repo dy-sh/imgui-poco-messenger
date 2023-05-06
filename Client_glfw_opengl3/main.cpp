@@ -26,12 +26,13 @@
 #endif
 
 #include "App.h"
-#include "Style.h"
 
 static void glfw_error_callback(int error, const char* description)
 {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
 }
+
+App app;
 
 // Main code
 int main(int, char**)
@@ -109,7 +110,7 @@ int main(int, char**)
     bool show_another_window = false;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-    apply_custom_style( clear_color );
+    app.ApplyStyle( clear_color );
 
     // Main loop
 #ifdef __EMSCRIPTEN__
@@ -133,7 +134,7 @@ int main(int, char**)
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        ShowWindows();
+        app.Render();
 
         // Rendering
         ImGui::Render();
