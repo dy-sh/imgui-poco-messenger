@@ -2,10 +2,9 @@
 // Created by Dmitry Savosh on 20.04.2023.
 //
 
-#ifndef IMGUI_APP_UTILS_H
-#define IMGUI_APP_UTILS_H
+#pragma once
 
-#include "imgui.h"
+
 #include <cctype>
 #include <cstdio>
 #include <cstdlib>
@@ -33,7 +32,7 @@ ENUM_TO_STRING( LogLevel, "inf", "wrn", "err" )
         return values[static_cast<int>(value)]; \
     }
 
-#endif // IMGUI_APP_UTILS_H
+
 
 
 // const char helpers
@@ -62,10 +61,8 @@ static int Strnicmp( const char* s1, const char* s2, int n )
 
 static char* Strdup( const char* s )
 {
-    IM_ASSERT( s );
     size_t len = strlen( s ) + 1;
     void* buf  = malloc( len );
-    IM_ASSERT( buf );
     return (char*)memcpy( buf, (const void*)s, len );
 }
 

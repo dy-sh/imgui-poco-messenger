@@ -2,8 +2,7 @@
 // Created by Dmitry Savosh on 18.04.2023.
 //
 
-#ifndef IMGUI_GLFW_LOGIN_WINDOW_H
-#define IMGUI_GLFW_LOGIN_WINDOW_H
+#pragma once
 
 #include "imgui.h"
 
@@ -17,4 +16,4 @@ void ShowLoginWindow();
 
 bool CheckCredentials( char login[LOGIN_LENGTH], char password[PASS_LENGTH] );
 
-#endif // IMGUI_GLFW_LOGIN_WINDOW_H
+
