@@ -13,9 +13,6 @@
 #include "Window/LoginWindow.h"
 #include "Window/MainWindow.h"
 
-// extern GLFWwindow* g_window;
-
-
 class AppGUI
 {
 public:
@@ -34,6 +31,8 @@ public:
     bool show_app_about = false;
     bool show_app_style_editor = false;
     bool show_demo_window = false;
+    
+    bool should_close = false;
 
 
     AppGUI()
@@ -41,7 +40,7 @@ public:
         style = std::make_unique<DefaultStyle>();
         windowManager.AddWindow(std::make_unique<MainWindow>("Main", &windowManager,true));
         windowManager.AddWindow(std::make_unique<ConsoleWindow>("Console", false));
-        windowManager.AddWindow(std::make_unique<LogWindow>("Log", true));
+        windowManager.AddWindow(std::make_unique<LogWindow>("Log", false));
         windowManager.AddWindow(std::make_unique<LoginWindow>("Login", false));
     }
 
@@ -54,8 +53,10 @@ public:
 
     void Render()
     {
-        // if( use_esc_key && ImGui::IsKeyPressed( ImGuiKey::ImGuiKey_Escape ) )
-        //     glfwSetWindowShouldClose( g_window, true );
+        if( use_esc_key && ImGui::IsKeyPressed( ImGuiKey::ImGuiKey_Escape ) )
+        {
+            Exit();
+        }
 
         if (use_key_for_log && ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_X)
             && ImGui::IsKeyDown(ImGuiKey::ImGuiKey_ModAlt))
@@ -138,5 +139,8 @@ public:
         }
     }
 
-private:
+    void Exit()
+    {
+        should_close=true;
+    }
 };

@@ -4,13 +4,19 @@
 #include <imgui.h>
 #include <string>
 
+struct WindowOptions
+{
+    bool resizable = true;
+    bool no_bring_to_front = false;
+    bool no_decoration = false;
+};
+
 class Window
 {
 public:
-    Window(const std::string& title, bool visible = true, bool resizable = true, ImVec2 size = {400, 500})
-        : title(title), visible(visible), resizable(resizable), size(size)
+    Window(const std::string& title, bool visible = true, ImVec2 size = {400, 500}, WindowOptions options = {})
+        : title(title), visible(visible), options(options)
     {
-        resizable = true;
     }
 
 
@@ -28,7 +34,17 @@ public:
         {
             ImGui::SetNextWindowSizeConstraints(size, ImVec2(FLT_MAX, FLT_MAX));
             // ImGui::SetNextWindowSize( size, ImGuiCond_FirstUseEver );
-            ImGui::Begin(title.c_str(), &visible, resizable ? ImGuiWindowFlags_None : ImGuiWindowFlags_NoResize);
+
+            ImGuiWindowFlags flags = 0;
+            if (!options.resizable)
+                flags = flags | ImGuiWindowFlags_NoResize;
+            if (options.no_bring_to_front)
+                flags = flags | ImGuiWindowFlags_NoBringToFrontOnFocus;
+            if (options.no_decoration)
+                flags = flags | ImGuiWindowFlags_NoDecoration;
+
+
+            ImGui::Begin(title.c_str(), &visible, flags);
             RenderContent();
             ImGui::End();
         }
@@ -39,26 +55,29 @@ public:
     void SetVisible(bool vis) { visible = vis; }
     void ToggleVisible() { visible = !visible; }
 
-    bool IsResizable() const { return resizable; }
-    void SetResizable(bool res) { resizable = res; }
+    bool IsResizable() const { return options.resizable; }
+    void SetResizable(bool res) { options.resizable = res; }
 
     virtual bool IsModal() const { return false; }
 
     void SetTitle(std::string title) { this->title = title; }
     std::string GetTitle() { return title; }
 
+    void SetOptions(WindowOptions options) { this->options = options; }
+    WindowOptions GetOptions() { return options; }
+
 protected:
     std::string title;
     bool visible;
-    bool resizable;
     ImVec2 size;
+    WindowOptions options;
 };
 
 class ModalWindow : public Window
 {
 public:
     ModalWindow(const std::string& title, bool visible = true, ImVec2 size = {400, 500})
-        : Window(title, visible, false, size)
+        : Window(title, visible, size)
     {
     }
 
@@ -69,14 +88,14 @@ public:
         {
             ImGui::SetNextWindowSizeConstraints(size, ImVec2(FLT_MAX, FLT_MAX));
             // ImGui::SetNextWindowSize( size, ImGuiCond_FirstUseEver );
-            
+
             // // centered on screen
             // SetWindowPosition();
             // ImGui::Begin(title.c_str(), &visible,
             //              ImGuiWindowFlags_Modal | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
             // RenderContent();
             // ImGui::End();
-            
+
             ImGui::OpenPopup(title.c_str());
             if (ImGui::BeginPopupModal(title.c_str(), &visible))
             {
@@ -108,7 +127,7 @@ class MaximizedWindow : public Window
 {
 public:
     MaximizedWindow(const std::string& title, bool visible = true)
-        : Window(title, visible, false, {400, 500})
+        : Window(title, visible)
     {
     }
 

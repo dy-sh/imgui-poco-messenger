@@ -19,7 +19,7 @@ static int TextEditCallbackStub( ImGuiInputTextCallbackData* data )
 
 
 ConsoleWindow::ConsoleWindow(const std::string& title, bool visible)
-: Window(title, visible, true, {700, 400})
+: Window(title, visible, {700, 400})
 {
     Clear();
     Commands.push_back( "HELP" );

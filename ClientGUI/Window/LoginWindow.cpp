@@ -16,7 +16,7 @@ void LoginWindow::RenderContent()
     static bool incorrectCredentials = false; // флаг неправильного ввода
 
     ImGui::SetCursorPos({40, 50});
-    ImGui::InputText("Login", login, sizeof(login));
+    ImGui::InputText("User", login, sizeof(login));
     ImGui::SetCursorPos({40, 100});
     ImGui::InputText("Password", password, sizeof(password), ImGuiInputTextFlags_Password);
     ImGui::SetCursorPos({100, 150});
@@ -35,8 +35,8 @@ void LoginWindow::RenderContent()
 
     if (incorrectCredentials)
     {
-        ImGui::SetCursorPos({110, 190});
-        ImGui::Text("Incorrect password!");
+        ImGui::SetCursorPos({100, 190});
+        ImGui::Text("Invalid username or password!");
     }
 }
 

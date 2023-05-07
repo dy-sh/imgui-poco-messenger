@@ -146,6 +146,9 @@ int main(int, char**)
         ImGui::NewFrame();
 
         app.Render();
+        
+        if (app.should_close)
+            break;
 
         // Rendering
         ImGui::Render();

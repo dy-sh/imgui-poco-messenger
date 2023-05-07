@@ -9,11 +9,11 @@
 class WindowManager;
 class Client;
 
-class MainWindow : public MaximizedWindow
+class MainWindow : public Window // or MaximizedWindow
 {
 public:
     MainWindow(const std::string& title, WindowManager* windowManager, bool visible = true)
-        : MaximizedWindow(title, visible), windowManager(windowManager)
+        : Window(title, visible,{500,500},{true,true}), windowManager(windowManager)
     {
     }
 
