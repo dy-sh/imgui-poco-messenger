@@ -1,4 +1,6 @@
-﻿#include "WindowManager.h"
+﻿// Copyright 2023 Dmitry Savosh <d.savosh@gmail.com>
+
+#include "WindowManager.h"
 
 
 void WindowManager::Render()

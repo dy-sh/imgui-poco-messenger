@@ -13,7 +13,7 @@ class MainWindow : public Window // or MaximizedWindow
 {
 public:
     MainWindow(const std::string& title, WindowManager* windowManager, bool visible = true)
-        : Window(title, visible,{500,500},{true,true}), windowManager(windowManager)
+        : Window(title, visible,{0,0},{true,true}), windowManager(windowManager)
     {
     }
 

@@ -15,7 +15,7 @@ class Window
 {
 public:
     Window(const std::string& title, bool visible = true, ImVec2 size = {400, 500}, WindowOptions options = {})
-        : title(title), visible(visible), options(options)
+        : title(title), visible(visible), options(options), size(size)
     {
     }
 
