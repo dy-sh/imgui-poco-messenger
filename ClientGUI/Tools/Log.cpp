@@ -8,6 +8,13 @@
 #include <sstream>
 
 
+LogWindow::LogWindow(const std::string& title, bool visible)
+    : Window(title, visible, true, {700, 400})
+{
+    Clear();
+}
+
+
 void LogWindow::Clear()
 {
     Buf.clear();

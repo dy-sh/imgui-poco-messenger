@@ -16,12 +16,8 @@ struct AppLogColors
 
 struct LogWindow : public Window
 {
-    LogWindow(const std::string& title, bool visible)
-        : Window(title, visible, true, {700, 400})
-    {
-        Clear();
-    }
-
+    LogWindow(const std::string& title, bool visible);
+    
 
     AppLogColors LogColors;
 

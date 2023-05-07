@@ -18,6 +18,15 @@ static int TextEditCallbackStub( ImGuiInputTextCallbackData* data )
 }
 
 
+ConsoleWindow::ConsoleWindow(const std::string& title, bool visible)
+: Window(title, visible, true, {700, 400})
+{
+    Clear();
+    Commands.push_back( "HELP" );
+    Commands.push_back( "HISTORY" );
+    Commands.push_back( "CLEAR" );
+}
+
 
 ConsoleWindow::~ConsoleWindow()
 {
@@ -33,7 +42,7 @@ void ConsoleWindow::Clear()
     Items.clear();
 }
 
-void ConsoleWindow::AddRaw( const char* fmt, ... )
+void ConsoleWindow::Add( const char* fmt, ... )
 {
     // FIXME-OPT
     char buf[1024];
@@ -46,17 +55,6 @@ void ConsoleWindow::AddRaw( const char* fmt, ... )
 }
 
 
-void ConsoleWindow::Add(const char* fmt, ...)
-{
-    va_list args;
-    va_start(args, fmt);
-
-    int length = vsnprintf(nullptr, 0, fmt, args); // Determine the length of the formatted string
-    std::string buffer(length, '\0'); // Allocate a buffer to store the formatted string
-    vsnprintf(&buffer[0], length + 1, fmt, args); // Format the string into the buffer
-    Add(LogLevel::inf, "%s", buffer.c_str()); // Add the formatted string to the log
-}
-
 
 void ConsoleWindow::Add(LogLevel level, const char* fmt, ...)
 {
@@ -64,8 +62,6 @@ void ConsoleWindow::Add(LogLevel level, const char* fmt, ...)
 
     // append LogLevel
     oss << "[" << ToString(level) << "] ";
-    // append current time
-    oss << "[" << std::fixed << std::setprecision(2) << ImGui::GetTime() << "] ";
     // append message
     oss << fmt << "\n";
 
@@ -78,7 +74,7 @@ void ConsoleWindow::Add(LogLevel level, const char* fmt, ...)
     int length = vsnprintf(nullptr, 0, fmt, args); // Determine the length of the formatted string
     std::string buffer(length, '\0'); // Allocate a buffer to store the formatted string
     vsnprintf(&buffer[0], length + 1, fmt, args); // Format the string into the buffer
-    AddRaw("%s", buffer.c_str()); // Add the formatted string to the log
+    Add("%s", buffer.c_str()); // Add the formatted string to the log
 
     va_end(args);
 }
@@ -116,7 +112,7 @@ void ConsoleWindow::RenderContent( )
     if( ImGui::SmallButton( "Spam" ) )
         spam = !spam;
     if( spam )
-        AddRaw( "Spam %f", ImGui::GetTime() );
+        Add( "Spam %f", ImGui::GetTime() );
 
     //    ImGui::Separator();
 
@@ -243,7 +239,7 @@ void ConsoleWindow::RenderContent( )
 
 void ConsoleWindow::ExecCommand( const char* command_line )
 {
-    AddRaw( "# %s\n", command_line );
+    Add( "# %s\n", command_line );
 
     // Insert into history. First find match and delete it so it can be pushed to the back.
     // This isn't trying to be smart or optimal.
@@ -270,11 +266,11 @@ void ConsoleWindow::ExecCommand( const char* command_line )
     {
         int first = History.Size - 10;
         for( int i = first > 0 ? first : 0; i < History.Size; i++ )
-            AddRaw( "%3d: %s\n", i, History[i] );
+            Add( "%3d: %s\n", i, History[i] );
     }
     else
     {
-        AddRaw( "Unknown command: '%s'\n", command_line );
+        Add( "Unknown command: '%s'\n", command_line );
     }
 
     // On command input, we scroll to bottom even if AutoScroll==false
@@ -282,17 +278,17 @@ void ConsoleWindow::ExecCommand( const char* command_line )
 }
 void ConsoleWindow::Help()
 {
-    AddRaw( "This example implements a console with basic coloring, completion (TAB key) and history (Up/Down keys). A "
+    Add( "This example implements a console with basic coloring, completion (TAB key) and history (Up/Down keys). A "
          "more elaborate "
          "implementation may want to store entries along with extra data such as timestamp, emitter, etc." );
-    AddRaw( "Log levels:" );
-    AddRaw( "[inf] something ok" );
-    AddRaw( "[wrn] something important" );
-    AddRaw( "[err] something critical" );
-    AddRaw( R"(Filter syntax:  "inclide, -exclude" (example: "help, -hist, -wrn"))" );
-    AddRaw( "Commands:" );
+    Add( "Log levels:" );
+    Add( "[inf] something ok" );
+    Add( "[wrn] something important" );
+    Add( "[err] something critical" );
+    Add( R"(Filter syntax:  "inclide, -exclude" (example: "help, -hist, -wrn"))" );
+    Add( "Commands:" );
     for( int i = 0; i < Commands.Size; i++ )
-        AddRaw( "- %s", Commands[i] );
+        Add( "- %s", Commands[i] );
 
     Filter.Clear();
 }
@@ -326,7 +322,7 @@ int ConsoleWindow::TextEditCallback( ImGuiInputTextCallbackData* data )
             if( candidates.Size == 0 )
             {
                 // No match
-                AddRaw( "No match for \"%.*s\"!\n", (int)( word_end - word_start ), word_start );
+                Add( "No match for \"%.*s\"!\n", (int)( word_end - word_start ), word_start );
             }
             else if( candidates.Size == 1 )
             {
@@ -361,9 +357,9 @@ int ConsoleWindow::TextEditCallback( ImGuiInputTextCallbackData* data )
                 }
 
                 // List matches
-                AddRaw( "Possible matches:\n" );
+                Add( "Possible matches:\n" );
                 for( int i = 0; i < candidates.Size; i++ )
-                    AddRaw( "- %s\n", candidates[i] );
+                    Add( "- %s\n", candidates[i] );
             }
 
             break;

@@ -29,19 +29,12 @@ public:
     bool ScrollToBottom = false;
 
 
-    ConsoleWindow(const std::string& title, bool visible)
-        : Window(title, visible, true, {700, 400})
-    {
-        Clear();
-        Commands.push_back( "HELP" );
-        Commands.push_back( "HISTORY" );
-        Commands.push_back( "CLEAR" );
-    }
+    ConsoleWindow(const std::string& title, bool visible);
+
     ~ConsoleWindow();
     
     static void Clear();
-    static void AddRaw( const char* fmt, ... ) IM_FMTARGS( 2 );
-    static void Add(const char* fmt, ...) IM_FMTARGS(2);
+    static void Add( const char* fmt, ... ) IM_FMTARGS( 2 );
     static void Add(LogLevel level, const char* fmt, ...) IM_FMTARGS(3);
     void RenderContent() override;
     void ExecCommand( const char* command_line );
