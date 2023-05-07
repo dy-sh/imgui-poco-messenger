@@ -47,3 +47,12 @@ Window* WindowManager::GetWindowByTitle(const std::string& title)
     }
     return nullptr;
 }
+
+
+void WindowManager::OnExit()
+{
+    for (auto& window : windows)
+    {
+        window->OnExit();
+    }
+}

@@ -191,6 +191,8 @@ int main(int, char**)
 
     WaitForLastSubmittedFrame();
 
+    app.OnExit();
+
     // Cleanup
     ImGui_ImplDX12_Shutdown();
     ImGui_ImplWin32_Shutdown();

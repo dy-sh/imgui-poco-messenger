@@ -116,14 +116,14 @@ public:
                 if (Window* console = windowManager.GetWindowByTitle("Console"))
                 {
                     bool show_console = console->IsVisible();
-                    ImGui::MenuItem("Console", NULL, &show_console);
+                    ImGui::MenuItem("Console (Alt + C)", NULL, &show_console);
                     console->SetVisible(show_console);
                 }
 
                 if (Window* console = windowManager.GetWindowByTitle("Log"))
                 {
                     bool show_log = console->IsVisible();
-                    ImGui::MenuItem("Log", NULL, &show_log);
+                    ImGui::MenuItem("Log (Alt + X)", NULL, &show_log);
                     console->SetVisible(show_log);
                 }
                 
@@ -133,6 +133,10 @@ public:
                 ImGui::MenuItem("Style Editor", NULL, &show_app_style_editor);
                 ImGui::MenuItem("About Dear ImGui", NULL, &show_app_about);
                 ImGui::MenuItem("Demo Window", NULL, &show_demo_window);
+                if (ImGui::MenuItem("Exit (Esc)"))
+                {
+                    Exit();
+                }
                 ImGui::EndMenu();
             }
             ImGui::EndMainMenuBar();
@@ -142,5 +146,11 @@ public:
     void Exit()
     {
         should_close=true;
+    }
+
+
+    void OnExit()
+    {
+        windowManager.OnExit();
     }
 };

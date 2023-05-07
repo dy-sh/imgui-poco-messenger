@@ -66,6 +66,11 @@ public:
     void SetOptions(WindowOptions options) { this->options = options; }
     WindowOptions GetOptions() { return options; }
 
+
+    virtual void OnExit()
+    {
+    }
+
 protected:
     std::string title;
     bool visible;

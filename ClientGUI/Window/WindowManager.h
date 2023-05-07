@@ -19,6 +19,8 @@ public:
     void RemoveWindow(Window* window);
     
     Window* GetWindowByTitle(const std::string& title);
+    
+    void OnExit();
 
 private:
     std::vector<std::unique_ptr<Window>> windows;
