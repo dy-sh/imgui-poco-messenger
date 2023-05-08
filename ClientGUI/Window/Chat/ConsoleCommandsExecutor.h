@@ -4,15 +4,12 @@
 #include <memory>
 #include <vector>
 
-#include "ChatWindow.h"
-#include "ConsoleCommand.h"
 #include "imgui.h"
+#include "ConsoleCommand.h"
 #include "Commands/ClearConsoleCommand.h"
 #include "Commands/HelpConsoleCommand.h"
 #include "Commands/HistoryConsoleCommand.h"
 
-
-class ChatWindow;
 
 class ConsoleCommandsExecutor
 {
