@@ -8,8 +8,7 @@ ClientHandler::ClientHandler(StreamSocket& socket, SocketReactor& reactor):
     stream(socket),
     reactor(reactor)
 {
-    reactor.addEventHandler(
-        socket, Observer<ClientHandler, ReadableNotification>(*this, &ClientHandler::OnReadable));
+    reactor.addEventHandler(socket, Observer(*this, &ClientHandler::OnReadable));
 }
 
 

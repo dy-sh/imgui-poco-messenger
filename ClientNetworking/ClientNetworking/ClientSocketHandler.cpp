@@ -5,7 +5,6 @@
 #include "Protocol/IProtocol.h"
 
 
-
 ClientSocketHandler::ClientSocketHandler(StreamSocket& socket, SocketReactor& reactor,
                                          IProtocol& protocol, MessengerClient& messenger):
     socket(socket),
@@ -18,10 +17,8 @@ ClientSocketHandler::ClientSocketHandler(StreamSocket& socket, SocketReactor& re
     Application& app = Application::instance();
     app.logger().information("Connection from " + socket.peerAddress().toString());
 
-    reactor.addEventHandler(socket, NObserver<ClientSocketHandler, ReadableNotification>(
-                                 *this, &ClientSocketHandler::OnSocketReadable));
-    reactor.addEventHandler(socket, NObserver<ClientSocketHandler, ShutdownNotification>(
-                                 *this, &ClientSocketHandler::OnSocketShutdown));
+    reactor.addEventHandler(socket, NObserver(*this, &ClientSocketHandler::OnSocketReadable));
+    reactor.addEventHandler(socket, NObserver(*this, &ClientSocketHandler::OnSocketShutdown));
 
     fifo_out.readable += delegate(this, &ClientSocketHandler::OnFIFOOutReadable);
     fifo_in.writable += delegate(this, &ClientSocketHandler::OnFIFOInWritable);
@@ -39,12 +36,9 @@ ClientSocketHandler::~ClientSocketHandler()
     {
     }
 
-    reactor.removeEventHandler(socket, NObserver<ClientSocketHandler, ReadableNotification>(
-                                    *this, &ClientSocketHandler::OnSocketReadable));
-    reactor.removeEventHandler(socket, NObserver<ClientSocketHandler, WritableNotification>(
-                                    *this, &ClientSocketHandler::OnSocketWritable));
-    reactor.removeEventHandler(socket, NObserver<ClientSocketHandler, ShutdownNotification>(
-                                    *this, &ClientSocketHandler::OnSocketShutdown));
+    reactor.removeEventHandler(socket, NObserver(*this, &ClientSocketHandler::OnSocketReadable));
+    reactor.removeEventHandler(socket, NObserver(*this, &ClientSocketHandler::OnSocketWritable));
+    reactor.removeEventHandler(socket, NObserver(*this, &ClientSocketHandler::OnSocketShutdown));
 
     fifo_out.readable -= delegate(this, &ClientSocketHandler::OnFIFOOutReadable);
     fifo_in.writable -= delegate(this, &ClientSocketHandler::OnFIFOInWritable);
@@ -55,13 +49,11 @@ void ClientSocketHandler::OnFIFOOutReadable(bool& b)
 {
     if (b)
     {
-        reactor.addEventHandler(socket, NObserver<ClientSocketHandler, WritableNotification>(
-                                     *this, &ClientSocketHandler::OnSocketWritable));
+        reactor.addEventHandler(socket, NObserver(*this, &ClientSocketHandler::OnSocketWritable));
     }
     else
     {
-        reactor.removeEventHandler(socket, NObserver<ClientSocketHandler, WritableNotification>(
-                                        *this, &ClientSocketHandler::OnSocketWritable));
+        reactor.removeEventHandler(socket, NObserver(*this, &ClientSocketHandler::OnSocketWritable));
     }
 }
 
@@ -70,17 +62,13 @@ void ClientSocketHandler::OnFIFOInWritable(bool& b)
 {
     if (b)
     {
-        reactor.addEventHandler(socket, NObserver<ClientSocketHandler, ReadableNotification>(
-                                     *this, &ClientSocketHandler::OnSocketReadable));
+        reactor.addEventHandler(socket, NObserver(*this, &ClientSocketHandler::OnSocketReadable));
     }
     else
     {
-        reactor.removeEventHandler(socket, NObserver<ClientSocketHandler, ReadableNotification>(
-                                        *this, &ClientSocketHandler::OnSocketReadable));
+        reactor.removeEventHandler(socket, NObserver(*this, &ClientSocketHandler::OnSocketReadable));
     }
 }
-
-
 
 
 void ClientSocketHandler::OnSocketReadable(const AutoPtr<ReadableNotification>& pNf)
@@ -96,8 +84,8 @@ void ClientSocketHandler::OnSocketReadable(const AutoPtr<ReadableNotification>& 
 
             while (true)
             {
-                auto [message, size] = protocol->ParseMessage(fifo_in.begin(),fifo_in.used());
-                if (size>0)
+                auto [message, size] = protocol->ParseMessage(fifo_in.begin(), fifo_in.used());
+                if (size > 0)
                 {
                     messenger->receiveMessage(message.get(), this);
                     fifo_in.drain(size);
