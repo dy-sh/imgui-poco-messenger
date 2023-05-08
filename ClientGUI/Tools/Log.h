@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include "Debug.h"
 #include "imgui.h"
 #include "../Window/Window.h"
@@ -17,14 +19,13 @@ struct AppLogColors
 struct LogWindow : public Window
 {
     LogWindow(const std::string& title, bool visible);
-    
+
 
     AppLogColors LogColors;
 
-    inline static ImGuiTextBuffer Buf = ImGuiTextBuffer{};
+    static ImGuiTextBuffer Buf;
     ImGuiTextFilter Filter;
-    inline static ImVector<int> LineOffsets = ImVector<int>{};
-    // Index to lines offset. We maintain this with AddMessage() calls.
+    static std::vector<int> LineOffsets;
     bool AutoScroll = true; // Keep scrolling if already at the bottom.
 
     static void Clear();

@@ -393,3 +393,5 @@ int ConsoleWindow::TextEditCallback( ImGuiInputTextCallbackData* data )
     }
     return 0;
 }
+
+ImVector<char*> ConsoleWindow::Items {};

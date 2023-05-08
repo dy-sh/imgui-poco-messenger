@@ -5,11 +5,12 @@
 #include "Log.h"
 
 #include <iomanip>
+#include <iostream>
 #include <sstream>
 
 
 LogWindow::LogWindow(const std::string& title, bool visible)
-    : Window(title, visible,  {700, 400})
+    : Window(title, visible, {700, 400})
 {
     Clear();
 }
@@ -119,11 +120,11 @@ void LogWindow::RenderContent()
             // This is because we don't have random access to the result of our filter.
             // A real application processing logs with ten of thousands of entries may want to store the result of
             // search/filter.. especially if the filtering function is not trivial (e.g. reg-exp).
-            for (int line_no = 0; line_no < LineOffsets.Size; line_no++)
+            for (int line_no = 0; line_no < LineOffsets.size(); line_no++)
             {
                 const char* line_start = buf + LineOffsets[line_no];
                 const char* line_end
-                    = (line_no + 1 < LineOffsets.Size) ? (buf + LineOffsets[line_no + 1] - 1) : buf_end;
+                    = (line_no + 1 < LineOffsets.size()) ? (buf + LineOffsets[line_no + 1] - 1) : buf_end;
                 if (Filter.PassFilter(line_start, line_end))
                     DrawColorizedLine(line_start, line_end);
             }
@@ -144,14 +145,14 @@ void LogWindow::RenderContent()
             // anymore, which is why we don't use the clipper. Storing or skimming through the search result would make
             // it possible (and would be recommended if you want to search through tens of thousands of entries).
             ImGuiListClipper clipper;
-            clipper.Begin(LineOffsets.Size);
+            clipper.Begin(LineOffsets.size());
             while (clipper.Step())
             {
                 for (int line_no = clipper.DisplayStart; line_no < clipper.DisplayEnd; line_no++)
                 {
                     const char* line_start = buf + LineOffsets[line_no];
                     const char* line_end
-                        = (line_no + 1 < LineOffsets.Size) ? (buf + LineOffsets[line_no + 1] - 1) : buf_end;
+                        = (line_no + 1 < LineOffsets.size()) ? (buf + LineOffsets[line_no + 1] - 1) : buf_end;
 
                     DrawColorizedLine(line_start, line_end);
                 }
@@ -193,5 +194,5 @@ void LogWindow::DrawColorizedLine(const char* line_start, const char* line_end) 
 }
 
 
-// ImGuiTextBuffer LogWindow::Buf = ImGuiTextBuffer{};
-// ImVector<int> LogWindow::LineOffsets = ImVector<int>{};
+ImGuiTextBuffer LogWindow::Buf{};
+std::vector<int> LogWindow::LineOffsets{0};

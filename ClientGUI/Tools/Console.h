@@ -20,7 +20,7 @@ public:
     AppConsoleColors ConsoleColors;
 
     char InputBuf[256]{};
-    inline static ImVector<char*> Items;
+    static ImVector<char*> Items;
     ImVector<const char*> Commands;
     ImVector<char*> History;
     int HistoryPos = -1; // -1: new line, 0..History.Size-1 browsing history.
