@@ -2,19 +2,19 @@
 
 #include "ClientSocketHandler.h"
 
-#include "MessengerClient.h"
+#include "Client.h"
 #include "Protocol/IProtocol.h"
 
 
 ClientSocketHandler::ClientSocketHandler(StreamSocket& socket, SocketReactor& reactor, IProtocol& protocol,
-                             MessengerClient& messenger):
+                             Client* client):
     socket(socket),
     stream(socket),
     reactor(reactor),
     fifo_in(BUFFER_SIZE, true),
     fifo_out(BUFFER_SIZE, true),
     protocol{&protocol},
-    messenger{&messenger}
+    client{client}
 {
     reactor.addEventHandler(socket, NObserver(*this, &ClientSocketHandler::OnSocketReadable));
     reactor.addEventHandler(socket, NObserver(*this, &ClientSocketHandler::OnSocketShutdown));
@@ -77,7 +77,7 @@ void ClientSocketHandler::OnSocketReadable(const AutoPtr<ReadableNotification>& 
                 auto [message, size] = protocol->ParseMessage(fifo_in.begin(), fifo_in.used());
                 if (size > 0)
                 {
-                    messenger->ReceiveMessage(message.get(), this);
+                    client->ReceiveMessage(message.get(), this);
                     fifo_in.drain(size);
                 }
                 else break;
@@ -121,7 +121,7 @@ void ClientSocketHandler::OnSocketShutdown(const AutoPtr<ShutdownNotification>& 
 
 void ClientSocketHandler::Send(const char* text)
 {
-    stream << text << std::endl;
+    // stream << text << std::endl;
 
-    // fifo_out.write(text, std::string(text).size());
+    fifo_out.write(text, std::string(text).size());
 }

@@ -23,13 +23,11 @@
     <ClInclude Include="ClientNetworking\ClientSocketHandler.h" />
     <ClInclude Include="ClientNetworking\ClientThread.h" />
     <ClInclude Include="ClientNetworking\ClientUser.h" />
-    <ClInclude Include="ClientNetworking\MessengerClient.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClientNetworking\Client.cpp" />
     <ClCompile Include="ClientNetworking\ClientSocketHandler.cpp" />
     <ClCompile Include="ClientNetworking\ClientThread.cpp" />
-    <ClCompile Include="ClientNetworking\MessengerClient.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

@@ -10,6 +10,8 @@
 #include "../../Utils/Utils.h"
 #include "../../Tools/Console/ConsoleCommandsExecutor.h"
 #include "ClientNetworking/Client.h"
+#include "Protocol/Messages/Message.h"
+using Poco::delegate;
 
 
 static int TextEditCallbackStub(ImGuiInputTextCallbackData* data)
@@ -22,6 +24,7 @@ static int TextEditCallbackStub(ImGuiInputTextCallbackData* data)
 ChatWindow::ChatWindow(const std::string& title, bool visible, Client* client)
     : Window(title, visible, {700, 400}), client{client}
 {
+    client->OnReceiveMessage += delegate(this, &ChatWindow::OnReceiveMessage);
     commands_executor = new ConsoleCommandsExecutor(this);
     Clear();
 }
@@ -29,6 +32,7 @@ ChatWindow::ChatWindow(const std::string& title, bool visible, Client* client)
 
 ChatWindow::~ChatWindow()
 {
+    client->OnReceiveMessage -= delegate(this, &ChatWindow::OnReceiveMessage);
     Clear();
     delete commands_executor;
 }
@@ -262,4 +266,15 @@ int ChatWindow::MessageTextEditCallback(ImGuiInputTextCallbackData* data)
         }
     }
     return 0;
+}
+
+
+void ChatWindow::OnReceiveMessage(const void* pSender, Message*& message)
+{
+    // if (auto textMess = dynamic_cast<TextMessage*>(message))
+    // {
+    //     ReceiveText(*textMess, socket_handler);
+    // }
+
+    Print(message->to_str().c_str());
 }

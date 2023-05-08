@@ -20,8 +20,8 @@
 #include <iostream>
 
 
+class Client;
 struct ClientUser;
-class MessengerClient;
 struct IProtocol;
 using Poco::Net::SocketReactor;
 using Poco::Net::SocketAcceptor;
@@ -48,7 +48,7 @@ class ClientSocketHandler
     constexpr static int BUFFER_SIZE = 1024;
     
 public:
-    ClientSocketHandler(StreamSocket& socket, SocketReactor& reactor, IProtocol& protocol, MessengerClient& messenger);
+    ClientSocketHandler(StreamSocket& socket, SocketReactor& reactor, IProtocol& protocol, Client* client);
     ~ClientSocketHandler();
 
     
@@ -67,6 +67,6 @@ public:
     FIFOBuffer fifo_in;
     FIFOBuffer fifo_out;
     IProtocol* protocol = nullptr;
-    MessengerClient* messenger = nullptr;
+    Client* client = nullptr;
     ClientUser* user = nullptr;
 };

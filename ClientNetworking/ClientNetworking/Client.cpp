@@ -3,14 +3,12 @@
 #include "Client.h"
 #include "ClientSocketHandler.h"
 #include "ClientThread.h"
-#include "MessengerClient.h"
 #include "Protocol/SimpleProtocol.h"
 
 
 Client::Client()
 {
     protocol = new SimpleProtocol();
-    messenger = new MessengerClient();
 }
 
 
@@ -18,7 +16,6 @@ Client::~Client()
 {
     Disconnect();
     delete protocol;
-    delete messenger;
 }
 
 
@@ -26,7 +23,7 @@ void Client::Connect(const SocketAddress& address)
 {
     Disconnect();
 
-    client_thread = new ClientThread(*protocol, *messenger, address);
+    client_thread = new ClientThread(*protocol, this, address);
 
     thread = new Thread();
     thread->start(client_thread);
@@ -53,4 +50,26 @@ void Client::Send(const char* str)
     {
         client_thread->handler->Send(str);
     }
+}
+
+void Client::ReceiveText(const TextMessage& text_message, ClientSocketHandler* socket_handler)
+{
+}
+
+
+void Client::ReceiveMessage(Message* message, ClientSocketHandler* socket_handler)
+{
+    OnReceiveMessage(this,message);
+    // if (auto textMess = dynamic_cast<TextMessage*>(message))
+    // {
+    //     ReceiveText(*textMess, socket_handler);
+    // }
+    // else if (auto invMess = dynamic_cast<InvalidMessage*>(message))
+    // {
+    //     std::cout << invMess->to_str() << std::endl;
+    // }
+    // else
+    // {
+    //     std::cout << "Received unknown message" << std::endl;
+    // }
 }

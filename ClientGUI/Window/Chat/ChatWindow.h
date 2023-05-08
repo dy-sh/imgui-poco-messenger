@@ -3,12 +3,14 @@
 #pragma once
 
 
+#include <Poco/AbstractDelegate.h>
 
 #include "imgui.h"
 #include "../Window.h"
 #include "../../Tools/Console/IConsoleWindow.h"
 
 
+struct Message;
 class ConsoleCommandsExecutor;
 class Client;
 
@@ -42,6 +44,9 @@ public:
     void Send(const char* message);
     void ProceedMessageTextField();
     int MessageTextEditCallback( ImGuiInputTextCallbackData* data );
+    void OnReceiveMessage(const void* pSender,Message*& message);
+
+
 private:
     Client* client;
     bool set_focus_on_textfield{true};

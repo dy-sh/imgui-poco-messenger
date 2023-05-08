@@ -12,11 +12,10 @@ class MainWindow : public MaximizedWindow
 public:
     MainWindow(const std::string& title, bool visible, WindowManager* windowManager, Client* client);
 
-
     void RenderContent() override;
-
     void OnExit() override;
 
+    
 private:
     Client* client = nullptr;
     WindowManager* windowManager = nullptr;

@@ -3,7 +3,6 @@
 #include "ClientThread.h"
 
 #include "ClientSocketHandler.h"
-#include "ClientSocketHandler.h"
 
 
 void ClientThread::run()
@@ -12,7 +11,7 @@ void ClientThread::run()
     try
     {
         socket.connect(address);
-        handler = new ClientSocketHandler(socket, reactor,protocol,messenger);
+        handler = new ClientSocketHandler(socket, reactor, protocol, client);
 
         handler->Send("Atest1;");
         reactor.run(); // thread will be blocked here
