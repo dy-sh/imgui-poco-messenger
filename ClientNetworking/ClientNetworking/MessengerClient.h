@@ -13,13 +13,8 @@ class ClientSocketHandler;
 class MessengerClient
 {
 public:
-    std::vector<ClientUser*> getAllAuthorizedUsers();
-    
-    void receiveMessage(Message* message, ClientSocketHandler* socketHandler);
+    void ReceiveText(const TextMessage& text_message, ClientSocketHandler* socket_handler);
+    void ReceiveMessage(Message* message, ClientSocketHandler* socket_handler);
 private:
-    size_t last_user_id{0};
-    std::vector<ClientUser*> users;
-    // std::vector<TextMessage> messages;
-    void authorizeUser(AuthorizeMessage& message, ClientSocketHandler* socketHandler);
-    void receiveText(TextMessage& message, ClientSocketHandler* socketHandler);
+    size_t user_id{0};
 };

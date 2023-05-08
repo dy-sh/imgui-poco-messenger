@@ -1,22 +1,21 @@
 ﻿// Copyright 2023 Dmitry Savosh <d.savosh@gmail.com>
 
 #include "ClientSocketHandler.h"
+
 #include "MessengerClient.h"
 #include "Protocol/IProtocol.h"
 
 
-ClientSocketHandler::ClientSocketHandler(StreamSocket& socket, SocketReactor& reactor,
-                                         IProtocol& protocol, MessengerClient& messenger):
+ClientSocketHandler::ClientSocketHandler(StreamSocket& socket, SocketReactor& reactor, IProtocol& protocol,
+                             MessengerClient& messenger):
     socket(socket),
+    stream(socket),
     reactor(reactor),
     fifo_in(BUFFER_SIZE, true),
     fifo_out(BUFFER_SIZE, true),
     protocol{&protocol},
     messenger{&messenger}
 {
-    Application& app = Application::instance();
-    app.logger().information("Connection from " + socket.peerAddress().toString());
-
     reactor.addEventHandler(socket, NObserver(*this, &ClientSocketHandler::OnSocketReadable));
     reactor.addEventHandler(socket, NObserver(*this, &ClientSocketHandler::OnSocketShutdown));
 
@@ -27,15 +26,6 @@ ClientSocketHandler::ClientSocketHandler(StreamSocket& socket, SocketReactor& re
 
 ClientSocketHandler::~ClientSocketHandler()
 {
-    Application& app = Application::instance();
-    try
-    {
-        app.logger().information("Disconnecting " + socket.peerAddress().toString());
-    }
-    catch (...)
-    {
-    }
-
     reactor.removeEventHandler(socket, NObserver(*this, &ClientSocketHandler::OnSocketReadable));
     reactor.removeEventHandler(socket, NObserver(*this, &ClientSocketHandler::OnSocketWritable));
     reactor.removeEventHandler(socket, NObserver(*this, &ClientSocketHandler::OnSocketShutdown));
@@ -70,7 +60,6 @@ void ClientSocketHandler::OnFIFOInWritable(bool& b)
     }
 }
 
-
 void ClientSocketHandler::OnSocketReadable(const AutoPtr<ReadableNotification>& pNf)
 {
     try
@@ -80,14 +69,15 @@ void ClientSocketHandler::OnSocketReadable(const AutoPtr<ReadableNotification>& 
         {
             size_t new_pos = fifo_in.used() - len;
             std::string s(fifo_in.begin() + new_pos, len);
-            Application::instance().logger().information("RECEIVED: " + s);
+
+            std::cout << "RECEIVED FROM SERVER: " << s << std::endl;
 
             while (true)
             {
                 auto [message, size] = protocol->ParseMessage(fifo_in.begin(), fifo_in.used());
                 if (size > 0)
                 {
-                    messenger->receiveMessage(message.get(), this);
+                    messenger->ReceiveMessage(message.get(), this);
                     fifo_in.drain(size);
                 }
                 else break;
@@ -100,11 +90,11 @@ void ClientSocketHandler::OnSocketReadable(const AutoPtr<ReadableNotification>& 
     }
     catch (Poco::Exception& exc)
     {
-        Application& app = Application::instance();
-        app.logger().log(exc);
+        std::cout << "Exception: " << exc.message() << std::endl;
         delete this;
     }
 }
+
 
 
 void ClientSocketHandler::OnSocketWritable(const AutoPtr<WritableNotification>& pNf)
@@ -112,14 +102,13 @@ void ClientSocketHandler::OnSocketWritable(const AutoPtr<WritableNotification>& 
     try
     {
         std::string s(fifo_out.begin(), fifo_out.used());
-        Application::instance().logger().information("SENDING: " + s);
+        std::cout << "SENDING: " << s << std::endl;
 
         socket.sendBytes(fifo_out);
     }
     catch (Poco::Exception& exc)
     {
-        Application& app = Application::instance();
-        app.logger().log(exc);
+        std::cout << "Exception: " << exc.message() << std::endl;
         delete this;
     }
 }
@@ -130,8 +119,9 @@ void ClientSocketHandler::OnSocketShutdown(const AutoPtr<ShutdownNotification>& 
     delete this;
 }
 
-
-void ClientSocketHandler::Send(std::string text)
+void ClientSocketHandler::Send(const char* text)
 {
-    fifo_out.write(text.c_str(), text.size());
+    stream << text << std::endl;
+
+    // fifo_out.write(text, std::string(text).size());
 }

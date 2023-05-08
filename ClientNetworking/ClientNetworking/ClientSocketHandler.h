@@ -6,6 +6,7 @@
 #include "Poco/Net/SocketAcceptor.h"
 #include "Poco/Net/SocketNotification.h"
 #include "Poco/Net/StreamSocket.h"
+#include "Poco/Net/SocketStream.h"
 #include "Poco/Net/ServerSocket.h"
 #include "Poco/NObserver.h"
 #include "Poco/Exception.h"
@@ -29,6 +30,7 @@ using Poco::Net::WritableNotification;
 using Poco::Net::ShutdownNotification;
 using Poco::Net::ServerSocket;
 using Poco::Net::StreamSocket;
+using Poco::Net::SocketStream;
 using Poco::NObserver;
 using Poco::AutoPtr;
 using Poco::Thread;
@@ -40,53 +42,31 @@ using Poco::Util::Option;
 using Poco::Util::OptionSet;
 using Poco::Util::HelpFormatter;
 
+
 class ClientSocketHandler
 {
-private:
-    enum
-    {
-        BUFFER_SIZE = 1024
-    };
+    constexpr static int BUFFER_SIZE = 1024;
+    
+public:
+    ClientSocketHandler(StreamSocket& socket, SocketReactor& reactor, IProtocol& protocol, MessengerClient& messenger);
+    ~ClientSocketHandler();
+
+    
+    void OnFIFOOutReadable(bool& b);
+    void OnFIFOInWritable(bool& b);
+    void OnSocketReadable(const AutoPtr<ReadableNotification>& pNf);
+    void OnSocketWritable(const AutoPtr<WritableNotification>& pNf);
+    void OnSocketShutdown(const AutoPtr<ShutdownNotification>& pNf);
+    
+    void Send(const char* text);
+
 
     StreamSocket socket;
+    SocketStream stream;
     SocketReactor& reactor;
     FIFOBuffer fifo_in;
     FIFOBuffer fifo_out;
-
     IProtocol* protocol = nullptr;
     MessengerClient* messenger = nullptr;
     ClientUser* user = nullptr;
-
-public:
-    ClientSocketHandler(StreamSocket& socket, SocketReactor& reactor, IProtocol& protocol, MessengerClient& messenger);
-
-    ~ClientSocketHandler();
-
-    void OnFIFOOutReadable(bool& b);
-
-    void OnFIFOInWritable(bool& b);
-
-    void OnSocketReadable(const AutoPtr<ReadableNotification>& pNf);
-
-    void OnSocketWritable(const AutoPtr<WritableNotification>& pNf);
-
-    void OnSocketShutdown(const AutoPtr<ShutdownNotification>& pNf);
-
-    void Send(std::string text);
-
-    void SetUser(ClientUser* user) { this->user = user; }
-    ClientUser* GetUser() { return user; }
-
-private:
-    ClientSocketHandler(StreamSocket& socket, SocketReactor& reactor): socket(socket),
-                                                                       reactor(reactor),
-                                                                       fifo_in(BUFFER_SIZE, true),
-                                                                       fifo_out(BUFFER_SIZE, true),
-                                                                       protocol(nullptr)
-    {
-        throw std::logic_error("Dont use ClientSocketHandler deprecated constructor!");
-    }
-
-
-    friend SocketAcceptor<ClientSocketHandler>;
 };

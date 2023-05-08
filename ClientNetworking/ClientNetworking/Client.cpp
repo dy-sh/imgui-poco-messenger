@@ -1,7 +1,7 @@
 ﻿// Copyright 2023 Dmitry Savosh <d.savosh@gmail.com>
 
 #include "Client.h"
-#include "ClientHandler.h"
+#include "ClientSocketHandler.h"
 #include "ClientThread.h"
 #include "MessengerClient.h"
 #include "Protocol/SimpleProtocol.h"

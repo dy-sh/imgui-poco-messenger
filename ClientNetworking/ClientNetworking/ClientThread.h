@@ -7,7 +7,7 @@
 
 class MessengerClient;
 struct IProtocol;
-class ClientHandler;
+class ClientSocketHandler;
 using Poco::Net::StreamSocket;
 using Poco::Net::SocketAddress;
 using Poco::Net::SocketReactor;
@@ -17,7 +17,7 @@ class ClientThread : public Poco::Runnable
 {
 public:
     SocketAddress address;
-    ClientHandler* handler = nullptr;
+    ClientSocketHandler* handler = nullptr;
     StreamSocket socket;
     SocketReactor reactor;
     IProtocol& protocol;
