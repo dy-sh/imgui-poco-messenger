@@ -49,9 +49,15 @@ class ClientHandler
     
 public:
     ClientHandler(StreamSocket& socket, SocketReactor& reactor, IProtocol& protocol, MessengerClient& messenger);
+    ~ClientHandler();
+
     
-    void OnReadable(ReadableNotification* pNf);
+    void OnFIFOOutReadable(bool& b);
+    void OnFIFOInWritable(bool& b);
     void OnSocketReadable(const AutoPtr<ReadableNotification>& pNf);
+    void OnSocketWritable(const AutoPtr<WritableNotification>& pNf);
+    void OnSocketShutdown(const AutoPtr<ShutdownNotification>& pNf);
+    
     void Send(const char* text);
 
 

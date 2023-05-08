@@ -17,8 +17,48 @@ ClientHandler::ClientHandler(StreamSocket& socket, SocketReactor& reactor, IProt
     messenger{&messenger}
 {
     reactor.addEventHandler(socket, NObserver(*this, &ClientHandler::OnSocketReadable));
+    reactor.addEventHandler(socket, NObserver(*this, &ClientHandler::OnSocketShutdown));
+
+    fifo_out.readable += delegate(this, &ClientHandler::OnFIFOOutReadable);
+    fifo_in.writable += delegate(this, &ClientHandler::OnFIFOInWritable);
 }
 
+
+ClientHandler::~ClientHandler()
+{
+    reactor.removeEventHandler(socket, NObserver(*this, &ClientHandler::OnSocketReadable));
+    reactor.removeEventHandler(socket, NObserver(*this, &ClientHandler::OnSocketWritable));
+    reactor.removeEventHandler(socket, NObserver(*this, &ClientHandler::OnSocketShutdown));
+
+    fifo_out.readable -= delegate(this, &ClientHandler::OnFIFOOutReadable);
+    fifo_in.writable -= delegate(this, &ClientHandler::OnFIFOInWritable);
+}
+
+
+void ClientHandler::OnFIFOOutReadable(bool& b)
+{
+    if (b)
+    {
+        reactor.addEventHandler(socket, NObserver(*this, &ClientHandler::OnSocketWritable));
+    }
+    else
+    {
+        reactor.removeEventHandler(socket, NObserver(*this, &ClientHandler::OnSocketWritable));
+    }
+}
+
+
+void ClientHandler::OnFIFOInWritable(bool& b)
+{
+    if (b)
+    {
+        reactor.addEventHandler(socket, NObserver(*this, &ClientHandler::OnSocketReadable));
+    }
+    else
+    {
+        reactor.removeEventHandler(socket, NObserver(*this, &ClientHandler::OnSocketReadable));
+    }
+}
 
 void ClientHandler::OnSocketReadable(const AutoPtr<ReadableNotification>& pNf)
 {
@@ -56,7 +96,32 @@ void ClientHandler::OnSocketReadable(const AutoPtr<ReadableNotification>& pNf)
 }
 
 
+
+void ClientHandler::OnSocketWritable(const AutoPtr<WritableNotification>& pNf)
+{
+    try
+    {
+        std::string s(fifo_out.begin(), fifo_out.used());
+        std::cout << "SENDING: " << s << std::endl;
+
+        socket.sendBytes(fifo_out);
+    }
+    catch (Poco::Exception& exc)
+    {
+        std::cout << "Exception: " << exc.message() << std::endl;
+        delete this;
+    }
+}
+
+
+void ClientHandler::OnSocketShutdown(const AutoPtr<ShutdownNotification>& pNf)
+{
+    delete this;
+}
+
 void ClientHandler::Send(const char* text)
 {
-    stream << text << std::endl;
+    // stream << text << std::endl;
+
+    fifo_out.write(text, std::string(text).size());
 }
