@@ -1,7 +1,6 @@
 ﻿// Copyright 2023 Dmitry Savosh <d.savosh@gmail.com>
 
 #include "ClearConsoleCommand.h"
-
 #include "../ConsoleCommandsExecutor.h"
 
 

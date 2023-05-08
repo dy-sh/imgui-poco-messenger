@@ -9,7 +9,7 @@
 #include "Commands/ClearConsoleCommand.h"
 #include "Commands/HelpConsoleCommand.h"
 #include "Commands/HistoryConsoleCommand.h"
-
+#include "IConsoleWindow.h"
 
 class ConsoleCommandsExecutor
 {
@@ -36,5 +36,5 @@ public:
 private:
     IConsoleWindow* window;
     std::vector<char*> history;
-    int history_pos = -1; // -1: new line, 0..History.Size-1 browsing history.
+    size_t history_pos = -1; // -1: new line, 0..History.Size-1 browsing history.
 };

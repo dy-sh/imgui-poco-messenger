@@ -1,13 +1,12 @@
 ﻿// Copyright 2023 Dmitry Savosh <d.savosh@gmail.com>
 
-#include "ConsoleCommandsExecutor.h"
 
-#include "ChatWindow.h"
-#include "../../Utils/Utils.h"
 #include <string>
 #include <vector>
 #include <iomanip>
 #include <sstream>
+#include "ConsoleCommandsExecutor.h"
+#include "../../Utils/Utils.h"
 
 
 void ConsoleCommandsExecutor::Print(const char* fmt, ...)

@@ -3,9 +3,10 @@
 #pragma once
 
 
-#include "IConsoleWindow.h"
+
 #include "imgui.h"
 #include "../Window.h"
+#include "../../Tools/Console/IConsoleWindow.h"
 
 
 class ConsoleCommandsExecutor;

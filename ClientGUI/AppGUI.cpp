@@ -18,7 +18,7 @@ AppGUI::AppGUI()
     client = new Client();
     style = std::make_unique<DefaultStyle>();
     window_manager.AddWindow(std::make_unique<MainWindow>("Main",  true, &window_manager, client));
-    window_manager.AddWindow(std::make_unique<ConsoleWindow>("Console", false));
+    window_manager.AddWindow(std::make_unique<ConsoleWindow>("Console", true));
     window_manager.AddWindow(std::make_unique<LogWindow>("Log", false));
     window_manager.AddWindow(std::make_unique<LoginWindow>("Login", false));
     window_manager.AddWindow(std::make_unique<ChatWindow>("Chat", true, client));

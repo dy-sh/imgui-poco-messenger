@@ -8,7 +8,7 @@
 #include <sstream>
 #include "../../Utils/Utils.h"
 #include "ChatWindow.h"
-#include "ConsoleCommandsExecutor.h"
+#include "../../Tools/Console/ConsoleCommandsExecutor.h"
 
 
 static int TextEditCallbackStub(ImGuiInputTextCallbackData* data)
