@@ -19,28 +19,10 @@ using Poco::Observer;
 class ClientHandler
 {
 public:
-    ClientHandler(StreamSocket& socket, SocketReactor& reactor) :
-        socket(socket),
-        stream(socket),
-        reactor(reactor)
-    {
-        reactor.addEventHandler(
-            socket, Observer<ClientHandler, ReadableNotification>(*this, &ClientHandler::OnReadable));
-    }
-
-
-    void OnReadable(ReadableNotification* pNf)
-    {
-        char buffer[1024];
-        stream.getline(buffer, sizeof(buffer));
-        std::cout << "RECEIVED FROM SERVER: " << buffer << std::endl;
-    }
-
-
-    void Send(const char* text)
-    {
-        stream << text << std::endl;
-    }
+    ClientHandler(StreamSocket& socket, SocketReactor& reactor);
+    
+    void OnReadable(ReadableNotification* pNf);
+    void Send(const char* text);
 
 private:
     StreamSocket socket;
