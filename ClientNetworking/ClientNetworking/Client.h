@@ -12,38 +12,39 @@ using Poco::Net::SocketStream;
 using Poco::Net::SocketReactor;
 using Poco::Net::ReadableNotification;
 using Poco::Thread;
+using Poco::Observer;
 
 
 class ClientHandler
 {
 public:
     ClientHandler(StreamSocket& socket, SocketReactor& reactor) :
-        _socket(socket),
-        _stream(socket),
-        _reactor(reactor)
+        socket(socket),
+        stream(socket),
+        reactor(reactor)
     {
-        _reactor.addEventHandler(
-            _socket, Poco::Observer<ClientHandler, ReadableNotification>(*this, &ClientHandler::onReadable));
+        reactor.addEventHandler(
+            socket, Observer<ClientHandler, ReadableNotification>(*this, &ClientHandler::OnReadable));
     }
 
 
-    void onReadable(ReadableNotification* pNf)
+    void OnReadable(ReadableNotification* pNf)
     {
         char buffer[1024];
-        _stream.getline(buffer, sizeof(buffer));
+        stream.getline(buffer, sizeof(buffer));
         std::cout << "RECEIVED FROM SERVER: " << buffer << std::endl;
     }
 
 
-    void send(const char* text)
+    void Send(const char* text)
     {
-        _stream << text << std::endl;
+        stream << text << std::endl;
     }
 
 private:
-    StreamSocket _socket;
-    Poco::Net::SocketStream _stream;
-    SocketReactor& _reactor;
+    StreamSocket socket;
+    SocketStream stream;
+    SocketReactor& reactor;
 };
 
 
@@ -70,7 +71,7 @@ public:
             socket.connect(address);
             handler = new ClientHandler(socket, reactor);
 
-            handler->send("Atest1;");
+            handler->Send("Atest1;");
             reactor.run(); // thread will be blocked here
             // socket.shutdown();
             socket.close();
@@ -145,7 +146,7 @@ public:
     {
         if (clientThread && clientThread->handler)
         {
-            clientThread->handler->send(str);
+            clientThread->handler->Send(str);
         }
     }
 };

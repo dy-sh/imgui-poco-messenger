@@ -39,7 +39,7 @@ public:
     void Print( const char* fmt, ... ) override;
     void ClearFilter() override{filter.Clear();}
     void RenderContent() override;
-    void Send(const char* s);
+    void Send(const char* message);
     void ProceedMessageTextField();
     int MessageTextEditCallback( ImGuiInputTextCallbackData* data );
 private:

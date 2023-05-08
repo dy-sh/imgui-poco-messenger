@@ -9,6 +9,7 @@
 #include "../../Utils/Utils.h"
 #include "ChatWindow.h"
 #include "../../Tools/Console/ConsoleCommandsExecutor.h"
+#include "ClientNetworking/Client.h"
 
 
 static int TextEditCallbackStub(ImGuiInputTextCallbackData* data)
@@ -218,8 +219,10 @@ void ChatWindow::RenderContent()
 }
 
 
-void ChatWindow::Send(const char* s)
+void ChatWindow::Send(const char* message)
 {
+    std::string mess = Poco::format("T%s;", std::string(message));
+    client->Send(mess.c_str());
 }
 
 

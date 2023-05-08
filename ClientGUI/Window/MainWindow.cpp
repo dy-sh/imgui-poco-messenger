@@ -17,6 +17,8 @@ using namespace Poco::Net;
 MainWindow::MainWindow(const std::string& title, bool visible, WindowManager* windowManager, Client* client):
     MaximizedWindow(title, visible), client{client}, windowManager{windowManager}
 {
+    options.no_bring_to_front = true;
+    
     //todo temporary
     SocketAddress address = SocketAddress(server_address, server_port);
     client->Connect(address);        
