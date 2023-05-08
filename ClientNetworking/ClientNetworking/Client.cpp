@@ -3,12 +3,14 @@
 #include "Client.h"
 #include "ClientHandler.h"
 #include "ClientThread.h"
+#include "MessengerClient.h"
 #include "Protocol/SimpleProtocol.h"
 
 
 Client::Client()
 {
     protocol = new SimpleProtocol();
+    messenger = new MessengerClient();
 }
 
 
@@ -16,6 +18,7 @@ Client::~Client()
 {
     Disconnect();
     delete protocol;
+    delete messenger;
 }
 
 
@@ -23,9 +26,8 @@ void Client::Connect(const SocketAddress& address)
 {
     Disconnect();
 
-    client_thread = new ClientThread();
-    client_thread->address = address;
-        
+    client_thread = new ClientThread(*protocol, *messenger, address);
+
     thread = new Thread();
     thread->start(client_thread);
 }

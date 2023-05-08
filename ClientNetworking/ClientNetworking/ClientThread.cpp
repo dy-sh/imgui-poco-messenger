@@ -12,7 +12,7 @@ void ClientThread::run()
     try
     {
         socket.connect(address);
-        handler = new ClientHandler(socket, reactor);
+        handler = new ClientHandler(socket, reactor,protocol,messenger);
 
         handler->Send("Atest1;");
         reactor.run(); // thread will be blocked here

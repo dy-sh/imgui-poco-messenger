@@ -5,6 +5,8 @@
 #include "Poco/Net/StreamSocket.h"
 #include "Poco/Net/SocketReactor.h"
 
+class MessengerClient;
+struct IProtocol;
 class ClientHandler;
 using Poco::Net::StreamSocket;
 using Poco::Net::SocketAddress;
@@ -18,10 +20,11 @@ public:
     ClientHandler* handler = nullptr;
     StreamSocket socket;
     SocketReactor reactor;
+    IProtocol& protocol;
+    MessengerClient& messenger;
 
-
-    explicit ClientThread(const SocketAddress& address = SocketAddress("localhost", 9977))
-        : address(address)
+    explicit ClientThread(IProtocol& protocol, MessengerClient& messenger, const SocketAddress& address = SocketAddress("localhost", 9977))
+        : address{address}, protocol{protocol}, messenger{messenger}
     {
     }
 

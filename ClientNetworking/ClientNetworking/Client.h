@@ -5,6 +5,7 @@
 #include <Poco/Net/SocketAddress.h>
 
 
+class MessengerClient;
 struct IProtocol;
 class ClientThread;
 using Poco::Thread;
@@ -25,4 +26,5 @@ private:
     Thread* thread = nullptr;
     ClientThread* client_thread = nullptr;
     IProtocol* protocol = nullptr;
+    MessengerClient* messenger = nullptr;
 };
