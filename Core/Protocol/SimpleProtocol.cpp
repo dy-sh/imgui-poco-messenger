@@ -8,7 +8,7 @@
 #include "Messages/MessageFactory.h"
 
 
-std::pair<std::unique_ptr<Message>, size_t> SimpleProtocol::parseMessage(const char* buffer, size_t buffer_size)
+std::pair<std::unique_ptr<Message>, size_t> SimpleProtocol::ParseMessage(const char* buffer, size_t buffer_size)
 {
     size_t from = 0;
     size_t size = 0;
@@ -41,18 +41,18 @@ std::pair<std::unique_ptr<Message>, size_t> SimpleProtocol::parseMessage(const c
     }
 
     //check parsers
-    if (MessageFactory::messageFactory.empty())
+    if (MessageFactory::message_factory.empty())
     {
         throw std::logic_error("No message types registered. Use REGISTER_MESSAGE macro to register message types.");
     }
 
     // parse message
-    for (auto& [type, messageCreator] : MessageFactory::messageFactory)
+    for (auto& [type, messageCreator] : MessageFactory::message_factory)
     {
-        if (messageCreator()->matches(buffer, from, size)) //todo don't create new instances each time to match
+        if (messageCreator()->Matches(buffer, from, size)) //todo don't create new instances each time to match
         {
             auto message = std::move(messageCreator());
-            message->parse(buffer, from, size);
+            message->Parse(buffer, from, size);
             return {std::move(message), from + size};
         }
     }

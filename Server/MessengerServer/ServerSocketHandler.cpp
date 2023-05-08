@@ -84,7 +84,7 @@ void ServerSocketHandler::OnSocketReadable(const AutoPtr<ReadableNotification>& 
 
             while (true)
             {
-                auto [message, size] = protocol->parseMessage(fifo_in.begin(), fifo_in.used());
+                auto [message, size] = protocol->ParseMessage(fifo_in.begin(), fifo_in.used());
                 if (size > 0)
                 {
                     messenger->ReceiveMessage(message.get(), this);

@@ -3,7 +3,7 @@
 #include "TextMessage.h"
 
 
-bool TextMessage::parse(const char* buffer, size_t from, size_t size)
+bool TextMessage::Parse(const char* buffer, size_t from, size_t size)
 {
     text = std::string(buffer + from + 1, size - 2);
     return true;

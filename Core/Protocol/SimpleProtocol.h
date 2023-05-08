@@ -21,5 +21,5 @@ constexpr char DELIMITER = ';';
 
 struct SimpleProtocol : public IProtocol
 {
-    std::pair<std::unique_ptr<Message>, size_t> parseMessage(const char* buffer, size_t buffer_size) override;
+    std::pair<std::unique_ptr<Message>, size_t> ParseMessage(const char* buffer, size_t buffer_size) override;
 };

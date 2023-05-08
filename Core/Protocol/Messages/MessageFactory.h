@@ -10,7 +10,7 @@ struct Message;
 
 struct MessageFactory
 {
-    static std::map<std::string, std::function<std::unique_ptr<Message>()>> messageFactory;
+    static std::map<std::string, std::function<std::unique_ptr<Message>()>> message_factory;
 };
 
 
@@ -19,10 +19,10 @@ struct MessageRegistrar
 {
     MessageRegistrar(char prefix)
     {
-        MessageFactory::messageFactory[T::Type] = [prefix] { return std::make_unique<T>(prefix); };
+        MessageFactory::message_factory[T::type] = [prefix] { return std::make_unique<T>(prefix); };
     }
 };
 
 #define REGISTER_MESSAGE(TypeName, Prefix, Name) \
-const std::string TypeName::Type = Name;\
+const std::string TypeName::type = Name;\
 static MessageRegistrar<TypeName> TypeName##Registrar(Prefix);

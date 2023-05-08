@@ -3,14 +3,14 @@
 #include "AuthorizeMessage.h"
 
 
-bool AuthorizeMessage::parse(const char* buffer, size_t from, size_t size)
+bool AuthorizeMessage::Parse(const char* buffer, size_t from, size_t size)
 {
-    userName = std::string(buffer + from + 1, size - 2);
+    user_name = std::string(buffer + from + 1, size - 2);
     return true;
 }
 
 
 std::string AuthorizeMessage::to_str() const
 {
-    return "CONNECT: " + userName;
+    return "CONNECT: " + user_name;
 }

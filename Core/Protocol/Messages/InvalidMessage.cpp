@@ -9,7 +9,7 @@ InvalidMessage::InvalidMessage(const char* buffer, size_t from, size_t size): Me
 }
 
 
-bool InvalidMessage::parse(const char* buffer, size_t from, size_t size)
+bool InvalidMessage::Parse(const char* buffer, size_t from, size_t size)
 {
     text = std::string(buffer + from , size - 1);
     return true;

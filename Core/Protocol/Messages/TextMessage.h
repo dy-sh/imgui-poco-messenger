@@ -7,9 +7,9 @@
 
 struct TextMessage : Message
 {
-    static const std::string Type;
+    static const std::string type;
 
-    std::string userName;
+    std::string user_name;
     std::string text;
 
 
@@ -18,7 +18,7 @@ struct TextMessage : Message
     }
 
 
-    bool parse(const char* buffer, size_t from, size_t size) override;
+    bool Parse(const char* buffer, size_t from, size_t size) override;
 
     std::string to_str() const override;
 };

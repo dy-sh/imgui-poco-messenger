@@ -9,5 +9,5 @@
 struct IProtocol
 {
     virtual ~IProtocol() = default;
-    virtual std::pair<std::unique_ptr<Message>, size_t> parseMessage(const char* buffer, size_t buffer_size)=0;
+    virtual std::pair<std::unique_ptr<Message>, size_t> ParseMessage(const char* buffer, size_t buffer_size)=0;
 };

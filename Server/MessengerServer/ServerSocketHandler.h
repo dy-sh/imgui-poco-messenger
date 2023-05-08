@@ -53,9 +53,9 @@ private:
     FIFOBuffer fifo_in;
     FIFOBuffer fifo_out;
 
-    IProtocol* protocol{nullptr};
-    MessengerServer* messenger{nullptr};
-    ServerUser* user{nullptr};
+    IProtocol* protocol = nullptr;
+    MessengerServer* messenger = nullptr;
+    ServerUser* user = nullptr;
 
 public:
     ServerSocketHandler(StreamSocket& socket, SocketReactor& reactor, IProtocol& protocol, MessengerServer& messenger);

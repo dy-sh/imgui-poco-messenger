@@ -16,10 +16,10 @@ struct Message
     }
 
 
-    virtual bool matches(const char* buffer, size_t from, size_t size) const;
+    virtual bool Matches(const char* buffer, size_t from, size_t size) const;
 
 
-    virtual bool parse(const char* buffer, size_t from, size_t size){return false;}
+    virtual bool Parse(const char* buffer, size_t from, size_t size){return false;}
     virtual std::string to_str() const{return "";} 
 
 private:

@@ -2,7 +2,7 @@
 
 #include "MessageFactory.h"
 
-std::map<std::string, std::function<std::unique_ptr<Message>()>> MessageFactory::messageFactory;
+std::map<std::string, std::function<std::unique_ptr<Message>()>> MessageFactory::message_factory;
 
 #include "AuthorizeMessage.h"
 REGISTER_MESSAGE(AuthorizeMessage, 'A', "Authorize")

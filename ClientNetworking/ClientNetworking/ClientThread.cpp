@@ -3,6 +3,7 @@
 #include "ClientThread.h"
 
 #include "ClientHandler.h"
+#include "ClientSocketHandler.h"
 
 
 void ClientThread::run()

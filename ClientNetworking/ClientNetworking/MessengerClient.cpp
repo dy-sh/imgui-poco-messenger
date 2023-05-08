@@ -46,7 +46,7 @@ void MessengerClient::authorizeUser(AuthorizeMessage& message, ClientSocketHandl
 {
     ClientUser* user = new ClientUser();
     user->id = ++last_user_id;
-    user->nickname = message.userName;
+    user->nickname = message.user_name;
     user->socketHandlers.push_back(socketHandler);
 
     users.push_back(user);

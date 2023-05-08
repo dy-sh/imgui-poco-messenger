@@ -5,27 +5,24 @@
 #include <Poco/Net/SocketAddress.h>
 
 
+struct IProtocol;
 class ClientThread;
 using Poco::Thread;
 
 
 class Client
 {
-private:
-    Thread* thread= nullptr;
-    ClientThread* clientThread = nullptr;
-
 public:
-    ~Client()
-    {
-        Disconnect();
-    }
+    Client();
 
+    ~Client();
 
     void Connect(const Poco::Net::SocketAddress& address);
     void Disconnect();
     void Send(const char* str);
+
+private:
+    Thread* thread = nullptr;
+    ClientThread* client_thread = nullptr;
+    IProtocol* protocol = nullptr;
 };
-
-
-

@@ -2,7 +2,7 @@
 
 #include "Message.h"
 
-bool Message::matches(const char* buffer, size_t from, size_t size) const
+bool Message::Matches(const char* buffer, size_t from, size_t size) const
 {
     return buffer[0 + from] == prefix;
 }
