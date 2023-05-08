@@ -21,7 +21,7 @@ void Server::uninitialize()
 }
 
 
-void Server::defineOptions(Poco::Util::OptionSet& options)
+void Server::defineOptions(OptionSet& options)
 {
     ServerApplication::defineOptions(options);
 
@@ -37,7 +37,7 @@ void Server::handleOption(const std::string& name, const std::string& value)
     ServerApplication::handleOption(name, value);
 
     if (name == "help")
-        _helpRequested = true;
+        help_requested = true;
 }
 
 
@@ -53,7 +53,7 @@ void Server::displayHelp()
 
 int Server::main(const std::vector<std::string>& args)
 {
-    if (_helpRequested)
+    if (help_requested)
     {
         displayHelp();
         return Application::EXIT_OK;

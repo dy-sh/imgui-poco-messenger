@@ -5,26 +5,23 @@
 #include "Protocol/IProtocol.h"
 
 
-
 ServerSocketHandler::ServerSocketHandler(StreamSocket& socket, SocketReactor& reactor,
                                          IProtocol& protocol, MessengerServer& messenger):
-    _socket(socket),
-    _reactor(reactor),
-    _fifoIn(BUFFER_SIZE, true),
-    _fifoOut(BUFFER_SIZE, true),
+    socket(socket),
+    reactor(reactor),
+    fifo_in(BUFFER_SIZE, true),
+    fifo_out(BUFFER_SIZE, true),
     protocol{&protocol},
     messenger{&messenger}
 {
     Application& app = Application::instance();
     app.logger().information("Connection from " + socket.peerAddress().toString());
 
-    _reactor.addEventHandler(_socket, NObserver<ServerSocketHandler, ReadableNotification>(
-                                 *this, &ServerSocketHandler::onSocketReadable));
-    _reactor.addEventHandler(_socket, NObserver<ServerSocketHandler, ShutdownNotification>(
-                                 *this, &ServerSocketHandler::onSocketShutdown));
+    reactor.addEventHandler(socket, NObserver(*this, &ServerSocketHandler::OnSocketReadable));
+    reactor.addEventHandler(socket, NObserver(*this, &ServerSocketHandler::OnSocketShutdown));
 
-    _fifoOut.readable += delegate(this, &ServerSocketHandler::onFIFOOutReadable);
-    _fifoIn.writable += delegate(this, &ServerSocketHandler::onFIFOInWritable);
+    fifo_out.readable += delegate(this, &ServerSocketHandler::OnFIFOOutReadable);
+    fifo_in.writable += delegate(this, &ServerSocketHandler::OnFIFOInWritable);
 }
 
 
@@ -33,74 +30,65 @@ ServerSocketHandler::~ServerSocketHandler()
     Application& app = Application::instance();
     try
     {
-        app.logger().information("Disconnecting " + _socket.peerAddress().toString());
+        app.logger().information("Disconnecting " + socket.peerAddress().toString());
     }
     catch (...)
     {
     }
 
-    _reactor.removeEventHandler(_socket, NObserver<ServerSocketHandler, ReadableNotification>(
-                                    *this, &ServerSocketHandler::onSocketReadable));
-    _reactor.removeEventHandler(_socket, NObserver<ServerSocketHandler, WritableNotification>(
-                                    *this, &ServerSocketHandler::onSocketWritable));
-    _reactor.removeEventHandler(_socket, NObserver<ServerSocketHandler, ShutdownNotification>(
-                                    *this, &ServerSocketHandler::onSocketShutdown));
+    reactor.removeEventHandler(socket, NObserver(*this, &ServerSocketHandler::OnSocketReadable));
+    reactor.removeEventHandler(socket, NObserver(*this, &ServerSocketHandler::OnSocketWritable));
+    reactor.removeEventHandler(socket, NObserver(*this, &ServerSocketHandler::OnSocketShutdown));
 
-    _fifoOut.readable -= delegate(this, &ServerSocketHandler::onFIFOOutReadable);
-    _fifoIn.writable -= delegate(this, &ServerSocketHandler::onFIFOInWritable);
+    fifo_out.readable -= delegate(this, &ServerSocketHandler::OnFIFOOutReadable);
+    fifo_in.writable -= delegate(this, &ServerSocketHandler::OnFIFOInWritable);
 }
 
 
-void ServerSocketHandler::onFIFOOutReadable(bool& b)
+void ServerSocketHandler::OnFIFOOutReadable(bool& b)
 {
     if (b)
     {
-        _reactor.addEventHandler(_socket, NObserver<ServerSocketHandler, WritableNotification>(
-                                     *this, &ServerSocketHandler::onSocketWritable));
+        reactor.addEventHandler(socket, NObserver(*this, &ServerSocketHandler::OnSocketWritable));
     }
     else
     {
-        _reactor.removeEventHandler(_socket, NObserver<ServerSocketHandler, WritableNotification>(
-                                        *this, &ServerSocketHandler::onSocketWritable));
+        reactor.removeEventHandler(socket, NObserver(*this, &ServerSocketHandler::OnSocketWritable));
     }
 }
 
 
-void ServerSocketHandler::onFIFOInWritable(bool& b)
+void ServerSocketHandler::OnFIFOInWritable(bool& b)
 {
     if (b)
     {
-        _reactor.addEventHandler(_socket, NObserver<ServerSocketHandler, ReadableNotification>(
-                                     *this, &ServerSocketHandler::onSocketReadable));
+        reactor.addEventHandler(socket, NObserver(*this, &ServerSocketHandler::OnSocketReadable));
     }
     else
     {
-        _reactor.removeEventHandler(_socket, NObserver<ServerSocketHandler, ReadableNotification>(
-                                        *this, &ServerSocketHandler::onSocketReadable));
+        reactor.removeEventHandler(socket, NObserver(*this, &ServerSocketHandler::OnSocketReadable));
     }
 }
 
 
-
-
-void ServerSocketHandler::onSocketReadable(const AutoPtr<ReadableNotification>& pNf)
+void ServerSocketHandler::OnSocketReadable(const AutoPtr<ReadableNotification>& n)
 {
     try
     {
-        int len = _socket.receiveBytes(_fifoIn);
+        int len = socket.receiveBytes(fifo_in);
         if (len > 0)
         {
-            size_t new_pos = _fifoIn.used() - len;
-            std::string s(_fifoIn.begin() + new_pos, len);
+            size_t new_pos = fifo_in.used() - len;
+            std::string s(fifo_in.begin() + new_pos, len);
             Application::instance().logger().information("RECEIVED: " + s);
 
             while (true)
             {
-                auto [message, size] = protocol->parseMessage(_fifoIn.begin(),_fifoIn.used());
-                if (size>0)
+                auto [message, size] = protocol->parseMessage(fifo_in.begin(), fifo_in.used());
+                if (size > 0)
                 {
-                    messenger->receiveMessage(message.get(), this);
-                    _fifoIn.drain(size);
+                    messenger->ReceiveMessage(message.get(), this);
+                    fifo_in.drain(size);
                 }
                 else break;
             }
@@ -119,14 +107,14 @@ void ServerSocketHandler::onSocketReadable(const AutoPtr<ReadableNotification>& 
 }
 
 
-void ServerSocketHandler::onSocketWritable(const AutoPtr<WritableNotification>& pNf)
+void ServerSocketHandler::OnSocketWritable(const AutoPtr<WritableNotification>& n)
 {
     try
     {
-        std::string s(_fifoOut.begin(), _fifoOut.used());
+        std::string s(fifo_out.begin(), fifo_out.used());
         Application::instance().logger().information("SENDING: " + s);
 
-        _socket.sendBytes(_fifoOut);
+        socket.sendBytes(fifo_out);
     }
     catch (Poco::Exception& exc)
     {
@@ -137,7 +125,7 @@ void ServerSocketHandler::onSocketWritable(const AutoPtr<WritableNotification>& 
 }
 
 
-void ServerSocketHandler::onSocketShutdown(const AutoPtr<ShutdownNotification>& pNf)
+void ServerSocketHandler::OnSocketShutdown(const AutoPtr<ShutdownNotification>& n)
 {
     delete this;
 }
@@ -145,5 +133,5 @@ void ServerSocketHandler::onSocketShutdown(const AutoPtr<ShutdownNotification>& 
 
 void ServerSocketHandler::Send(std::string text)
 {
-    _fifoOut.write(text.c_str(), text.size());
+    fifo_out.write(text.c_str(), text.size());
 }

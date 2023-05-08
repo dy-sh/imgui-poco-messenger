@@ -8,7 +8,7 @@
 #include "ServerUser.h"
 
 
-std::vector<ServerUser*> MessengerServer::getAllAuthorizedUsers()
+std::vector<ServerUser*> MessengerServer::GetAllAuthorizedUsers()
 {
     std::vector<ServerUser*> result;
 
@@ -21,15 +21,15 @@ std::vector<ServerUser*> MessengerServer::getAllAuthorizedUsers()
 }
 
 
-void MessengerServer::receiveMessage(Message* message, ServerSocketHandler* socketHandler)
+void MessengerServer::ReceiveMessage(Message* message, ServerSocketHandler* socketHandler)
 {
     if (auto authMess = dynamic_cast<AuthorizeMessage*>(message))
     {
-        authorizeUser(*authMess, socketHandler);
+        AuthorizeUser(*authMess, socketHandler);
     }
     else if (auto textMess = dynamic_cast<TextMessage*>(message))
     {
-        receiveText(*textMess, socketHandler);
+        ReceiveText(*textMess, socketHandler);
     }
     else if (auto invMess = dynamic_cast<InvalidMessage*>(message))
     {
@@ -42,12 +42,12 @@ void MessengerServer::receiveMessage(Message* message, ServerSocketHandler* sock
 }
 
 
-void MessengerServer::authorizeUser(AuthorizeMessage& message, ServerSocketHandler* socketHandler)
+void MessengerServer::AuthorizeUser(AuthorizeMessage& message, ServerSocketHandler* socketHandler)
 {
     ServerUser* user = new ServerUser();
     user->id = ++last_user_id;
     user->nickname = message.userName;
-    user->socketHandlers.push_back(socketHandler);
+    user->socket_handlers.push_back(socketHandler);
 
     users.push_back(user);
 
@@ -58,7 +58,7 @@ void MessengerServer::authorizeUser(AuthorizeMessage& message, ServerSocketHandl
 }
 
 
-void MessengerServer::receiveText(TextMessage& message, ServerSocketHandler* socketHandler)
+void MessengerServer::ReceiveText(TextMessage& message, ServerSocketHandler* socketHandler)
 {
     const ServerUser* user = socketHandler->GetUser();
     if (!user || !user->IsAuthorized())
@@ -73,12 +73,12 @@ void MessengerServer::receiveText(TextMessage& message, ServerSocketHandler* soc
     socketHandler->Send("TEXT_RECEIVED|" + std::to_string(message.text.size()) + ";\r\n");
 
     //broadcast message to all users
-    const std::vector<ServerUser*> auth_users = getAllAuthorizedUsers();
+    const std::vector<ServerUser*> auth_users = GetAllAuthorizedUsers();
     for (const auto* auth_user : auth_users)
     {
         if (!auth_user) continue;
 
-        for (auto* auth_user_socket : auth_user->socketHandlers)
+        for (auto* auth_user_socket : auth_user->socket_handlers)
         {
             if (!auth_user_socket) continue;
 

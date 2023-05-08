@@ -12,7 +12,7 @@ class ServerSocketAcceptor : public SocketAcceptor<ServerSocketHandler>
     
 public:
     ServerSocketAcceptor(ServerSocket& socket, SocketReactor& reactor, IProtocol& protocol,MessengerServer& messenger)
-        : SocketAcceptor<ServerSocketHandler>(socket, reactor), protocol{protocol}, messenger{messenger}, reactor{reactor}
+        : SocketAcceptor(socket, reactor), protocol{protocol}, messenger{messenger}, reactor{reactor}
     {
     }
 

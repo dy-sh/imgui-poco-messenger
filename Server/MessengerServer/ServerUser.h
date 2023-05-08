@@ -10,7 +10,7 @@ struct ServerUser
 {
     size_t id;
     std::string nickname;
-    std::vector<ServerSocketHandler*> socketHandlers;
+    std::vector<ServerSocketHandler*> socket_handlers;
 
     bool IsAuthorized() const { return id > 0; }
 };

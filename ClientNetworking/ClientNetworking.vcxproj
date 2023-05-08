@@ -20,6 +20,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClientNetworking\Client.h" />
+    <ClInclude Include="ClientNetworking\ClientHandler.h" />
+    <ClInclude Include="ClientNetworking\ClientThread.h" />
     <ClInclude Include="ClientNetworking\ClientUser.h" />
     <ClInclude Include="ClientNetworking\MessengerClient.h" />
     <ClInclude Include="ClientNetworking\ClientSocketAcceptor.h" />
@@ -27,6 +29,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClientNetworking\Client.cpp" />
+    <ClCompile Include="ClientNetworking\ClientHandler.cpp" />
+    <ClCompile Include="ClientNetworking\ClientThread.cpp" />
     <ClCompile Include="ClientNetworking\MessengerClient.cpp" />
     <ClCompile Include="ClientNetworking\ClientSocketHandler.cpp" />
   </ItemGroup>

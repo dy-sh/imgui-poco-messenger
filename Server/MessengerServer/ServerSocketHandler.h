@@ -48,10 +48,10 @@ private:
         BUFFER_SIZE = 1024
     };
 
-    StreamSocket _socket;
-    SocketReactor& _reactor;
-    FIFOBuffer _fifoIn;
-    FIFOBuffer _fifoOut;
+    StreamSocket socket;
+    SocketReactor& reactor;
+    FIFOBuffer fifo_in;
+    FIFOBuffer fifo_out;
 
     IProtocol* protocol{nullptr};
     MessengerServer* messenger{nullptr};
@@ -62,15 +62,15 @@ public:
 
     ~ServerSocketHandler();
 
-    void onFIFOOutReadable(bool& b);
+    void OnFIFOOutReadable(bool& b);
 
-    void onFIFOInWritable(bool& b);
+    void OnFIFOInWritable(bool& b);
 
-    void onSocketReadable(const AutoPtr<ReadableNotification>& pNf);
+    void OnSocketReadable(const AutoPtr<ReadableNotification>& n);
 
-    void onSocketWritable(const AutoPtr<WritableNotification>& pNf);
+    void OnSocketWritable(const AutoPtr<WritableNotification>& n);
 
-    void onSocketShutdown(const AutoPtr<ShutdownNotification>& pNf);
+    void OnSocketShutdown(const AutoPtr<ShutdownNotification>& n);
 
     void Send(std::string text);
 
@@ -78,10 +78,10 @@ public:
     ServerUser* GetUser() { return user; }
 
 private:
-    ServerSocketHandler(StreamSocket& socket, SocketReactor& reactor): _socket(socket),
-                                                                       _reactor(reactor),
-                                                                       _fifoIn(BUFFER_SIZE, true),
-                                                                       _fifoOut(BUFFER_SIZE, true),
+    ServerSocketHandler(StreamSocket& socket, SocketReactor& reactor): socket(socket),
+                                                                       reactor(reactor),
+                                                                       fifo_in(BUFFER_SIZE, true),
+                                                                       fifo_out(BUFFER_SIZE, true),
                                                                        protocol(nullptr)
     {
         throw std::logic_error("Dont use MessengerServerSocketHandler deprecated constructor!");
