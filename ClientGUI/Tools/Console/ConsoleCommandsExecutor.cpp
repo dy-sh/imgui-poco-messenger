@@ -147,6 +147,6 @@ void ConsoleCommandsExecutor::ExecCommand(const char* command_line)
     }
     if (!found)
     {
-        Print("Unknown command: '%s'\n", command_line);
+        Print("Unknown command: '%s'\nUse /HELP for assist\n", command_line);
     }
 }

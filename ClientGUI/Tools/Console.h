@@ -1,12 +1,16 @@
-//
-// Created by Dmitry Savosh on 19.04.2023.
-//
+// Copyright 2023 Dmitry Savosh <d.savosh@gmail.com>
 
 #pragma once
+
 
 #include "Debug.h"
 #include "imgui.h"
 #include "../Window/Window.h"
+#include "Console/IConsoleWindow.h"
+
+
+class ConsoleCommandsExecutor;
+class Client;
 
 struct AppConsoleColors
 {
@@ -14,32 +18,33 @@ struct AppConsoleColors
     ImVec4 WarningColor = ImVec4( 1.0f, 0.8f, 0.6f, 1.0f );
 };
 
-class ConsoleWindow:public Window
+class ConsoleWindow:public Window, public IConsoleWindow
 {
 public:
-    AppConsoleColors ConsoleColors;
+    AppConsoleColors console_colors;
+    ConsoleCommandsExecutor* commands_executor;
 
-    char InputBuf[256]{};
-    static ImVector<char*> Items;
-    ImVector<const char*> Commands;
-    ImVector<char*> History;
-    int HistoryPos = -1; // -1: new line, 0..History.Size-1 browsing history.
-    ImGuiTextFilter Filter;
-    bool AutoScroll     = true;
-    bool ScrollToBottom = false;
+    char input_buf[256]{};
+    static ImVector<char*> items;
+    ImGuiTextFilter filter;
+    bool auto_scroll     = true;
+    bool scroll_to_bottom = false;
 
 
     ConsoleWindow(const std::string& title, bool visible);
 
     ~ConsoleWindow();
     
-    static void Clear();
+    void Clear() override;
+    void Print( const char* fmt, ... ) override;
     static void Add( const char* fmt, ... );
     static void Add(LogLevel level, const char* fmt, ...);
+    void ClearFilter() override{filter.Clear();}
     void RenderContent() override;
-    void ExecCommand( const char* command_line );
-    int TextEditCallback( ImGuiInputTextCallbackData* data );
-    void Help();
+    void ProceedMessageTextField();
+    int MessageTextEditCallback( ImGuiInputTextCallbackData* data );
+private:
+    bool set_focus_on_textfield{true};
 };
 
 

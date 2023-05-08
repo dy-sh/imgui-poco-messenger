@@ -18,24 +18,24 @@ LogWindow::LogWindow(const std::string& title, bool visible)
 
 void LogWindow::Clear()
 {
-    Buf.clear();
-    LineOffsets.clear();
-    LineOffsets.push_back(0);
+    buffer.clear();
+    line_offsets.clear();
+    line_offsets.push_back(0);
 }
 
 
 void LogWindow::AddRaw(const char* fmt, ...)
 {
     // write message
-    int old_size = Buf.size();
+    int old_size = buffer.size();
     va_list args;
     va_start(args, fmt);
-    Buf.appendfv(fmt, args);
+    buffer.appendfv(fmt, args);
     va_end(args);
 
-    for (int new_size = Buf.size(); old_size < new_size; old_size++)
-        if (Buf[old_size] == '\n')
-            LineOffsets.push_back(old_size + 1);
+    for (int new_size = buffer.size(); old_size < new_size; old_size++)
+        if (buffer[old_size] == '\n')
+            line_offsets.push_back(old_size + 1);
 }
 
 
@@ -82,7 +82,7 @@ void LogWindow::RenderContent()
     // Options menu
     if (ImGui::BeginPopup("Options"))
     {
-        ImGui::Checkbox("Auto-scroll", &AutoScroll);
+        ImGui::Checkbox("Auto-scroll", &auto_scroll);
         ImGui::EndPopup();
     }
 
@@ -96,7 +96,7 @@ void LogWindow::RenderContent()
     ImGui::SameLine();
     bool copy = ImGui::Button("Copy");
     ImGui::SameLine();
-    Filter.Draw("Filter", -100.0f);
+    filter.Draw("Filter", -100.0f);
 
     ImGui::Separator();
 
@@ -112,20 +112,20 @@ void LogWindow::RenderContent()
         }
 
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
-        const char* buf = Buf.begin();
-        const char* buf_end = Buf.end();
-        if (Filter.IsActive())
+        const char* buf = buffer.begin();
+        const char* buf_end = buffer.end();
+        if (filter.IsActive())
         {
             // In this example we don't use the clipper when Filter is enabled.
             // This is because we don't have random access to the result of our filter.
             // A real application processing logs with ten of thousands of entries may want to store the result of
             // search/filter.. especially if the filtering function is not trivial (e.g. reg-exp).
-            for (int line_no = 0; line_no < LineOffsets.size(); line_no++)
+            for (int line_no = 0; line_no < line_offsets.size(); line_no++)
             {
-                const char* line_start = buf + LineOffsets[line_no];
+                const char* line_start = buf + line_offsets[line_no];
                 const char* line_end
-                    = (line_no + 1 < LineOffsets.size()) ? (buf + LineOffsets[line_no + 1] - 1) : buf_end;
-                if (Filter.PassFilter(line_start, line_end))
+                    = (line_no + 1 < line_offsets.size()) ? (buf + line_offsets[line_no + 1] - 1) : buf_end;
+                if (filter.PassFilter(line_start, line_end))
                     DrawColorizedLine(line_start, line_end);
             }
         }
@@ -145,14 +145,14 @@ void LogWindow::RenderContent()
             // anymore, which is why we don't use the clipper. Storing or skimming through the search result would make
             // it possible (and would be recommended if you want to search through tens of thousands of entries).
             ImGuiListClipper clipper;
-            clipper.Begin(LineOffsets.size());
+            clipper.Begin(line_offsets.size());
             while (clipper.Step())
             {
                 for (int line_no = clipper.DisplayStart; line_no < clipper.DisplayEnd; line_no++)
                 {
-                    const char* line_start = buf + LineOffsets[line_no];
+                    const char* line_start = buf + line_offsets[line_no];
                     const char* line_end
-                        = (line_no + 1 < LineOffsets.size()) ? (buf + LineOffsets[line_no + 1] - 1) : buf_end;
+                        = (line_no + 1 < line_offsets.size()) ? (buf + line_offsets[line_no + 1] - 1) : buf_end;
 
                     DrawColorizedLine(line_start, line_end);
                 }
@@ -163,7 +163,7 @@ void LogWindow::RenderContent()
 
         // Keep up at the bottom of the scroll region if we were already at the bottom at the beginning of the frame.
         // Using a scrollbar or mouse-wheel will take away from the bottom edge.
-        if (AutoScroll && ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
+        if (auto_scroll && ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
             ImGui::SetScrollHereY(1.0f);
     }
     ImGui::EndChild();
@@ -177,13 +177,13 @@ void LogWindow::DrawColorizedLine(const char* line_start, const char* line_end) 
 
     if (strncmp(line_start + 1, Warning, strlen(Warning)) == 0)
     {
-        ImGui::PushStyleColor(ImGuiCol_Text, LogColors.WarningColor);
+        ImGui::PushStyleColor(ImGuiCol_Text, log_colors.WarningColor);
         ImGui::TextUnformatted(line_start, line_end);
         ImGui::PopStyleColor();
     }
     else if (strncmp(line_start + 1, Error, strlen(Error)) == 0)
     {
-        ImGui::PushStyleColor(ImGuiCol_Text, LogColors.ErrorColor);
+        ImGui::PushStyleColor(ImGuiCol_Text, log_colors.ErrorColor);
         ImGui::TextUnformatted(line_start, line_end);
         ImGui::PopStyleColor();
     }
@@ -194,5 +194,5 @@ void LogWindow::DrawColorizedLine(const char* line_start, const char* line_end) 
 }
 
 
-ImGuiTextBuffer LogWindow::Buf{};
-std::vector<int> LogWindow::LineOffsets{0};
+ImGuiTextBuffer LogWindow::buffer{};
+std::vector<int> LogWindow::line_offsets{0};

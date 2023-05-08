@@ -60,40 +60,40 @@ void MainWindow::RenderContent()
         }
     }
 
-    // if (ImGui::Button("Authorization"))
-    // {
-    //     if (windowManager)
-    //     {
-    //         if (Window* loginWindow = windowManager->GetWindowByTitle("Login"))
-    //         {
-    //             loginWindow->ToggleVisible();
-    //         }
-    //     }
-    // }
+    if (ImGui::Button("Authorization"))
+    {
+        if (windowManager)
+        {
+            if (Window* loginWindow = windowManager->GetWindowByTitle("Login"))
+            {
+                loginWindow->ToggleVisible();
+            }
+        }
+    }
 
-    // if (ImGui::Button("Add Log message"))
-    // {
-    //     LOG("Simple %d message example", 123);
-    //     LOG(LogLevel::wrn, "wrn message example");
-    //     LogWindow::Add(LogLevel::err, "err message example");
-    //    
-    //     if (Window* log = static_cast<LogWindow*>(windowManager->GetWindowByTitle("Log")))
-    //     {
-    //         log->SetVisible(true);
-    //     }
-    // }
-    //
-    // if (ImGui::Button("Add Console message"))
-    // {
-    //     CONSOLE("Simple %d message example", 123);
-    //     CONSOLE(LogLevel::wrn, "wrn message example");
-    //     ConsoleWindow::Add(LogLevel::err, "err message example");
-    //
-    //     if (Window* log = static_cast<LogWindow*>(windowManager->GetWindowByTitle("Console")))
-    //     {
-    //         log->SetVisible(true);
-    //     }
-    // }
+    if (ImGui::Button("Add Log message"))
+    {
+        LOG("Simple %d message example", 123);
+        LOG(LogLevel::wrn, "wrn message example");
+        LogWindow::Add(LogLevel::err, "err message example");
+       
+        if (Window* log = static_cast<LogWindow*>(windowManager->GetWindowByTitle("Log")))
+        {
+            log->SetVisible(true);
+        }
+    }
+    
+    if (ImGui::Button("Add Console message"))
+    {
+        CONSOLE("Simple %d message example", 123);
+        CONSOLE(LogLevel::wrn, "wrn message example");
+        ConsoleWindow::Add(LogLevel::err, "err message example");
+    
+        if (Window* log = static_cast<LogWindow*>(windowManager->GetWindowByTitle("Console")))
+        {
+            log->SetVisible(true);
+        }
+    }
 }
 
 
