@@ -2,11 +2,16 @@
 
 #include "Server.h"
 
+#include <Poco/Util/HelpFormatter.h>
+#include "Protocol/SimpleProtocol.h"
+
 #include "MessengerServer.h"
 #include "ServerSocketHandler.h"
 #include "ServerSocketAcceptor.h"
-#include "Protocol/SimpleProtocol.h"
 
+using Poco::Util::Option;
+using Poco::Util::HelpFormatter;
+using Poco::Thread;
 
 void Server::initialize(Application& self)
 {

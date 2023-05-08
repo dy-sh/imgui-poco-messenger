@@ -4,6 +4,8 @@
 #include <Poco/Net/SocketAcceptor.h>
 #include "Protocol/IProtocol.h"
 
+using Poco::Net::ServerSocket;
+
 class ServerSocketAcceptor : public SocketAcceptor<ServerSocketHandler>
 {
     IProtocol& protocol;

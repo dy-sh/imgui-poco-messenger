@@ -1,9 +1,17 @@
 ﻿// Copyright 2023 Dmitry Savosh <d.savosh@gmail.com>
 
 #include "ServerSocketHandler.h"
+
+#include <Poco/Delegate.h>
+#include <Poco/NObserver.h>
+#include <Poco/Util/Application.h>
+
 #include "MessengerServer.h"
 #include "Protocol/IProtocol.h"
 
+using Poco::Util::Application;
+using Poco::NObserver;
+using Poco::delegate;
 
 ServerSocketHandler::ServerSocketHandler(StreamSocket& socket, SocketReactor& reactor,
                                          IProtocol& protocol, MessengerServer& messenger):
