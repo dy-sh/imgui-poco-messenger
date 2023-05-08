@@ -29,9 +29,9 @@ struct LogWindow : public Window
     bool AutoScroll = true; // Keep scrolling if already at the bottom.
 
     static void Clear();
-    static void AddRaw(const char* fmt, ...) IM_FMTARGS(2);
-    static void Add(const char* fmt, ...) IM_FMTARGS(2);
-    static void Add(LogLevel level, const char* fmt, ...) IM_FMTARGS(3);
+    static void AddRaw(const char* fmt, ...);
+    static void Add(const char* fmt, ...);
+    static void Add(LogLevel level, const char* fmt, ...);
     void RenderContent() override;
     void DrawColorizedLine(const char* line_start, const char* line_end) const;
 };

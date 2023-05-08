@@ -9,6 +9,7 @@
 #include "Theme/DefaultStyle.h"
 #include "Tools/Console.h"
 #include "Tools/Log.h"
+#include "Window/ChatWindow.h"
 #include "Window/WindowManager.h"
 #include "Window/LoginWindow.h"
 #include "Window/MainWindow.h"
@@ -42,6 +43,7 @@ public:
         windowManager.AddWindow(std::make_unique<ConsoleWindow>("Console", false));
         windowManager.AddWindow(std::make_unique<LogWindow>("Log", false));
         windowManager.AddWindow(std::make_unique<LoginWindow>("Login", false));
+        windowManager.AddWindow(std::make_unique<ChatWindow>("Chat", true));
     }
 
 

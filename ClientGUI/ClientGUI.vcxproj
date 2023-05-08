@@ -164,6 +164,7 @@
   <ItemGroup>
     <ClCompile Include="Tools\Console.cpp" />
     <ClCompile Include="Tools\Log.cpp" />
+    <ClCompile Include="Window\ChatWindow.cpp" />
     <ClCompile Include="Window\LoginWindow.cpp" />
     <ClCompile Include="Window\MainWindow.cpp" />
     <ClCompile Include="..\Lib\imgui-1.89.5\imgui.cpp" />
@@ -263,6 +264,7 @@
     <ClInclude Include="Theme\DefaultStyle.h" />
     <ClInclude Include="Theme\Style.h" />
     <ClInclude Include="Utils\Utils.h" />
+    <ClInclude Include="Window\ChatWindow.h" />
     <ClInclude Include="Window\LoginWindow.h" />
     <ClInclude Include="Window\MainWindow.h" />
     <ClInclude Include="Window\Window.h" />

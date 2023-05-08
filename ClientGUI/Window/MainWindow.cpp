@@ -16,6 +16,14 @@ using namespace std;
 using namespace Poco::Net;
 
 
+MainWindow::MainWindow(const std::string& title, WindowManager* windowManager, bool visible): MaximizedWindow(title, visible), windowManager(windowManager)
+{
+    //todo temporary
+    client = new Client();
+    SocketAddress address = SocketAddress(server_address, server_port);
+    client->Connect(address);
+}
+
 
 void MainWindow::RenderContent()
 {
@@ -25,7 +33,7 @@ void MainWindow::RenderContent()
 
     
     ImGui::InputText("Address", server_address, sizeof(server_address));
-
+    
     if (ImGui::Button("Connect"))
     {
         LOG("Connecting to %s:%d ...",server_address,server_port);
@@ -37,6 +45,7 @@ void MainWindow::RenderContent()
         client->Connect(address);
     }
     
+    ImGui:: SameLine();
     if (ImGui::Button("Disconnect"))
     {
         if (client)

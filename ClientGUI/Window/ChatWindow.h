@@ -1,23 +1,23 @@
-//
+﻿//
 // Created by Dmitry Savosh on 19.04.2023.
 //
 
 #pragma once
 
-#include "Debug.h"
+
 #include "imgui.h"
 #include "../Window/Window.h"
 
-struct AppConsoleColors
+struct AppChatColors
 {
     ImVec4 ErrorColor   = ImVec4( 1.0f, 0.3f, 0.3f, 1.0f );
     ImVec4 WarningColor = ImVec4( 1.0f, 0.8f, 0.6f, 1.0f );
 };
 
-class ConsoleWindow:public Window
+class ChatWindow:public Window
 {
 public:
-    AppConsoleColors ConsoleColors;
+    AppChatColors ChatColors;
 
     char InputBuf[256]{};
     static ImVector<char*> Items;
@@ -29,17 +29,19 @@ public:
     bool ScrollToBottom = false;
 
 
-    ConsoleWindow(const std::string& title, bool visible);
+    ChatWindow(const std::string& title, bool visible);
 
-    ~ConsoleWindow();
+    ~ChatWindow();
     
     static void Clear();
-    static void Add( const char* fmt, ... );
-    static void Add(LogLevel level, const char* fmt, ...);
+    static void Add( const char* fmt, ... ) IM_FMTARGS( 2 );
     void RenderContent() override;
+    void Send();
     void ExecCommand( const char* command_line );
     int TextEditCallback( ImGuiInputTextCallbackData* data );
     void Help();
+private:
+    bool set_focus_on_textfield{true};
 };
 
 

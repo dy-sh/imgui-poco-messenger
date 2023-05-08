@@ -10,11 +10,6 @@ using namespace std;
 
 void LoginWindow::RenderContent()
 {
-    static char login[LOGIN_LENGTH] = "";
-    static char password[PASS_LENGTH] = "";
-
-    static bool incorrectCredentials = false; // флаг неправильного ввода
-
     ImGui::SetCursorPos({40, 50});
     ImGui::InputText("User", login, sizeof(login));
     ImGui::SetCursorPos({40, 100});
@@ -41,7 +36,7 @@ void LoginWindow::RenderContent()
 }
 
 
-bool LoginWindow::CheckCredentials(char login[LOGIN_LENGTH], char password[PASS_LENGTH])
+bool LoginWindow::CheckCredentials(const char* login, const char* password)
 {
     return login == correct_login && password == correct_password;
 }

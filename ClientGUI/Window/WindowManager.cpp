@@ -1,7 +1,7 @@
 ﻿// Copyright 2023 Dmitry Savosh <d.savosh@gmail.com>
 
 #include "WindowManager.h"
-
+#include <algorithm>
 
 void WindowManager::Render()
 {
