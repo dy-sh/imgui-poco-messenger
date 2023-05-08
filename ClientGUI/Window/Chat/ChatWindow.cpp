@@ -1,6 +1,4 @@
-﻿//
-// Created by Dmitry Savosh on 19.04.2023.
-//
+﻿// Copyright 2023 Dmitry Savosh <d.savosh@gmail.com>
 
 #define _CRT_SECURE_NO_WARNINGS 1
 
@@ -10,7 +8,7 @@
 #include <sstream>
 #include "../../Utils/Utils.h"
 #include "ChatWindow.h"
-#include "CommandsExecutor.h"
+#include "ConsoleCommandsExecutor.h"
 
 
 static int TextEditCallbackStub(ImGuiInputTextCallbackData* data)
@@ -23,7 +21,7 @@ static int TextEditCallbackStub(ImGuiInputTextCallbackData* data)
 ChatWindow::ChatWindow(const std::string& title, bool visible, Client* client)
     : Window(title, visible, {700, 400}), client{client}
 {
-    commands_executor = new CommandsExecutor(this);
+    commands_executor = new ConsoleCommandsExecutor(this);
     Clear();
 }
 
@@ -37,9 +35,9 @@ ChatWindow::~ChatWindow()
 
 void ChatWindow::Clear()
 {
-    for (int i = 0; i < Items.Size; i++)
-        free(Items[i]);
-    Items.clear();
+    for (int i = 0; i < items.Size; i++)
+        free(items[i]);
+    items.clear();
 }
 
 
@@ -52,7 +50,7 @@ void ChatWindow::Print(const char* fmt, ...)
     vsnprintf(buf, IM_ARRAYSIZE(buf), fmt, args);
     buf[IM_ARRAYSIZE(buf) - 1] = 0;
     va_end(args);
-    Items.push_back(Strdup(buf));
+    items.push_back(Strdup(buf));
 }
 
 
@@ -81,7 +79,7 @@ void ChatWindow::RenderContent()
     ImGui::SameLine();
     if (ImGui::SmallButton("Help"))
     {
-        commands_executor->Help();
+        commands_executor->ExecCommand("/HELP");
     }
 
     static bool spam = false;
@@ -96,7 +94,7 @@ void ChatWindow::RenderContent()
     // Options menu
     if (ImGui::BeginPopup("Options"))
     {
-        ImGui::Checkbox("Auto-scroll", &AutoScroll);
+        ImGui::Checkbox("Auto-scroll", &auto_scroll);
         ImGui::EndPopup();
     }
 
@@ -105,7 +103,7 @@ void ChatWindow::RenderContent()
     if (ImGui::SmallButton("Options"))
         ImGui::OpenPopup("Options");
     ImGui::SameLine();
-    Filter.Draw("Search", 180);
+    filter.Draw("Search", 180);
     ImGui::Separator();
 
     // Reserve enough left-over height for 1 separator + 1 input text
@@ -147,10 +145,10 @@ void ChatWindow::RenderContent()
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1)); // Tighten spacing
         if (copy_to_clipboard)
             ImGui::LogToClipboard();
-        for (int i = 0; i < Items.Size; i++)
+        for (int i = 0; i < items.Size; i++)
         {
-            const char* item = Items[i];
-            if (!Filter.PassFilter(item))
+            const char* item = items[i];
+            if (!filter.PassFilter(item))
                 continue;
 
             // Normally you would store more information in your item than just a string.
@@ -183,9 +181,9 @@ void ChatWindow::RenderContent()
 
         // Keep up at the bottom of the scroll region if we were already at the bottom at the beginning of the frame.
         // Using a scrollbar or mouse-wheel will take away from the bottom edge.
-        if (ScrollToBottom || (AutoScroll && ImGui::GetScrollY() >= ImGui::GetScrollMaxY()))
+        if (scroll_to_bottom || (auto_scroll && ImGui::GetScrollY() >= ImGui::GetScrollMaxY()))
             ImGui::SetScrollHereY(1.0f);
-        ScrollToBottom = false;
+        scroll_to_bottom = false;
 
         ImGui::PopStyleVar();
     }
@@ -204,7 +202,7 @@ void ChatWindow::RenderContent()
     ImGuiInputTextFlags input_text_flags = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_EscapeClearsAll
         | ImGuiInputTextFlags_CallbackCompletion
         | ImGuiInputTextFlags_CallbackHistory;
-    if (ImGui::InputText("Message", InputBuf, IM_ARRAYSIZE(InputBuf), input_text_flags, &TextEditCallbackStub,
+    if (ImGui::InputText("Message", input_buf, IM_ARRAYSIZE(input_buf), input_text_flags, &TextEditCallbackStub,
                          (void*)this))
     {
         ProceedMessageTextField();
@@ -227,12 +225,13 @@ void ChatWindow::Send(const char* s)
 
 void ChatWindow::ProceedMessageTextField()
 {
-    char* s = InputBuf;
+    char* s = input_buf;
     Strtrim(s);
 
     if (s[0] == '/') //command
     {
         commands_executor->ExecCommand(s);
+        scroll_to_bottom = true;
     }
 
     if (s[0] != 0) //not empty line

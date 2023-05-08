@@ -1,4 +1,6 @@
-﻿#include "Window.h"
+﻿// Copyright 2023 Dmitry Savosh <d.savosh@gmail.com>
+
+#include "Window.h"
 
 
 void Window::Render()

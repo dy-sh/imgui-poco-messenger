@@ -1,4 +1,6 @@
-﻿#include "CommandsExecutor.h"
+﻿// Copyright 2023 Dmitry Savosh <d.savosh@gmail.com>
+
+#include "ConsoleCommandsExecutor.h"
 
 #include "ChatWindow.h"
 #include "../../Utils/Utils.h"
@@ -7,28 +9,27 @@
 #include <iomanip>
 #include <sstream>
 
-void CommandsExecutor::Print(const char* fmt, ...)
+
+void ConsoleCommandsExecutor::Print(const char* fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
     int length = vsnprintf(nullptr, 0, fmt, args); // Determine the length of the formatted string
     std::string buffer(length, '\0'); // Allocate a buffer to store the formatted string
     vsnprintf(&buffer[0], length + 1, fmt, args); // Format the string into the buffer
-    window->Print( "%s", buffer.c_str()); // Add the formatted string to the log
+    window->Print("%s", buffer.c_str()); // Add the formatted string to the log
 }
 
 
-
-void CommandsExecutor::ClearHistory()
+void ConsoleCommandsExecutor::ClearHistory()
 {
-    for (int i = 0; i < History.Size; i++)
-        free(History[i]);
+    for (int i = 0; i < history.size(); i++)
+        free(history[i]);
 }
 
-void CommandsExecutor::TextCompletion(ImGuiInputTextCallbackData* data)
-{
-    // Example of TEXT COMPLETION
 
+void ConsoleCommandsExecutor::TextCompletion(ImGuiInputTextCallbackData* data)
+{
     // Locate beginning of current word
     const char* word_end = data->Buf + data->CursorPos;
     const char* word_start = word_end;
@@ -42,9 +43,9 @@ void CommandsExecutor::TextCompletion(ImGuiInputTextCallbackData* data)
 
     // Build a list of candidates
     ImVector<const char*> candidates;
-    for (int i = 0; i < Commands.Size; i++)
-        if (Strnicmp(Commands[i], word_start, (int)(word_end - word_start)) == 0)
-            candidates.push_back(Commands[i]);
+    for (int i = 0; i < commands.size(); i++)
+        if (Strnicmp(commands[i]->command, word_start, (int)(word_end - word_start)) == 0)
+            candidates.push_back(commands[i]->command);
 
     if (candidates.Size == 0)
     {
@@ -90,90 +91,63 @@ void CommandsExecutor::TextCompletion(ImGuiInputTextCallbackData* data)
     }
 }
 
-void CommandsExecutor::ShowCommandFromHistory(ImGuiInputTextCallbackData* data)
+
+void ConsoleCommandsExecutor::ShowCommandFromHistory(ImGuiInputTextCallbackData* data)
 {
     // Example of HISTORY
-    const int prev_history_pos = HistoryPos;
+    const int prev_history_pos = history_pos;
     if (data->EventKey == ImGuiKey_UpArrow)
     {
-        if (HistoryPos == -1)
-            HistoryPos = History.Size - 1;
-        else if (HistoryPos > 0)
-            HistoryPos--;
+        if (history_pos == -1)
+            history_pos = history.size() - 1;
+        else if (history_pos > 0)
+            history_pos--;
     }
     else if (data->EventKey == ImGuiKey_DownArrow)
     {
-        if (HistoryPos != -1)
-            if (++HistoryPos >= History.Size)
-                HistoryPos = -1;
+        if (history_pos != -1)
+            if (++history_pos >= history.size())
+                history_pos = -1;
     }
 
     // A better implementation would preserve the data on the current input line along with cursor position.
-    if (prev_history_pos != HistoryPos)
+    if (prev_history_pos != history_pos)
     {
-        const char* history_str = (HistoryPos >= 0) ? History[HistoryPos] : "";
+        const char* history_str = (history_pos >= 0) ? history[history_pos] : "";
         data->DeleteChars(0, data->BufTextLen);
         data->InsertChars(0, history_str);
     }
 }
 
-void CommandsExecutor::ExecCommand(const char* command_line)
+
+void ConsoleCommandsExecutor::ExecCommand(const char* command_line)
 {
     Print("# %s\n", command_line);
 
     // Insert into history. First find match and delete it so it can be pushed to the back.
     // This isn't trying to be smart or optimal.
-    HistoryPos = -1;
-    for (int i = History.Size - 1; i >= 0; i--)
-        if (Stricmp(History[i], command_line) == 0)
+    history_pos = -1;
+    for (int i = history.size() - 1; i >= 0; i--)
+        if (Stricmp(history[i], command_line) == 0)
         {
-            free(History[i]);
-            History.erase(History.begin() + i);
+            free(history[i]);
+            history.erase(history.begin() + i);
             break;
         }
-    History.push_back(Strdup(command_line));
+    history.push_back(Strdup(command_line));
 
-    // Process command
-    if (Stricmp(command_line, "/CLEAR") == 0)
+    bool found = false;
+    for (auto& command : commands)
     {
-        window->Clear();
+        if (command->IsValidCommand(command_line))
+        {
+            command->Execute(command_line);
+            found = true;
+            break;
+        }
     }
-    else if (Stricmp(command_line, "/HELP") == 0)
-    {
-        Help();
-    }
-    else if (Stricmp(command_line, "/HISTORY") == 0)
-    {
-        int first = History.Size - 10;
-        for (int i = first > 0 ? first : 0; i < History.Size; i++)
-            Print("%3d: %s\n", i, History[i]);
-    }
-    else
+    if (!found)
     {
         Print("Unknown command: '%s'\n", command_line);
     }
-
-    // On command input, we scroll to bottom even if AutoScroll==false
-    window->ScrollToBottom = true;
 }
-
-
-void CommandsExecutor::Help()
-{
-    Print("This example implements a Chat with basic coloring, completion (TAB key) and history (Up/Down keys). A "
-        "more elaborate "
-        "implementation may want to store entries along with extra data such as timestamp, emitter, etc.");
-    Print("Log levels:");
-    Print("[inf] something ok");
-    Print("[wrn] something important");
-    Print("[err] something critical");
-    Print(R"(Filter syntax:  "inclide, -exclude" (example: "help, -hist, -wrn"))");
-    Print("Commands:");
-    for (int i = 0; i < Commands.Size; i++)
-        Print("- %s", Commands[i]);
-
-    window->Filter.Clear();
-}
-
-
-

@@ -239,7 +239,11 @@
       <AdditionalIncludeDirectories>;C:\Users\derwi\AppData\Roaming\vcpkg\installed\x64-windows\include;..\Core;..\Lib\imgui-1.89.5;..\Lib\imgui-1.89.5\backends;..\Lib\glfw\include;..\ClientNetworking;../Lib/poco/Foundation/include;../Lib/poco/Net/include;../Lib/poco/Util/include;C:\Users\derwi\AppData\Roaming\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
       <LibCompiled>true</LibCompiled>
     </ClCompile>
-    <ClCompile Include="Window\Chat\CommandsExecutor.cpp" />
+    <ClCompile Include="Window\Chat\Commands\ClearConsoleCommand.cpp" />
+    <ClCompile Include="Window\Chat\Commands\HelpConsoleCommand.cpp" />
+    <ClCompile Include="Window\Chat\Commands\HistoryConsoleCommand.cpp" />
+    <ClCompile Include="Window\Chat\ConsoleCommand.cpp" />
+    <ClCompile Include="Window\Chat\ConsoleCommandsExecutor.cpp" />
     <ClCompile Include="Window\LoginWindow.cpp" />
     <ClCompile Include="Window\MainWindow.cpp" />
     <ClCompile Include="..\Lib\imgui-1.89.5\imgui.cpp" />
@@ -340,7 +344,12 @@
     <ClInclude Include="Theme\Style.h" />
     <ClInclude Include="Utils\Utils.h" />
     <ClInclude Include="Window\Chat\ChatWindow.h" />
-    <ClInclude Include="Window\Chat\CommandsExecutor.h" />
+    <ClInclude Include="Window\Chat\Commands\ClearConsoleCommand.h" />
+    <ClInclude Include="Window\Chat\Commands\HelpConsoleCommand.h" />
+    <ClInclude Include="Window\Chat\Commands\HistoryConsoleCommand.h" />
+    <ClInclude Include="Window\Chat\ConsoleCommand.h" />
+    <ClInclude Include="Window\Chat\ConsoleCommandsExecutor.h" />
+    <ClInclude Include="Window\Chat\IConsoleWindow.h" />
     <ClInclude Include="Window\LoginWindow.h" />
     <ClInclude Include="Window\MainWindow.h" />
     <ClInclude Include="Window\Window.h" />

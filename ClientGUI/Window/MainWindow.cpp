@@ -1,6 +1,4 @@
-//
-// Created by Dmitry Savosh on 18.04.2023.
-//
+// Copyright 2023 Dmitry Savosh <d.savosh@gmail.com>
 
 #include "Poco/Net/StreamSocket.h"
 #include "Poco/Net/SocketAddress.h"

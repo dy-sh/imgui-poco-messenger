@@ -1,16 +1,14 @@
-﻿//
-// Created by Dmitry Savosh on 19.04.2023.
-//
+﻿// Copyright 2023 Dmitry Savosh <d.savosh@gmail.com>
 
 #pragma once
 
 
-
+#include "IConsoleWindow.h"
 #include "imgui.h"
 #include "../Window.h"
 
 
-class CommandsExecutor;
+class ConsoleCommandsExecutor;
 class Client;
 
 struct AppChatColors
@@ -19,25 +17,26 @@ struct AppChatColors
     ImVec4 WarningColor = ImVec4( 1.0f, 0.8f, 0.6f, 1.0f );
 };
 
-class ChatWindow:public Window
+class ChatWindow:public Window, public IConsoleWindow
 {
 public:
     AppChatColors chat_colors;
-    CommandsExecutor* commands_executor;
+    ConsoleCommandsExecutor* commands_executor;
 
-    char InputBuf[256]{};
-    ImVector<char*> Items;
-    ImGuiTextFilter Filter;
-    bool AutoScroll     = true;
-    bool ScrollToBottom = false;
+    char input_buf[256]{};
+    ImVector<char*> items;
+    ImGuiTextFilter filter;
+    bool auto_scroll     = true;
+    bool scroll_to_bottom = false;
 
 
     ChatWindow(const std::string& title, bool visible, Client* client);
 
     ~ChatWindow();
     
-    void Clear();
-    void Print( const char* fmt, ... );
+    void Clear() override;
+    void Print( const char* fmt, ... ) override;
+    void ClearFilter() override{filter.Clear();}
     void RenderContent() override;
     void Send(const char* s);
     void ProceedMessageTextField();

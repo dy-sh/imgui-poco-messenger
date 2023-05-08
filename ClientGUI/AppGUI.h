@@ -1,6 +1,4 @@
-//
-// Created by Dmitry Savosh on 19.04.2023.
-//
+// Copyright 2023 Dmitry Savosh <d.savosh@gmail.com>
 
 #pragma once
 #include <memory>
@@ -16,7 +14,7 @@ class AppGUI
 public:
     Client* client;
 
-    WindowManager windowManager;
+    WindowManager window_manager;
     std::unique_ptr<Style> style;
 
     bool show_debug_toolbar = true;

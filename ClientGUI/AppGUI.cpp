@@ -1,4 +1,6 @@
-﻿#include "AppGUI.h"
+﻿// Copyright 2023 Dmitry Savosh <d.savosh@gmail.com>
+
+#include "AppGUI.h"
 
 #include "Tools/Debug.h"
 #include "imgui.h"
@@ -15,11 +17,11 @@ AppGUI::AppGUI()
 {
     client = new Client();
     style = std::make_unique<DefaultStyle>();
-    windowManager.AddWindow(std::make_unique<MainWindow>("Main",  true, &windowManager, client));
-    windowManager.AddWindow(std::make_unique<ConsoleWindow>("Console", false));
-    windowManager.AddWindow(std::make_unique<LogWindow>("Log", false));
-    windowManager.AddWindow(std::make_unique<LoginWindow>("Login", false));
-    windowManager.AddWindow(std::make_unique<ChatWindow>("Chat", true, client));
+    window_manager.AddWindow(std::make_unique<MainWindow>("Main",  true, &window_manager, client));
+    window_manager.AddWindow(std::make_unique<ConsoleWindow>("Console", false));
+    window_manager.AddWindow(std::make_unique<LogWindow>("Log", false));
+    window_manager.AddWindow(std::make_unique<LoginWindow>("Login", false));
+    window_manager.AddWindow(std::make_unique<ChatWindow>("Chat", true, client));
 }
 
 
@@ -45,7 +47,7 @@ void AppGUI::Render()
     if (use_key_for_log && ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_X)
         && ImGui::IsKeyDown(ImGuiKey::ImGuiKey_ModAlt))
     {
-        if (Window* logWindow = windowManager.GetWindowByTitle("Log"))
+        if (Window* logWindow = window_manager.GetWindowByTitle("Log"))
         {
             logWindow->ToggleVisible();
         }
@@ -54,7 +56,7 @@ void AppGUI::Render()
     if (use_key_for_console && ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_C)
         && ImGui::IsKeyDown(ImGuiKey::ImGuiKey_ModAlt))
     {
-        if (Window* consoleWindow = windowManager.GetWindowByTitle("Console"))
+        if (Window* consoleWindow = window_manager.GetWindowByTitle("Console"))
         {
             consoleWindow->ToggleVisible();
         }
@@ -63,7 +65,7 @@ void AppGUI::Render()
     if (show_debug_toolbar)
         ShowDebugToolbar();
 
-    windowManager.Render();
+    window_manager.Render();
 
     RenderDebugWindows();
 }
@@ -97,14 +99,14 @@ void AppGUI::ShowDebugToolbar()
     {
         if (ImGui::BeginMenu("Debug"))
         {
-            if (Window* console = windowManager.GetWindowByTitle("Console"))
+            if (Window* console = window_manager.GetWindowByTitle("Console"))
             {
                 bool show_console = console->IsVisible();
                 ImGui::MenuItem("Console (Alt + C)", NULL, &show_console);
                 console->SetVisible(show_console);
             }
 
-            if (Window* console = windowManager.GetWindowByTitle("Log"))
+            if (Window* console = window_manager.GetWindowByTitle("Log"))
             {
                 bool show_log = console->IsVisible();
                 ImGui::MenuItem("Log (Alt + X)", NULL, &show_log);
@@ -136,5 +138,5 @@ void AppGUI::Exit()
 
 void AppGUI::OnExit()
 {
-    windowManager.OnExit();
+    window_manager.OnExit();
 }
