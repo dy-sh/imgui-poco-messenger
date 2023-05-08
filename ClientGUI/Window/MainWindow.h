@@ -9,10 +9,10 @@
 class WindowManager;
 class Client;
 
-class MainWindow : public MaximizedWindow 
+class MainWindow : public MaximizedWindow
 {
 public:
-    MainWindow(const std::string& title, WindowManager* windowManager, bool visible = true);
+    MainWindow(const std::string& title, bool visible, WindowManager* windowManager, Client* client);
 
 
     void RenderContent() override;

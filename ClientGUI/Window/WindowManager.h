@@ -3,7 +3,6 @@
 #pragma once
 #include <vector>
 #include <string>
-#include <imgui.h>
 #include <memory>
 
 #include "Window.h"

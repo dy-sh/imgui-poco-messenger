@@ -16,12 +16,12 @@ using namespace std;
 using namespace Poco::Net;
 
 
-MainWindow::MainWindow(const std::string& title, WindowManager* windowManager, bool visible): MaximizedWindow(title, visible), windowManager(windowManager)
+MainWindow::MainWindow(const std::string& title, bool visible, WindowManager* windowManager, Client* client):
+    MaximizedWindow(title, visible), client{client}, windowManager{windowManager}
 {
     //todo temporary
-    client = new Client();
     SocketAddress address = SocketAddress(server_address, server_port);
-    client->Connect(address);
+    client->Connect(address);        
 }
 
 
@@ -31,12 +31,12 @@ void MainWindow::RenderContent()
     ImGui::Spacing();
     ImGui::Spacing();
 
-    
+
     ImGui::InputText("Address", server_address, sizeof(server_address));
-    
+
     if (ImGui::Button("Connect"))
     {
-        LOG("Connecting to %s:%d ...",server_address,server_port);
+        LOG("Connecting to %s:%d ...", server_address, server_port);
 
         if (!client)
             client = new Client();
@@ -44,8 +44,8 @@ void MainWindow::RenderContent()
         SocketAddress address = SocketAddress(server_address, server_port);
         client->Connect(address);
     }
-    
-    ImGui:: SameLine();
+
+    ImGui::SameLine();
     if (ImGui::Button("Disconnect"))
     {
         if (client)
@@ -53,7 +53,7 @@ void MainWindow::RenderContent()
             client->Disconnect();
         }
     }
-    
+
     if (ImGui::Button("Send"))
     {
         if (client)
@@ -106,5 +106,3 @@ void MainWindow::OnExit()
         client->Disconnect();
     }
 }
-
-
