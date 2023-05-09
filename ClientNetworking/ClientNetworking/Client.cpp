@@ -61,3 +61,7 @@ void Client::ReceiveMessage(Message* message, ClientSocketHandler* socket_handle
 {
     OnReceiveMessage(this,message);
 }
+
+
+
+

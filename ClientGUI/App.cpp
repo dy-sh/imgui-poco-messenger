@@ -21,7 +21,7 @@ App::App()
     window_manager.AddWindow(std::make_unique<ConsoleWindow>("Console", false));
     window_manager.AddWindow(std::make_unique<LogWindow>("Log", false));
     window_manager.AddWindow(std::make_unique<LoginWindow>("Login", false));
-    window_manager.AddWindow(std::make_unique<ChatWindow>("Chat", true, client));
+    window_manager.AddWindow(std::make_unique<ChatWindow>("Chat", false, client));
 }
 
 
@@ -47,18 +47,18 @@ void App::Render()
     if (use_key_for_log && ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_X)
         && ImGui::IsKeyDown(ImGuiKey::ImGuiKey_ModAlt))
     {
-        if (Window* logWindow = window_manager.GetWindowByTitle("Log"))
+        if (Window* log_window = window_manager.GetWindowByTitle("Log"))
         {
-            logWindow->ToggleVisible();
+            log_window->ToggleVisible();
         }
     }
 
     if (use_key_for_console && ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_C)
         && ImGui::IsKeyDown(ImGuiKey::ImGuiKey_ModAlt))
     {
-        if (Window* consoleWindow = window_manager.GetWindowByTitle("Console"))
+        if (Window* console_window = window_manager.GetWindowByTitle("Console"))
         {
-            consoleWindow->ToggleVisible();
+            console_window->ToggleVisible();
         }
     }
 

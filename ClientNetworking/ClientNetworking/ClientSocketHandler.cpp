@@ -21,6 +21,8 @@ ClientSocketHandler::ClientSocketHandler(StreamSocket& socket, SocketReactor& re
 
     fifo_out.readable += delegate(this, &ClientSocketHandler::OnFIFOOutReadable);
     fifo_in.writable += delegate(this, &ClientSocketHandler::OnFIFOInWritable);
+
+    client->OnConnected(this);
 }
 
 
@@ -117,6 +119,7 @@ void ClientSocketHandler::OnSocketWritable(const AutoPtr<WritableNotification>& 
 
 void ClientSocketHandler::OnSocketShutdown(const AutoPtr<ShutdownNotification>& pNf)
 {
+    client->OnDisconnected(this);
     delete this;
 }
 

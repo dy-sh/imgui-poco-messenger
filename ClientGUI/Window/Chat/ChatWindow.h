@@ -44,7 +44,7 @@ public:
     void Send(const char* message);
     void ProceedMessageTextField();
     int MessageTextEditCallback( ImGuiInputTextCallbackData* data );
-    void OnReceiveMessage(const void* pSender,Message*& message);
+    void OnReceiveMessage(const void* sender,Message*& message);
 
 
 private:

@@ -52,12 +52,13 @@ std::pair<std::unique_ptr<Message>, size_t> SimpleProtocol::ParseMessage(const c
         if (messageCreator()->Matches(buffer, from, size)) //todo don't create new instances each time to match
         {
             auto message = std::move(messageCreator());
-            message->Parse(buffer, from, size);
-            return {std::move(message), from + size};
+            if (message->Parse(buffer, from, size))
+            {
+                return {std::move(message), from + size};
+            }
         }
     }
 
     auto message = std::make_unique<InvalidMessage>(buffer, from, size);
-
     return {std::move(message), from + size};
 }

@@ -25,8 +25,15 @@ struct InvalidMessage : Message
 
     bool Parse(const char* buffer, size_t from, size_t size) override
     {
-        text = std::string(buffer + from, size - 1);
-        return true;
+        try
+        {
+            text = std::string(buffer + from, size - 1);
+            return true;
+        }
+        catch (...)
+        {
+            return false;
+        }
     }
 
 

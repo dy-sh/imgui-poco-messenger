@@ -270,11 +270,11 @@ int ChatWindow::MessageTextEditCallback(ImGuiInputTextCallbackData* data)
 }
 
 
-void ChatWindow::OnReceiveMessage(const void* pSender, Message*& message)
+void ChatWindow::OnReceiveMessage(const void* sender, Message*& message)
 {
-    if (auto textMess = dynamic_cast<ServerTextMessage*>(message))
+    if (auto text_mess = dynamic_cast<ServerTextMessage*>(message))
     {
-        std::string mess = textMess->user_name + "> " + textMess->text;
+        std::string mess = text_mess->user_name + "> " + text_mess->text;
         Print(mess.c_str());
     }
     else

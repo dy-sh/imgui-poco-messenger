@@ -6,14 +6,15 @@
 #include "Protocol/Messages/InvalidMessage.h"
 #include "Protocol/Messages/ClientTextMessage.h"
 #include "ServerUser.h"
+#include "Protocol/Messages/ServerErrorMessage.h"
 
 
 std::vector<ServerUser*> Server::GetAllAuthorizedUsers()
 {
-    std::vector<ServerUser*> authorizedUsers;
-    authorizedUsers.reserve(users.size());
+    std::vector<ServerUser*> authorized_users;
+    authorized_users.reserve(users.size());
 
-    std::transform(users.begin(), users.end(), std::back_inserter(authorizedUsers), [](const auto& userPair)
+    std::transform(users.begin(), users.end(), std::back_inserter(authorized_users), [](const auto& userPair)
     {
         if (userPair.second->IsAuthorized())
         {
@@ -26,25 +27,25 @@ std::vector<ServerUser*> Server::GetAllAuthorizedUsers()
     });
 
     //remove nullptrs
-    authorizedUsers.erase(std::remove(authorizedUsers.begin(), authorizedUsers.end(), nullptr), authorizedUsers.end());
+    authorized_users.erase(std::remove(authorized_users.begin(), authorized_users.end(), nullptr), authorized_users.end());
 
-    return authorizedUsers;
+    return authorized_users;
 }
 
 
 void Server::ReceiveMessage(Message* message, ServerSocketHandler* socketHandler)
 {
-    if (auto authMess = dynamic_cast<ClientAuthorizeMessage*>(message))
+    if (const auto auth_mess = dynamic_cast<ClientAuthorizeMessage*>(message))
     {
-        AuthorizeUser(*authMess, socketHandler);
+        AuthorizeUser(*auth_mess, socketHandler);
     }
-    else if (auto textMess = dynamic_cast<ClientTextMessage*>(message))
+    else if (const auto text_mess = dynamic_cast<ClientTextMessage*>(message))
     {
-        ReceiveText(*textMess, socketHandler);
+        ReceiveText(*text_mess, socketHandler);
     }
-    else if (auto invMess = dynamic_cast<InvalidMessage*>(message))
+    else if (const auto inv_mess = dynamic_cast<InvalidMessage*>(message))
     {
-        std::cout << invMess->to_str() << std::endl;
+        std::cout << inv_mess->to_str() << std::endl;
     }
     else
     {
@@ -90,7 +91,7 @@ void Server::ReceiveText(ClientTextMessage& message, ServerSocketHandler* socket
     if (!user || !user->IsAuthorized())
     {
         std::cout << "ERROR: Received text message from unauthorized user." << std::endl;
-        socketHandler->Send("E|NOT_AUTHORIZED;\r\n");
+        socketHandler->Send(ServerErrorMessage::NOT_AUTHORIZED);
         return;
     }
 

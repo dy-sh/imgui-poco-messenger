@@ -3,15 +3,17 @@
 #pragma once
 #include "Message.h"
 
-struct ServerAuthorizeMessage : Message
+struct ServerErrorMessage : Message
 {
     static const std::string type;
 
-    int user_id = 0;
-    std::string user_name;
+    inline const static std::string NOT_AUTHORIZED = "E|0|Not authorized;\r\n";
+
+    int error_id = 0;
+    std::string message;
 
 
-    ServerAuthorizeMessage(char prefix) : Message(prefix)
+    ServerErrorMessage(char prefix) : Message(prefix)
     {
     }
 
@@ -30,11 +32,11 @@ struct ServerAuthorizeMessage : Message
                     if (parsing_part == 0)
                     {
                         std::string num = std::string(buffer + parsing_from, x - parsing_from);
-                        user_id = std::stoi(num);
+                        error_id = std::stoi(num);
                     }
                     else if (parsing_part == 1)
                     {
-                        user_name = std::string(buffer + parsing_from, x - parsing_from - 1);
+                        message = std::string(buffer + parsing_from, x - parsing_from - 1);
                     }
                     parsing_from = x + 1;
                     parsing_part++;
@@ -52,6 +54,6 @@ struct ServerAuthorizeMessage : Message
 
     std::string to_str() const override
     {
-        return "AUTHORIZED: id: " + std::to_string(user_id) + " username: " + user_name;
+        return "ERROR ON SERVER [" + std::to_string(error_id) + "]: " + message;
     }
 };

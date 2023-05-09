@@ -169,6 +169,7 @@
     <ClInclude Include="Protocol\Messages\MessageFactory.h" />
     <ClInclude Include="Protocol\Messages\ClientTextMessage.h" />
     <ClInclude Include="Protocol\Messages\ServerAuthorizeMessage.h" />
+    <ClInclude Include="Protocol\Messages\ServerErrorMessage.h" />
     <ClInclude Include="Protocol\Messages\ServerTextMessage.h" />
     <ClInclude Include="Protocol\SimpleProtocol.h" />
   </ItemGroup>

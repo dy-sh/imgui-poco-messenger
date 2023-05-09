@@ -16,3 +16,7 @@ REGISTER_MESSAGE(ClientTextMessage, 't', "Client_Text");
 
 #include "ServerTextMessage.h"
 REGISTER_MESSAGE(ServerTextMessage, 'T', "Server_Text");
+
+
+#include "ServerErrorMessage.h"
+REGISTER_MESSAGE(ServerErrorMessage, 'E', "Server_Error");

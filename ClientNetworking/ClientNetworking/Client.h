@@ -29,7 +29,10 @@ public:
     void ReceiveText(const ClientTextMessage& text_message, ClientSocketHandler* socket_handler);
     void ReceiveMessage(Message* message, ClientSocketHandler* socket_handler);
 
+    BasicEvent<void> OnConnected;
+    BasicEvent<void> OnDisconnected;
     BasicEvent<Message*> OnReceiveMessage;
+
 private:
     Thread* thread = nullptr;
     ClientThread* client_thread = nullptr;

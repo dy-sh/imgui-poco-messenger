@@ -11,6 +11,7 @@ struct ClientTextMessage : Message
 
     std::string text;
 
+
     ClientTextMessage(char prefix) : Message(prefix)
     {
     }
@@ -18,13 +19,20 @@ struct ClientTextMessage : Message
 
     bool Parse(const char* buffer, size_t from, size_t size) override
     {
-        text = std::string(buffer + from + 2, size - 3);
-        return true;
+        try
+        {
+            text = std::string(buffer + from + 2, size - 3);
+            return true;
+        }
+        catch (...)
+        {
+            return false;
+        }
     }
+
 
     std::string to_str() const override
     {
         return "TEXT: " + text;
     }
 };
-
