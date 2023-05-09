@@ -2,6 +2,7 @@
 
 #include "ClientThread.h"
 
+#include "Client.h"
 #include "ClientSocketHandler.h"
 
 
@@ -13,6 +14,8 @@ void ClientThread::run()
         socket.connect(address);
         handler = new ClientSocketHandler(socket, reactor, protocol, client);
 
+        OnStarted.set();
+        
         reactor.run(); // thread will be blocked here
         // socket.shutdown();
         socket.close();

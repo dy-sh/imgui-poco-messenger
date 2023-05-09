@@ -21,8 +21,6 @@ ClientSocketHandler::ClientSocketHandler(StreamSocket& socket, SocketReactor& re
 
     fifo_out.readable += delegate(this, &ClientSocketHandler::OnFIFOOutReadable);
     fifo_in.writable += delegate(this, &ClientSocketHandler::OnFIFOInWritable);
-
-    client->OnConnected(this);
 }
 
 

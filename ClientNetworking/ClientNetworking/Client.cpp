@@ -27,6 +27,8 @@ void Client::Connect(const SocketAddress& address)
 
     thread = new Thread();
     thread->start(client_thread);
+    client_thread->OnStarted.wait(); // block current thread and wait
+    OnConnected();
 }
 
 
