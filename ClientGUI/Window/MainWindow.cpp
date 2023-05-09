@@ -58,7 +58,7 @@ void MainWindow::RenderContent()
     {
         if (client)
         {
-            client->Send("THello;");
+            client->Send("tHello;");
         }
     }
 

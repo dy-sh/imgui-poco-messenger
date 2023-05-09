@@ -158,20 +158,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Protocol\Messages\AuthorizeMessage.cpp" />
+    <ClCompile Include="Protocol\Messages\ClientAuthorizeMessage.cpp" />
     <ClCompile Include="Protocol\Messages\InvalidMessage.cpp" />
     <ClCompile Include="Protocol\Messages\Message.cpp" />
     <ClCompile Include="Protocol\Messages\MessageFactory.cpp" />
-    <ClCompile Include="Protocol\Messages\TextMessage.cpp" />
+    <ClCompile Include="Protocol\Messages\ClientTextMessage.cpp" />
+    <ClCompile Include="Protocol\Messages\ServerTextMessage.cpp" />
     <ClCompile Include="Protocol\SimpleProtocol.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Protocol\IProtocol.h" />
-    <ClInclude Include="Protocol\Messages\AuthorizeMessage.h" />
+    <ClInclude Include="Protocol\Messages\ClientAuthorizeMessage.h" />
     <ClInclude Include="Protocol\Messages\InvalidMessage.h" />
     <ClInclude Include="Protocol\Messages\Message.h" />
     <ClInclude Include="Protocol\Messages\MessageFactory.h" />
-    <ClInclude Include="Protocol\Messages\TextMessage.h" />
+    <ClInclude Include="Protocol\Messages\ClientTextMessage.h" />
+    <ClInclude Include="Protocol\Messages\ServerTextMessage.h" />
     <ClInclude Include="Protocol\SimpleProtocol.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

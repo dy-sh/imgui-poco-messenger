@@ -7,7 +7,7 @@
 #include "Poco/Delegate.h"
 
 class ClientSocketHandler;
-struct TextMessage;
+struct ClientTextMessage;
 struct Message;
 struct IProtocol;
 class ClientThread;
@@ -26,7 +26,7 @@ public:
     void Disconnect();
     void Send(const char* str);
 
-    void ReceiveText(const TextMessage& text_message, ClientSocketHandler* socket_handler);
+    void ReceiveText(const ClientTextMessage& text_message, ClientSocketHandler* socket_handler);
     void ReceiveMessage(Message* message, ClientSocketHandler* socket_handler);
 
     BasicEvent<Message*> OnReceiveMessage;

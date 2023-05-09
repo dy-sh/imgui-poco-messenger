@@ -11,6 +11,7 @@
 #include "../../Tools/Console/ConsoleCommandsExecutor.h"
 #include "ClientNetworking/Client.h"
 #include "Protocol/Messages/Message.h"
+#include "Protocol/Messages/ServerTextMessage.h"
 using Poco::delegate;
 
 
@@ -225,7 +226,7 @@ void ChatWindow::RenderContent()
 
 void ChatWindow::Send(const char* message)
 {
-    std::string mess = Poco::format("T%s;", std::string(message));
+    std::string mess = Poco::format("t%s;", std::string(message));
     client->Send(mess.c_str());
 }
 
@@ -271,10 +272,13 @@ int ChatWindow::MessageTextEditCallback(ImGuiInputTextCallbackData* data)
 
 void ChatWindow::OnReceiveMessage(const void* pSender, Message*& message)
 {
-    // if (auto textMess = dynamic_cast<TextMessage*>(message))
-    // {
-    //     ReceiveText(*textMess, socket_handler);
-    // }
-
-    Print(message->to_str().c_str());
+    if (auto textMess = dynamic_cast<ServerTextMessage*>(message))
+    {
+        std::string mess = textMess->user_name + "> " + textMess->text;
+        Print(mess.c_str());
+    }
+    else
+    {
+        Print(message->to_str().c_str());
+    }
 }

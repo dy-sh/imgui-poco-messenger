@@ -4,8 +4,8 @@
 #include <vector>
 
 struct Message;
-struct TextMessage;
-struct AuthorizeMessage;
+struct ClientTextMessage;
+struct ClientAuthorizeMessage;
 struct ServerUser;
 class ServerSocketHandler;
 
@@ -20,6 +20,6 @@ private:
     size_t last_user_id{0};
     std::vector<ServerUser*> users;
     // std::vector<TextMessage> messages;
-    void AuthorizeUser(AuthorizeMessage& message, ServerSocketHandler* socketHandler);
-    void ReceiveText(TextMessage& message, ServerSocketHandler* socketHandler);
+    void AuthorizeUser(ClientAuthorizeMessage& message, ServerSocketHandler* socketHandler);
+    void ReceiveText(ClientTextMessage& message, ServerSocketHandler* socketHandler);
 };

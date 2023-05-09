@@ -2,9 +2,9 @@
 
 #include "MessengerServer.h"
 #include "ServerSocketHandler.h"
-#include "Protocol/Messages/AuthorizeMessage.h"
+#include "Protocol/Messages/ClientAuthorizeMessage.h"
 #include "Protocol/Messages/InvalidMessage.h"
-#include "Protocol/Messages/TextMessage.h"
+#include "Protocol/Messages/ClientTextMessage.h"
 #include "ServerUser.h"
 
 
@@ -23,11 +23,11 @@ std::vector<ServerUser*> MessengerServer::GetAllAuthorizedUsers()
 
 void MessengerServer::ReceiveMessage(Message* message, ServerSocketHandler* socketHandler)
 {
-    if (auto authMess = dynamic_cast<AuthorizeMessage*>(message))
+    if (auto authMess = dynamic_cast<ClientAuthorizeMessage*>(message))
     {
         AuthorizeUser(*authMess, socketHandler);
     }
-    else if (auto textMess = dynamic_cast<TextMessage*>(message))
+    else if (auto textMess = dynamic_cast<ClientTextMessage*>(message))
     {
         ReceiveText(*textMess, socketHandler);
     }
@@ -42,7 +42,7 @@ void MessengerServer::ReceiveMessage(Message* message, ServerSocketHandler* sock
 }
 
 
-void MessengerServer::AuthorizeUser(AuthorizeMessage& message, ServerSocketHandler* socketHandler)
+void MessengerServer::AuthorizeUser(ClientAuthorizeMessage& message, ServerSocketHandler* socketHandler)
 {
     ServerUser* user = new ServerUser();
     user->id = ++last_user_id;
@@ -58,7 +58,7 @@ void MessengerServer::AuthorizeUser(AuthorizeMessage& message, ServerSocketHandl
 }
 
 
-void MessengerServer::ReceiveText(TextMessage& message, ServerSocketHandler* socketHandler)
+void MessengerServer::ReceiveText(ClientTextMessage& message, ServerSocketHandler* socketHandler)
 {
     const ServerUser* user = socketHandler->GetUser();
     if (!user || !user->IsAuthorized())
@@ -83,7 +83,7 @@ void MessengerServer::ReceiveText(TextMessage& message, ServerSocketHandler* soc
             if (!auth_user_socket) continue;
 
             auth_user_socket->Send(
-                "TEXT|"
+                "t"
                 + std::to_string(user->id) + "|"
                 + user->nickname + "|"
                 + message.text + ";\r\n");

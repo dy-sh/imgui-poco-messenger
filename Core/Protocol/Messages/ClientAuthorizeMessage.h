@@ -5,21 +5,17 @@
 
 #include "Message.h"
 
-struct TextMessage : Message
+struct ClientAuthorizeMessage : Message
 {
     static const std::string type;
 
     std::string user_name;
-    std::string text;
 
-
-    TextMessage(char prefix) : Message(prefix)
+    ClientAuthorizeMessage(char prefix) : Message(prefix)
     {
     }
-
 
     bool Parse(const char* buffer, size_t from, size_t size) override;
 
     std::string to_str() const override;
 };
-

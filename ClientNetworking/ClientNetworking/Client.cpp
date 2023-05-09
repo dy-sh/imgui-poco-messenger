@@ -52,7 +52,7 @@ void Client::Send(const char* str)
     }
 }
 
-void Client::ReceiveText(const TextMessage& text_message, ClientSocketHandler* socket_handler)
+void Client::ReceiveText(const ClientTextMessage& text_message, ClientSocketHandler* socket_handler)
 {
 }
 
