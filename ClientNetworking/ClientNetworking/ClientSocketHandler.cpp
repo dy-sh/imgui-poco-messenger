@@ -69,7 +69,7 @@ void ClientSocketHandler::OnSocketReadable(const AutoPtr<ReadableNotification>& 
         {
             size_t new_pos = fifo_in.used() - len;
             std::string s(fifo_in.begin() + new_pos, len);
-
+            s.erase(std::remove_if(s.begin(), s.end(), [](char c) { return c == '\n' || c == '\r'; }), s.end());
             std::cout << "RECEIVED FROM SERVER: " << s << std::endl;
 
             while (true)
@@ -102,6 +102,7 @@ void ClientSocketHandler::OnSocketWritable(const AutoPtr<WritableNotification>& 
     try
     {
         std::string s(fifo_out.begin(), fifo_out.used());
+        s.erase(std::remove_if(s.begin(), s.end(), [](char c) { return c == '\n' || c == '\r'; }), s.end());
         std::cout << "SENDING: " << s << std::endl;
 
         socket.sendBytes(fifo_out);

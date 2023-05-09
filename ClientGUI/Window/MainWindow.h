@@ -20,5 +20,6 @@ private:
     Client* client = nullptr;
     WindowManager* windowManager = nullptr;
     char server_address[100] = "127.0.0.1";
+    char user_name[16] = "User1";
     int server_port = 9977;
 };

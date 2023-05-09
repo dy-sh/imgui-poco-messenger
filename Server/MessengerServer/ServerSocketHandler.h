@@ -52,6 +52,12 @@ public:
     void SetUser(ServerUser* user) { this->user = user; }
     ServerUser* GetUser() { return user; }
 
+
+    bool operator<(const ServerSocketHandler& other) const
+    {
+        return this < &other;
+    }
+
 private:
     ServerSocketHandler(StreamSocket& socket, SocketReactor& reactor)
         : socket(socket), reactor(reactor), fifo_in(BUFFER_SIZE, true), fifo_out(BUFFER_SIZE, true)

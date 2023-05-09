@@ -33,6 +33,7 @@ void MainWindow::RenderContent()
 
 
     ImGui::InputText("Address", server_address, sizeof(server_address));
+    ImGui::InputText("User", server_address, sizeof(user_name));
 
     if (ImGui::Button("Connect"))
     {

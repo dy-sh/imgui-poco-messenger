@@ -10,14 +10,25 @@
 
 std::vector<ServerUser*> Server::GetAllAuthorizedUsers()
 {
-    std::vector<ServerUser*> result;
+    std::vector<ServerUser*> authorizedUsers;
+    authorizedUsers.reserve(users.size());
 
-    copy_if(users.begin(), users.end(), back_inserter(result), [](const ServerUser* user)
+    std::transform(users.begin(), users.end(), std::back_inserter(authorizedUsers), [](const auto& userPair)
     {
-        return user->IsAuthorized();
+        if (userPair.second->IsAuthorized())
+        {
+            return userPair.second;
+        }
+        else
+        {
+            return static_cast<ServerUser*>(nullptr);
+        }
     });
 
-    return result;
+    //remove nullptrs
+    authorizedUsers.erase(std::remove(authorizedUsers.begin(), authorizedUsers.end(), nullptr), authorizedUsers.end());
+
+    return authorizedUsers;
 }
 
 
@@ -44,17 +55,32 @@ void Server::ReceiveMessage(Message* message, ServerSocketHandler* socketHandler
 
 void Server::AuthorizeUser(ClientAuthorizeMessage& message, ServerSocketHandler* socketHandler)
 {
-    ServerUser* user = new ServerUser();
-    user->id = ++last_user_id;
-    user->nickname = message.user_name;
-    user->socket_handlers.push_back(socketHandler);
+    ServerUser* user = nullptr;
 
-    users.push_back(user);
+    auto it = users.find(message.user_name);
+    if (it != users.end()) // если элемент найден
+    {
+        user = it->second; // извлекаем элемент
+    }
+    else
+    {
+        user = new ServerUser();
+        user->id = ++last_user_id;
+        user->user_name = message.user_name;
+        users[message.user_name] = user;
+    }
+    user->socket_handlers.insert(socketHandler);
 
-    std::cout << "User authorized. Id: [" << user->id << "], name: [" << user->nickname << "]" << std::endl;
+
+    std::cout
+        << "User authorized. "
+        << "Id: [" << user->id << "], "
+        << "name: [" << user->user_name << "] "
+        << "sockets: " << user->socket_handlers.size()
+        << std::endl;
 
     socketHandler->SetUser(user);
-    socketHandler->Send("A|" + std::to_string(user->id) + "|" + user->nickname + ";\r\n");
+    socketHandler->Send("A|" + std::to_string(user->id) + "|" + user->user_name + ";\r\n");
 }
 
 
@@ -69,8 +95,9 @@ void Server::ReceiveText(ClientTextMessage& message, ServerSocketHandler* socket
     }
 
     //send message back to user
-    std::cout << "TEXT from [" << user->nickname << "] : " << message.text << std::endl;
+    std::cout << "TEXT from [" << user->user_name << "] : " << message.text << std::endl;
     // socketHandler->Send("R|" + std::to_string(message.text.size()) + ";\r\n");
+
 
     //broadcast message to all users
     const std::vector<ServerUser*> auth_users = GetAllAuthorizedUsers();
@@ -82,10 +109,11 @@ void Server::ReceiveText(ClientTextMessage& message, ServerSocketHandler* socket
         {
             if (!auth_user_socket) continue;
 
+            std::cout << "!!!!  socket:" << &auth_user_socket << std::endl;
             auth_user_socket->Send(
                 "T|"
                 + std::to_string(user->id) + "|"
-                + user->nickname + "|"
+                + user->user_name + "|"
                 + message.text + ";\r\n");
         }
     }

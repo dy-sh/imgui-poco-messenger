@@ -14,16 +14,17 @@ using Poco::NObserver;
 using Poco::delegate;
 
 ServerSocketHandler::ServerSocketHandler(StreamSocket& socket, SocketReactor& reactor,
-                                         IProtocol& protocol, Server& messenger):
+                                         IProtocol& protocol, Server& server):
     socket(socket),
     reactor(reactor),
     fifo_in(BUFFER_SIZE, true),
     fifo_out(BUFFER_SIZE, true),
     protocol{&protocol},
-    messenger{&messenger}
+    messenger{&server}
 {
     Application& app = Application::instance();
     app.logger().information("Connection from " + socket.peerAddress().toString());
+    std::cout << "NEW SOCKET: " << this << std::endl;
 
     reactor.addEventHandler(socket, NObserver(*this, &ServerSocketHandler::OnSocketReadable));
     reactor.addEventHandler(socket, NObserver(*this, &ServerSocketHandler::OnSocketShutdown));
@@ -88,6 +89,7 @@ void ServerSocketHandler::OnSocketReadable(const AutoPtr<ReadableNotification>& 
         {
             size_t new_pos = fifo_in.used() - len;
             std::string s(fifo_in.begin() + new_pos, len);
+            s.erase(std::remove_if(s.begin(), s.end(), [](char c) { return c == '\n' || c == '\r'; }), s.end());
             Application::instance().logger().information("RECEIVED: " + s);
 
             while (true)
@@ -120,6 +122,7 @@ void ServerSocketHandler::OnSocketWritable(const AutoPtr<WritableNotification>& 
     try
     {
         std::string s(fifo_out.begin(), fifo_out.used());
+        s.erase(std::remove_if(s.begin(), s.end(), [](char c) { return c == '\n' || c == '\r'; }), s.end());
         Application::instance().logger().information("SENDING: " + s);
 
         socket.sendBytes(fifo_out);

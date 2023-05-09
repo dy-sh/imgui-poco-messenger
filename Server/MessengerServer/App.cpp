@@ -68,11 +68,11 @@ int App::main(const std::vector<std::string>& args)
     unsigned short port = (unsigned short)config().getInt("MessengerServer.port", 9977);
 
     SimpleProtocol protocol;
-    Server messenger;
+    Server server;
 
     ServerSocket svs(port);
     SocketReactor reactor;
-    ServerSocketAcceptor acceptor(svs, reactor, protocol,messenger);
+    ServerSocketAcceptor acceptor(svs, reactor, protocol,server);
 
 
     // run the reactor in its own thread so that we can wait for a termination request
