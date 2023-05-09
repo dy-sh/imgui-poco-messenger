@@ -18,7 +18,7 @@ struct ClientTextMessage : Message
 
     bool Parse(const char* buffer, size_t from, size_t size) override
     {
-        text = std::string(buffer + from + 1, size - 2);
+        text = std::string(buffer + from + 2, size - 3);
         return true;
     }
 

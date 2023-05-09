@@ -17,7 +17,7 @@ struct ClientAuthorizeMessage : Message
 
     bool Parse(const char* buffer, size_t from, size_t size) override
     {
-        user_name = std::string(buffer + from + 1, size - 2);
+        user_name = std::string(buffer + from + 2, size - 3);
         return true;
     }
 

@@ -19,17 +19,17 @@ struct ServerTextMessage : Message
 
     bool Parse(const char* buffer, size_t from, size_t size) override
     {
-        size_t parsing_from = from + 1;
         int parsing_part = 0;
+        size_t parsing_from = from + 2; // skip header with message type
 
-        for (size_t x = from + 1; x <= size; ++x)
+        for (size_t x = parsing_from; x <= size; ++x)
         {
-            char c = buffer[x];
             if (buffer[x] == '|' || x == size)
             {
                 if (parsing_part == 0)
                 {
-                    // user_id=
+                    std::string num = std::string(buffer + parsing_from, x - parsing_from);
+                    user_id = std::stoi(num);
                 }
                 else if (parsing_part == 1)
                 {

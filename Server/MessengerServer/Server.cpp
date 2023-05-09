@@ -54,7 +54,7 @@ void Server::AuthorizeUser(ClientAuthorizeMessage& message, ServerSocketHandler*
     std::cout << "User authorized. Id: [" << user->id << "], name: [" << user->nickname << "]" << std::endl;
 
     socketHandler->SetUser(user);
-    socketHandler->Send("A" + std::to_string(user->id) + "|" + user->nickname + ";\r\n");
+    socketHandler->Send("A|" + std::to_string(user->id) + "|" + user->nickname + ";\r\n");
 }
 
 
@@ -83,7 +83,7 @@ void Server::ReceiveText(ClientTextMessage& message, ServerSocketHandler* socket
             if (!auth_user_socket) continue;
 
             auth_user_socket->Send(
-                "T"
+                "T|"
                 + std::to_string(user->id) + "|"
                 + user->nickname + "|"
                 + message.text + ";\r\n");

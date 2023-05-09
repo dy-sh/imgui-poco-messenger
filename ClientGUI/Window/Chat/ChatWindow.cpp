@@ -226,7 +226,7 @@ void ChatWindow::RenderContent()
 
 void ChatWindow::Send(const char* message)
 {
-    std::string mess = Poco::format("t%s;", std::string(message));
+    std::string mess = Poco::format("t|%s;", std::string(message));
     client->Send(mess.c_str());
 }
 

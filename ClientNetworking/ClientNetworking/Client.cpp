@@ -60,16 +60,4 @@ void Client::ReceiveText(const ClientTextMessage& text_message, ClientSocketHand
 void Client::ReceiveMessage(Message* message, ClientSocketHandler* socket_handler)
 {
     OnReceiveMessage(this,message);
-    // if (auto textMess = dynamic_cast<TextMessage*>(message))
-    // {
-    //     ReceiveText(*textMess, socket_handler);
-    // }
-    // else if (auto invMess = dynamic_cast<InvalidMessage*>(message))
-    // {
-    //     std::cout << invMess->to_str() << std::endl;
-    // }
-    // else
-    // {
-    //     std::cout << "Received unknown message" << std::endl;
-    // }
 }
