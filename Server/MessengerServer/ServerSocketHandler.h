@@ -10,7 +10,7 @@
 #include "Poco/FIFOBuffer.h"
 
 struct ServerUser;
-class MessengerServer;
+class Server;
 struct IProtocol;
 using Poco::Net::SocketReactor;
 using Poco::Net::SocketAcceptor;
@@ -35,11 +35,11 @@ private:
     FIFOBuffer fifo_out;
 
     IProtocol* protocol = nullptr;
-    MessengerServer* messenger = nullptr;
+    Server* messenger = nullptr;
     ServerUser* user = nullptr;
 
 public:
-    ServerSocketHandler(StreamSocket& socket, SocketReactor& reactor, IProtocol& protocol, MessengerServer& messenger);
+    ServerSocketHandler(StreamSocket& socket, SocketReactor& reactor, IProtocol& protocol, Server& messenger);
     ~ServerSocketHandler();
 
     void OnFIFOOutReadable(bool& b);

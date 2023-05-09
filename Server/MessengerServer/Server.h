@@ -1,39 +1,25 @@
 ﻿// Copyright 2023 Dmitry Savosh <d.savosh@gmail.com>
 
 #pragma once
+#include <vector>
 
-#include "Poco/Net/SocketReactor.h"
-#include "Poco/Util/ServerApplication.h"
+struct Message;
+struct ClientTextMessage;
+struct ClientAuthorizeMessage;
+struct ServerUser;
+class ServerSocketHandler;
 
-using Poco::Util::OptionSet;
-
-
-class Server : public Poco::Util::ServerApplication
+class Server
 {
 public:
-    Server(): help_requested(false)
-    {
-    }
+    std::vector<ServerUser*> GetAllAuthorizedUsers();
 
-
-    ~Server()
-    {
-    }
-
-protected:
-    void initialize(Application& self) override;
-
-    void uninitialize() override;
-
-    void defineOptions(OptionSet& options) override;
-
-    void handleOption(const std::string& name, const std::string& value) override;
-
-    void displayHelp();
-
-    int main(const std::vector<std::string>& args) override;
+    void ReceiveMessage(Message* message, ServerSocketHandler* socketHandler);
 
 private:
-    bool help_requested;
+    size_t last_user_id{0};
+    std::vector<ServerUser*> users;
+    // std::vector<TextMessage> messages;
+    void AuthorizeUser(ClientAuthorizeMessage& message, ServerSocketHandler* socketHandler);
+    void ReceiveText(ClientTextMessage& message, ServerSocketHandler* socketHandler);
 };
-

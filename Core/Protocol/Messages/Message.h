@@ -16,7 +16,10 @@ struct Message
     }
 
 
-    virtual bool Matches(const char* buffer, size_t from, size_t size) const;
+    virtual bool Matches(const char* buffer, size_t from, size_t size) const
+    {
+        return buffer[0 + from] == prefix;
+    }
 
 
     virtual bool Parse(const char* buffer, size_t from, size_t size){return false;}

@@ -9,7 +9,7 @@
 struct Style;
 class Client;
 
-class AppGUI
+class App
 {
 public:
     Client* client;
@@ -33,8 +33,8 @@ public:
     bool should_close = false;
 
 
-    AppGUI();
-    ~AppGUI();
+    App();
+    ~App();
 
     void ApplyStyle(ImVec4& bg_color, ImGuiStyle* dst = nullptr);
     void Render();

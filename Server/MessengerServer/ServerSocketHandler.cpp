@@ -6,7 +6,7 @@
 #include <Poco/NObserver.h>
 #include <Poco/Util/Application.h>
 
-#include "MessengerServer.h"
+#include "Server.h"
 #include "Protocol/IProtocol.h"
 
 using Poco::Util::Application;
@@ -14,7 +14,7 @@ using Poco::NObserver;
 using Poco::delegate;
 
 ServerSocketHandler::ServerSocketHandler(StreamSocket& socket, SocketReactor& reactor,
-                                         IProtocol& protocol, MessengerServer& messenger):
+                                         IProtocol& protocol, Server& messenger):
     socket(socket),
     reactor(reactor),
     fifo_in(BUFFER_SIZE, true),

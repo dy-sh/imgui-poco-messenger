@@ -1,6 +1,6 @@
 ﻿// Copyright 2023 Dmitry Savosh <d.savosh@gmail.com>
 
-#include "AppGUI.h"
+#include "App.h"
 
 #include "Tools/Debug.h"
 #include "imgui.h"
@@ -13,7 +13,7 @@
 #include "Window/LoginWindow.h"
 #include "Window/MainWindow.h"
 
-AppGUI::AppGUI()
+App::App()
 {
     client = new Client();
     style = std::make_unique<DefaultStyle>();
@@ -25,19 +25,19 @@ AppGUI::AppGUI()
 }
 
 
-AppGUI::~AppGUI()
+App::~App()
 {
     delete client;
 }
 
 
-void AppGUI::ApplyStyle(ImVec4& bg_color, ImGuiStyle* dst)
+void App::ApplyStyle(ImVec4& bg_color, ImGuiStyle* dst)
 {
     style->ApplyStyle(bg_color, dst);
 }
 
 
-void AppGUI::Render()
+void App::Render()
 {
     if (use_esc_key && ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_Escape))
     {
@@ -71,7 +71,7 @@ void AppGUI::Render()
 }
 
 
-void AppGUI::RenderDebugWindows()
+void App::RenderDebugWindows()
 {
     if (show_demo_window)
         ImGui::ShowDemoWindow(&show_demo_window);
@@ -93,7 +93,7 @@ void AppGUI::RenderDebugWindows()
 }
 
 
-void AppGUI::ShowDebugToolbar()
+void App::ShowDebugToolbar()
 {
     if (ImGui::BeginMainMenuBar())
     {
@@ -130,13 +130,13 @@ void AppGUI::ShowDebugToolbar()
 }
 
 
-void AppGUI::Exit()
+void App::Exit()
 {
     should_close = true;
 }
 
 
-void AppGUI::OnExit()
+void App::OnExit()
 {
     window_manager.OnExit();
 }

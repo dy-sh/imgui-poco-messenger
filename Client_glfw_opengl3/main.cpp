@@ -25,7 +25,7 @@
 #include "../Lib/emscripten/emscripten_mainloop_stub.h"
 #endif
 
-#include "AppGUI.h"
+#include "App.h"
 
 
 static void glfw_error_callback(int error, const char* description)
@@ -34,7 +34,7 @@ static void glfw_error_callback(int error, const char* description)
 }
 
 
-AppGUI app;
+App app;
 
 // Main code
 int main(int, char**)

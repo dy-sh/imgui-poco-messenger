@@ -1,11 +1,11 @@
 // Copyright 2023 Dmitry Savosh <d.savosh@gmail.com>
 
-#include "MessengerServer/Server.h"
+#include "MessengerServer/App.h"
 
 
 int main(int argc, char** argv)
 {
-    Server app;
+    App app;
     return app.run(argc, argv);
 }
 

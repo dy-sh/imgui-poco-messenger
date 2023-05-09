@@ -9,11 +9,11 @@ using Poco::Net::ServerSocket;
 class ServerSocketAcceptor : public SocketAcceptor<ServerSocketHandler>
 {
     IProtocol& protocol;
-    MessengerServer& messenger;
+    Server& messenger;
     SocketReactor& reactor;
     
 public:
-    ServerSocketAcceptor(ServerSocket& socket, SocketReactor& reactor, IProtocol& protocol,MessengerServer& messenger)
+    ServerSocketAcceptor(ServerSocket& socket, SocketReactor& reactor, IProtocol& protocol,Server& messenger)
         : SocketAcceptor(socket, reactor), protocol{protocol}, messenger{messenger}, reactor{reactor}
     {
     }

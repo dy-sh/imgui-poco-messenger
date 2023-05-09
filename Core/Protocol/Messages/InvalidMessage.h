@@ -11,16 +11,27 @@ struct InvalidMessage : Message
 
     std::string text;
 
-    InvalidMessage(const char* buffer, size_t from, size_t size);
-
 
     InvalidMessage(char prefix) : Message(prefix)
     {
     }
 
 
-    bool Parse(const char* buffer, size_t from, size_t size) override;
-    
-    
-    std::string to_str() const override;
+    InvalidMessage(const char* buffer, size_t from, size_t size): Message('I')
+    {
+        text = std::string(buffer + from, size - 1);
+    }
+
+
+    bool Parse(const char* buffer, size_t from, size_t size) override
+    {
+        text = std::string(buffer + from, size - 1);
+        return true;
+    }
+
+
+    std::string to_str() const override
+    {
+        return "Invalid message: " + text;
+    }
 };

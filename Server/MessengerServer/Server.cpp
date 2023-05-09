@@ -1,90 +1,92 @@
 ﻿// Copyright 2023 Dmitry Savosh <d.savosh@gmail.com>
 
 #include "Server.h"
-
-#include <Poco/Util/HelpFormatter.h>
-#include "Protocol/SimpleProtocol.h"
-
-#include "MessengerServer.h"
 #include "ServerSocketHandler.h"
-#include "ServerSocketAcceptor.h"
+#include "Protocol/Messages/ClientAuthorizeMessage.h"
+#include "Protocol/Messages/InvalidMessage.h"
+#include "Protocol/Messages/ClientTextMessage.h"
+#include "ServerUser.h"
 
-using Poco::Util::Option;
-using Poco::Util::HelpFormatter;
-using Poco::Thread;
 
-void Server::initialize(Application& self)
+std::vector<ServerUser*> Server::GetAllAuthorizedUsers()
 {
-    loadConfiguration(); // load default configuration files, if present
-    ServerApplication::initialize(self);
-}
+    std::vector<ServerUser*> result;
 
-
-void Server::uninitialize()
-{
-    ServerApplication::uninitialize();
-}
-
-
-void Server::defineOptions(OptionSet& options)
-{
-    ServerApplication::defineOptions(options);
-
-    options.addOption(
-        Option("help", "h", "display help information on command line arguments")
-        .required(false)
-        .repeatable(false));
-}
-
-
-void Server::handleOption(const std::string& name, const std::string& value)
-{
-    ServerApplication::handleOption(name, value);
-
-    if (name == "help")
-        help_requested = true;
-}
-
-
-void Server::displayHelp()
-{
-    HelpFormatter helpFormatter(options());
-    helpFormatter.setCommand(commandName());
-    helpFormatter.setUsage("OPTIONS");
-    helpFormatter.setHeader("Messenger Server");
-    helpFormatter.format(std::cout);
-}
-
-
-int Server::main(const std::vector<std::string>& args)
-{
-    if (help_requested)
+    copy_if(users.begin(), users.end(), back_inserter(result), [](const ServerUser* user)
     {
-        displayHelp();
-        return Application::EXIT_OK;
+        return user->IsAuthorized();
+    });
+
+    return result;
+}
+
+
+void Server::ReceiveMessage(Message* message, ServerSocketHandler* socketHandler)
+{
+    if (auto authMess = dynamic_cast<ClientAuthorizeMessage*>(message))
+    {
+        AuthorizeUser(*authMess, socketHandler);
+    }
+    else if (auto textMess = dynamic_cast<ClientTextMessage*>(message))
+    {
+        ReceiveText(*textMess, socketHandler);
+    }
+    else if (auto invMess = dynamic_cast<InvalidMessage*>(message))
+    {
+        std::cout << invMess->to_str() << std::endl;
+    }
+    else
+    {
+        std::cout << "Received unknown message" << std::endl;
+    }
+}
+
+
+void Server::AuthorizeUser(ClientAuthorizeMessage& message, ServerSocketHandler* socketHandler)
+{
+    ServerUser* user = new ServerUser();
+    user->id = ++last_user_id;
+    user->nickname = message.user_name;
+    user->socket_handlers.push_back(socketHandler);
+
+    users.push_back(user);
+
+    std::cout << "User authorized. Id: [" << user->id << "], name: [" << user->nickname << "]" << std::endl;
+
+    socketHandler->SetUser(user);
+    socketHandler->Send("A" + std::to_string(user->id) + "|" + user->nickname + ";\r\n");
+}
+
+
+void Server::ReceiveText(ClientTextMessage& message, ServerSocketHandler* socketHandler)
+{
+    const ServerUser* user = socketHandler->GetUser();
+    if (!user || !user->IsAuthorized())
+    {
+        std::cout << "ERROR: Received text message from unauthorized user." << std::endl;
+        socketHandler->Send("E|NOT_AUTHORIZED;\r\n");
+        return;
     }
 
-    // get parameters from configuration file
-    unsigned short port = (unsigned short)config().getInt("MessengerServer.port", 9977);
+    //send message back to user
+    std::cout << "TEXT from [" << user->nickname << "] : " << message.text << std::endl;
+    // socketHandler->Send("R|" + std::to_string(message.text.size()) + ";\r\n");
 
-    SimpleProtocol protocol;
-    MessengerServer messenger;
+    //broadcast message to all users
+    const std::vector<ServerUser*> auth_users = GetAllAuthorizedUsers();
+    for (const auto* auth_user : auth_users)
+    {
+        if (!auth_user) continue;
 
-    ServerSocket svs(port);
-    SocketReactor reactor;
-    ServerSocketAcceptor acceptor(svs, reactor, protocol,messenger);
+        for (auto* auth_user_socket : auth_user->socket_handlers)
+        {
+            if (!auth_user_socket) continue;
 
-
-    // run the reactor in its own thread so that we can wait for a termination request
-    Thread thread;
-    thread.start(reactor);
-
-    std::cout << "Server started" << std::endl;
-
-    // wait for CTRL-C or kill
-    waitForTerminationRequest();
-    // Stop the SocketReactor
-    reactor.stop();
-
-    return Application::EXIT_OK;
+            auth_user_socket->Send(
+                "T"
+                + std::to_string(user->id) + "|"
+                + user->nickname + "|"
+                + message.text + ";\r\n");
+        }
+    }
 }
