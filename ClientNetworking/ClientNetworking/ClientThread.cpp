@@ -8,7 +8,7 @@
 
 void ClientThread::run()
 {
-    std::cerr << "Connection thread started" << std::endl;
+    std::cout << "Connection thread started" << std::endl;
     try
     {
         socket.connect(address);
@@ -18,27 +18,31 @@ void ClientThread::run()
         
         reactor.run(); // thread will be blocked here
 
-        stop();
+        // stop();
     }
-    catch (Poco::Exception& e)
+    catch (Poco::Exception& exc)
     {
-        std::cerr << "ERROR: " << e.displayText() << std::endl;
+        std::cout << "ClientThread exception on running [" << exc.code() << "]: " << exc.displayText() << std::endl;
     }
-    std::cerr << "Connection thread finished" << std::endl;
+    std::cout << "Connection thread finished" << std::endl;
 }
 
 
 void ClientThread::stop()
 {
-    reactor.stop();
-    socket.close();
-    delete handler;
-    handler = nullptr;
+    if (handler)
+    {
+        reactor.stop();
+        socket.shutdown();
+        socket.close();
+        delete handler;
+        handler = nullptr;
+    }
 }
 
 
 ClientThread::~ClientThread()
 {
     stop();
-    std::cerr << "Connection thread destructed" << std::endl;
+    std::cout << "Connection thread destructed" << std::endl;
 }

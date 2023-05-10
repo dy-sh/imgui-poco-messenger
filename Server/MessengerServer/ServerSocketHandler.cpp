@@ -113,8 +113,7 @@ void ServerSocketHandler::OnSocketReadable(const AutoPtr<ReadableNotification>& 
     }
     catch (Poco::Exception& exc)
     {
-        Application& app = Application::instance();
-        app.logger().log(exc);
+        Application::instance().logger().log( "ServerSocketHandler exception on reading [" + std::to_string(exc.code()) + "]: " + exc.displayText());
         delete this;
     }
 }
@@ -132,8 +131,7 @@ void ServerSocketHandler::OnSocketWritable(const AutoPtr<WritableNotification>& 
     }
     catch (Poco::Exception& exc)
     {
-        Application& app = Application::instance();
-        app.logger().log(exc);
+        Application::instance().logger().log( "ServerSocketHandler exception on writing [" + std::to_string(exc.code()) + "]: " + exc.displayText());
         delete this;
     }
 }

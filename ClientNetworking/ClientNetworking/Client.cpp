@@ -21,15 +21,22 @@ Client::~Client()
 
 void Client::Connect(const SocketAddress& address)
 {
-    Disconnect();
+    if (client_thread)
+    {
+        client_thread->reactor.removeEventHandler(client_thread->socket, NObserver(*this, &Client::OnSocketShutdown));
+        delete thread;
+        thread = nullptr;
+        // delete client_thread; - no need because called automatically from Thread
+        client_thread = nullptr;
+    }
 
     client_thread = new ClientThread(*protocol, this, address);
-
     thread = new Thread();
+
     thread->start(client_thread);
     client_thread->OnStarted.wait(); // block current thread and wait
-    OnConnected();
     client_thread->reactor.addEventHandler(client_thread->socket, NObserver(*this, &Client::OnSocketShutdown));
+    OnConnected();
 }
 
 
@@ -38,12 +45,7 @@ void Client::Disconnect()
     if (client_thread)
     {
         client_thread->stop();
-        thread->join();
     }
-    delete thread;
-    thread = nullptr;
-    // delete client_thread; - no need because called automatically from Thread
-    client_thread = nullptr;
 }
 
 
@@ -55,6 +57,7 @@ void Client::Send(const char* str)
     }
 }
 
+
 void Client::ReceiveText(const ClientTextMessage& text_message, ClientSocketHandler* socket_handler)
 {
 }
@@ -62,15 +65,13 @@ void Client::ReceiveText(const ClientTextMessage& text_message, ClientSocketHand
 
 void Client::ReceiveMessage(Message* message, ClientSocketHandler* socket_handler)
 {
-    OnReceiveMessage(this,message);
+    OnReceiveMessage(this, message);
 }
 
 
 void Client::OnSocketShutdown(const Poco::AutoPtr<Poco::Net::ShutdownNotification>& n)
 {
+    client_thread->stop();
+
     OnDisconnected(this);
 }
-
-
-
-

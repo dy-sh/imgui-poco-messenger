@@ -83,8 +83,10 @@ int App::main(const std::vector<std::string>& args)
 
     // wait for CTRL-C or kill
     waitForTerminationRequest();
+
     // Stop the SocketReactor
     reactor.stop();
+    svs.close();
 
     return Application::EXIT_OK;
 }

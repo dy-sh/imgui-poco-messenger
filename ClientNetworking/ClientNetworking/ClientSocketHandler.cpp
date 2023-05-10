@@ -6,9 +6,8 @@
 #include "Protocol/IProtocol.h"
 
 
-
 ClientSocketHandler::ClientSocketHandler(StreamSocket& socket, SocketReactor& reactor, IProtocol& protocol,
-                             Client* client):
+                                         Client* client):
     socket(socket),
     stream(socket),
     reactor(reactor),
@@ -30,7 +29,7 @@ ClientSocketHandler::~ClientSocketHandler()
     reactor.removeEventHandler(socket, NObserver(*this, &ClientSocketHandler::OnSocketReadable));
     reactor.removeEventHandler(socket, NObserver(*this, &ClientSocketHandler::OnSocketWritable));
     reactor.removeEventHandler(socket, NObserver(*this, &ClientSocketHandler::OnSocketShutdown));
-    
+
     fifo_out.readable -= delegate(this, &ClientSocketHandler::OnFIFOOutReadable);
     fifo_in.writable -= delegate(this, &ClientSocketHandler::OnFIFOInWritable);
 }
@@ -61,6 +60,7 @@ void ClientSocketHandler::OnFIFOInWritable(bool& b)
     }
 }
 
+
 void ClientSocketHandler::OnSocketReadable(const AutoPtr<ReadableNotification>& n)
 {
     try
@@ -86,16 +86,16 @@ void ClientSocketHandler::OnSocketReadable(const AutoPtr<ReadableNotification>& 
         }
         else
         {
-            delete this;
+            std::cout << "ClientSocketHandler exception on reading: socket.receiveBytes == 0"<< std::endl;
+            client->Disconnect();
         }
     }
     catch (Poco::Exception& exc)
     {
-        std::cout << "Exception: " << exc.message() << std::endl;
-        delete this;
+        std::cout << "ClientSocketHandler exception on reading [" << exc.code() << "]: " << exc.displayText() << std::endl;
+        client->Disconnect();
     }
 }
-
 
 
 void ClientSocketHandler::OnSocketWritable(const AutoPtr<WritableNotification>& n)
@@ -110,20 +110,21 @@ void ClientSocketHandler::OnSocketWritable(const AutoPtr<WritableNotification>& 
     }
     catch (Poco::Exception& exc)
     {
-        std::cout << "Exception: " << exc.message() << std::endl;
-        delete this;
+        std::cout << "ClientSocketHandler exception on writing [" << exc.code() << "]: " << exc.displayText() << std::endl;
+        client->Disconnect();
     }
 }
 
 
 void ClientSocketHandler::OnSocketShutdown(const AutoPtr<ShutdownNotification>& n)
 {
-
 }
+
 
 void ClientSocketHandler::Send(const char* text)
 {
     // stream << text << std::endl;
+
 
     fifo_out.write(text, std::string(text).size());
 }
