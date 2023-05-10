@@ -29,7 +29,8 @@ void Client::Connect(const SocketAddress& address)
 
     if (client_thread)
     {
-        client_thread->reactor.removeEventHandler(client_thread->socket, NObserver(*this, &Client::OnSocketShutdown));
+        client_thread->OnSocketOpened -= delegate(this, &Client::OnSocketOpened);
+        client_thread->OnSocketClosed -= delegate(this, &Client::OnSocketClosed);
         delete thread;
         thread = nullptr;
         // delete client_thread; - no need because called automatically from Thread
@@ -39,7 +40,8 @@ void Client::Connect(const SocketAddress& address)
     state = ClientState::Connecting;
 
     client_thread = new ClientThread(*protocol, this, address);
-    client_thread->OnStarted += delegate(this, &Client::OnSocketStarted);
+    client_thread->OnSocketOpened += delegate(this, &Client::OnSocketOpened);
+    client_thread->OnSocketClosed += delegate(this, &Client::OnSocketClosed);
 
     thread = new Thread();
     thread->start(client_thread);
@@ -76,22 +78,22 @@ void Client::ReceiveMessage(Message* message, ClientSocketHandler* socket_handle
 }
 
 
-void Client::OnSocketStarted(const void* sender)
+void Client::OnSocketOpened(const void* sender)
 {
-    client_thread->reactor.addEventHandler(client_thread->socket, NObserver(*this, &Client::OnSocketShutdown));
-
     state = ClientState::Connected;
 
     OnConnected(this);
 }
 
 
-void Client::OnSocketShutdown(const Poco::AutoPtr<Poco::Net::ShutdownNotification>& n)
+void Client::OnSocketClosed(const void* sender)
 {
-    client_thread->reactor.removeEventHandler(client_thread->socket, NObserver(*this, &Client::OnSocketShutdown));
     client_thread->stop();
 
     state = ClientState::Disconnected;
 
     OnDisconnected(this);
 }
+
+
+

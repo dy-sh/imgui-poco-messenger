@@ -14,8 +14,8 @@ void ClientThread::run()
         socket.connect(address);
         handler = new ClientSocketHandler(socket, reactor, protocol, client);
 
-        OnStartedSync.set();
-        OnStarted();
+        OnSocketOpenedSync.set();
+        OnSocketOpened();
         
         reactor.run(); // thread will be blocked here
 
@@ -26,6 +26,7 @@ void ClientThread::run()
         std::cerr << "ClientThread exception on running [" << exc.code() << "]: " << exc.displayText() << std::endl;
     }
     std::cout << "Connection thread finished" << std::endl;
+    OnSocketClosed();
 }
 
 

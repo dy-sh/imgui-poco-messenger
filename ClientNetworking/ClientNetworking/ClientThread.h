@@ -24,8 +24,9 @@ public:
     SocketReactor reactor;
     IProtocol& protocol;
     Client* client;
-    Event OnStartedSync;
-    BasicEvent<void> OnStarted;
+    Event OnSocketOpenedSync;
+    BasicEvent<void> OnSocketOpened;
+    BasicEvent<void> OnSocketClosed;
 
     explicit ClientThread(IProtocol& protocol, Client* client, const SocketAddress& address = SocketAddress("localhost", 9977))
         : address{address}, protocol{protocol}, client{client}

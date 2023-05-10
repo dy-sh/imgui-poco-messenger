@@ -13,22 +13,19 @@ class MainWindow : public MaximizedWindow
 public:
     MainWindow(const std::string& title, bool visible, WindowManager* window_manager, Client* client);
     ~MainWindow();
-    
+
     void RenderContent() override;
     void OnExit() override;
 
-    void OnReceiveMessage(const void* sender,Message*& message);
+    void OnReceiveMessage(const void* sender, Message*& message);
     void OnConnected(const void* sender);
     void OnDisconnected(const void* sender);
 
-
-    
 private:
     Client* client = nullptr;
     WindowManager* window_manager = nullptr;
     char server_address[100] = "127.0.0.1";
     char user_name[32] = "User1";
     int server_port = 9977;
-    bool connected=false;
-    bool authorized=false;
+    bool authorized = false;
 };

@@ -45,7 +45,7 @@ void MainWindow::RenderContent()
     ImGui::Spacing();
 
 
-    if (!connected)
+    if (client->GetState() == ClientState::Disconnected)
     {
         ImGui::InputText("Address", server_address, sizeof(server_address));
         ImGui::InputText("User", user_name, sizeof(user_name));
@@ -53,13 +53,26 @@ void MainWindow::RenderContent()
         if (ImGui::Button("Connect"))
         {
             LOG("Connecting to %s:%d ...", server_address, server_port);
-            
+
             SocketAddress address = SocketAddress(server_address, server_port);
             client->Connect(address);
         }
     }
     else
     {
+        if (client->GetState() == ClientState::Connecting)
+        {
+            ImGui::Text("Connecting...");
+        }
+        else if (client->GetState() == ClientState::Connected)
+        {
+            ImGui::Text("Connected");
+        }
+        else if (client->GetState() == ClientState::Disconnecting)
+        {
+            ImGui::Text("Disconnecting...");
+        }
+
         if (ImGui::Button("Disconnect"))
         {
             if (client)
@@ -135,8 +148,6 @@ void MainWindow::OnReceiveMessage(const void* sender, Message*& message)
 
 void MainWindow::OnConnected(const void* sender)
 {
-    connected = true;
-
     std::string mess = Poco::format("a|%s;", std::string(user_name));
     client->Send(mess.c_str());
 
@@ -149,7 +160,6 @@ void MainWindow::OnConnected(const void* sender)
 
 void MainWindow::OnDisconnected(const void* sender)
 {
-    connected = false;
     authorized = false;
 
     if (Window* chat_window = window_manager->GetWindowByTitle("Chat"))
