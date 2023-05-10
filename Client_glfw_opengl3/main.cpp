@@ -66,10 +66,22 @@ int main(int, char**)
     //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
 #endif
 
+    //get screen center
+    const GLFWvidmode* videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    int screenWidth = videoMode->width;
+    int screenHeight = videoMode->height;
+
+    int windowWidth = 640;
+    int windowHeight = 480;
+
+    int windowX = (screenWidth - windowWidth) / 2;
+    int windowY = (screenHeight - windowHeight) / 2;
+    
     // Create window with graphics context
-    GLFWwindow* window = glfwCreateWindow(1280, 720, "ImGui Poco Messenger", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(800, 600, "ImGui Poco Messenger", nullptr, nullptr);
     if (window == nullptr)
         return 1;
+    glfwSetWindowPos(window, windowX, windowY);
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1); // Enable vsync
 
@@ -108,8 +120,6 @@ int main(int, char**)
     //IM_ASSERT(font != nullptr);
 
     // Our state
-    bool show_demo_window = true;
-    bool show_another_window = false;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     app.ApplyStyle(clear_color);

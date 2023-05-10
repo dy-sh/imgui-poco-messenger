@@ -3,6 +3,9 @@
 #include "Poco/Net/StreamSocket.h"
 #include "Poco/Net/SocketAddress.h"
 #include "MainWindow.h"
+
+#include <sstream>
+
 #include "../Tools/Debug.h"
 #include "imgui.h"
 #include "WindowManager.h"
@@ -24,6 +27,16 @@ MainWindow::MainWindow(const std::string& title, bool visible, WindowManager* wi
     client->OnConnected += delegate(this, &MainWindow::OnConnected);
     client->OnDisconnected += delegate(this, &MainWindow::OnDisconnected);
 
+
+    int random_num = std::rand() % 1000;
+
+
+    srand(time(nullptr)); // random init
+
+
+    std::snprintf(user_name, sizeof(user_name), "%s%d", "User", rand() % 10000);
+
+
     //todo temporary
     // SocketAddress address = SocketAddress(server_address, server_port);
     // client->Connect(address);
@@ -40,91 +53,113 @@ MainWindow::~MainWindow()
 
 void MainWindow::RenderContent()
 {
-    ImGui::Spacing();
-    ImGui::Spacing();
-    ImGui::Spacing();
-
-
     if (client->GetState() == ClientState::Disconnected)
     {
+        ImGui::SetCursorPosY((ImGui::GetWindowHeight() - 100) * 0.5f);
+
+        ImGui::SetNextItemWidth(300);
+        ImGui::SetCursorPosX((ImGui::GetWindowWidth() - 300) * 0.5f);
         ImGui::InputText("Address", server_address, sizeof(server_address));
+
+        ImGui::SetNextItemWidth(300);
+        ImGui::SetCursorPosX((ImGui::GetWindowWidth() - 300) * 0.5f);
         ImGui::InputText("User", user_name, sizeof(user_name));
 
-        if (ImGui::Button("Connect"))
+
+        ImGui::SetCursorPosX((ImGui::GetWindowWidth() - 200) * 0.5f);
+        if (ImGui::Button("Connect", ImVec2(200.0f, 0)))
         {
             LOG("Connecting to %s:%d ...", server_address, server_port);
 
             SocketAddress address = SocketAddress(server_address, server_port);
             client->Connect(address);
         }
+        //Create an empty element to align elements after the button
+        ImGui::Dummy(ImVec2(0, 20));
     }
     else
     {
+        ImGui::SetCursorPosY((ImGui::GetWindowHeight() - 80) * 0.5f);
+
+
         if (client->GetState() == ClientState::Connecting)
         {
+            ImGui::SetCursorPosX((ImGui::GetWindowWidth() - 80) * 0.5f);
+            ImGui::SetNextItemWidth(80);
             ImGui::Text("Connecting...");
         }
         else if (client->GetState() == ClientState::Connected)
         {
+            ImGui::SetCursorPosX((ImGui::GetWindowWidth() - 70) * 0.5f);
+            ImGui::SetNextItemWidth(70);
             ImGui::Text("Connected");
         }
         else if (client->GetState() == ClientState::Disconnecting)
         {
+            ImGui::SetCursorPosX((ImGui::GetWindowWidth() - 100) * 0.5f);
+            ImGui::SetNextItemWidth(100);
             ImGui::Text("Disconnecting...");
         }
 
-        if (ImGui::Button("Disconnect"))
+        ImGui::Spacing();
+        ImGui::Spacing();
+        ImGui::Spacing();
+        ImGui::SetCursorPosX((ImGui::GetWindowWidth() - 200) * 0.5f);
+        if (ImGui::Button("Disconnect", ImVec2(200.0f, 0)))
         {
             if (client)
             {
                 client->Disconnect();
             }
         }
-
-        if (ImGui::Button("Send"))
-        {
-            if (client)
-            {
-                client->Send("t|Hello;");
-            }
-        }
+        //Create an empty element to align elements after the button
+        ImGui::Dummy(ImVec2(0, 20));
+        
     }
 
 
-    if (ImGui::Button("Authorization"))
-    {
-        if (window_manager)
-        {
-            if (Window* loginWindow = window_manager->GetWindowByTitle("Login"))
-            {
-                loginWindow->ToggleVisible();
-            }
-        }
-    }
+    // if (ImGui::Button("Send"))
+    // {
+    //     if (client)
+    //     {
+    //         client->Send("t|Hello;");
+    //     }
+    // }
 
-    if (ImGui::Button("Add Log message"))
-    {
-        LOG("Simple %d message example", 123);
-        LOG(LogLevel::wrn, "wrn message example");
-        LogWindow::Add(LogLevel::err, "err message example");
-
-        if (Window* log = static_cast<LogWindow*>(window_manager->GetWindowByTitle("Log")))
-        {
-            log->SetVisible(true);
-        }
-    }
-
-    if (ImGui::Button("Add Console message"))
-    {
-        CONSOLE("Simple %d message example", 123);
-        CONSOLE(LogLevel::wrn, "wrn message example");
-        ConsoleWindow::Add(LogLevel::err, "err message example");
-
-        if (Window* log = static_cast<LogWindow*>(window_manager->GetWindowByTitle("Console")))
-        {
-            log->SetVisible(true);
-        }
-    }
+    // if (ImGui::Button("Authorization"))
+    // {
+    //     if (window_manager)
+    //     {
+    //         if (Window* loginWindow = window_manager->GetWindowByTitle("Login"))
+    //         {
+    //             loginWindow->ToggleVisible();
+    //         }
+    //     }
+    // }
+    //
+    // if (ImGui::Button("Add Log message"))
+    // {
+    //     LOG("Simple %d message example", 123);
+    //     LOG(LogLevel::wrn, "wrn message example");
+    //     LogWindow::Add(LogLevel::err, "err message example");
+    //
+    //     if (Window* log = static_cast<LogWindow*>(window_manager->GetWindowByTitle("Log")))
+    //     {
+    //         log->SetVisible(true);
+    //     }
+    // }
+    //
+    // if (ImGui::Button("Add Console message"))
+    // {
+    //     CONSOLE("Simple %d message example", 123);
+    //     CONSOLE(LogLevel::wrn, "wrn message example");
+    //     ConsoleWindow::Add(LogLevel::err, "err message example");
+    //
+    //     if (Window* log = static_cast<LogWindow*>(window_manager->GetWindowByTitle("Console")))
+    //     {
+    //         log->SetVisible(true);
+    //     }
+    // }
 }
 
 
