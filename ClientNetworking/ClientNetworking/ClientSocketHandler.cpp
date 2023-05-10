@@ -86,13 +86,13 @@ void ClientSocketHandler::OnSocketReadable(const AutoPtr<ReadableNotification>& 
         }
         else
         {
-            std::cout << "ClientSocketHandler exception on reading: socket.receiveBytes == 0"<< std::endl;
+            std::cerr << "ClientSocketHandler exception on reading: socket.receiveBytes == 0"<< std::endl;
             client->Disconnect();
         }
     }
     catch (Poco::Exception& exc)
     {
-        std::cout << "ClientSocketHandler exception on reading [" << exc.code() << "]: " << exc.displayText() << std::endl;
+        std::cerr << "ClientSocketHandler exception on reading [" << exc.code() << "]: " << exc.displayText() << std::endl;
         client->Disconnect();
     }
 }
@@ -110,7 +110,7 @@ void ClientSocketHandler::OnSocketWritable(const AutoPtr<WritableNotification>& 
     }
     catch (Poco::Exception& exc)
     {
-        std::cout << "ClientSocketHandler exception on writing [" << exc.code() << "]: " << exc.displayText() << std::endl;
+        std::cerr << "ClientSocketHandler exception on writing [" << exc.code() << "]: " << exc.displayText() << std::endl;
         client->Disconnect();
     }
 }

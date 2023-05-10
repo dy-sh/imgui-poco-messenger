@@ -18,6 +18,14 @@ using Poco::Thread;
 using Poco::BasicEvent;
 using Poco::delegate;
 
+enum class ClientState
+{
+    Disconnected,
+    Connecting,
+    Disconnecting,
+    Connected
+};
+
 class Client
 {
 public:
@@ -32,6 +40,8 @@ public:
     BasicEvent<void> OnDisconnected;
     BasicEvent<Message*> OnReceiveMessage;
 
+    ClientState GetState() const { return state; }
+
 private:
     void ReceiveText(const ClientTextMessage& text_message, ClientSocketHandler* socket_handler);
     void ReceiveMessage(Message* message, ClientSocketHandler* socket_handler);
@@ -40,6 +50,7 @@ private:
     Thread* thread = nullptr;
     ClientThread* client_thread = nullptr;
     IProtocol* protocol = nullptr;
+    ClientState state = ClientState::Disconnected;
 
     friend ClientSocketHandler;
 };

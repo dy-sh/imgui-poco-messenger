@@ -21,6 +21,12 @@ Client::~Client()
 
 void Client::Connect(const SocketAddress& address)
 {
+    if (state == ClientState::Connecting || state == ClientState::Connected)
+    {
+        Disconnect();
+        return;
+    }
+
     if (client_thread)
     {
         client_thread->reactor.removeEventHandler(client_thread->socket, NObserver(*this, &Client::OnSocketShutdown));
@@ -29,6 +35,8 @@ void Client::Connect(const SocketAddress& address)
         // delete client_thread; - no need because called automatically from Thread
         client_thread = nullptr;
     }
+
+    state = ClientState::Connecting;
 
     client_thread = new ClientThread(*protocol, this, address);
     thread = new Thread();
@@ -44,6 +52,7 @@ void Client::Disconnect()
 {
     if (client_thread)
     {
+        state = ClientState::Disconnecting;
         client_thread->stop();
     }
 }
@@ -72,6 +81,8 @@ void Client::ReceiveMessage(Message* message, ClientSocketHandler* socket_handle
 void Client::OnSocketShutdown(const Poco::AutoPtr<Poco::Net::ShutdownNotification>& n)
 {
     client_thread->stop();
+
+    state = ClientState::Disconnected;
 
     OnDisconnected(this);
 }

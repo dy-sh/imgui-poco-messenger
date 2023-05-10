@@ -22,7 +22,7 @@ void ClientThread::run()
     }
     catch (Poco::Exception& exc)
     {
-        std::cout << "ClientThread exception on running [" << exc.code() << "]: " << exc.displayText() << std::endl;
+        std::cerr << "ClientThread exception on running [" << exc.code() << "]: " << exc.displayText() << std::endl;
     }
     std::cout << "Connection thread finished" << std::endl;
 }
