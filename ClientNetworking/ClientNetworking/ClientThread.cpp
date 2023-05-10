@@ -14,7 +14,8 @@ void ClientThread::run()
         socket.connect(address);
         handler = new ClientSocketHandler(socket, reactor, protocol, client);
 
-        OnStarted.set();
+        OnStartedSync.set();
+        OnStarted();
         
         reactor.run(); // thread will be blocked here
 

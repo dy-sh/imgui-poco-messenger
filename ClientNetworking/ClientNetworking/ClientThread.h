@@ -12,6 +12,7 @@ using Poco::Net::StreamSocket;
 using Poco::Net::SocketAddress;
 using Poco::Net::SocketReactor;
 using Poco::Event;
+using Poco::BasicEvent;
 
 
 class ClientThread : public Poco::Runnable
@@ -23,7 +24,8 @@ public:
     SocketReactor reactor;
     IProtocol& protocol;
     Client* client;
-    Event OnStarted;
+    Event OnStartedSync;
+    BasicEvent<void> OnStarted;
 
     explicit ClientThread(IProtocol& protocol, Client* client, const SocketAddress& address = SocketAddress("localhost", 9977))
         : address{address}, protocol{protocol}, client{client}

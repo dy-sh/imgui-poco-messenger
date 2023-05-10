@@ -45,6 +45,7 @@ public:
 private:
     void ReceiveText(const ClientTextMessage& text_message, ClientSocketHandler* socket_handler);
     void ReceiveMessage(Message* message, ClientSocketHandler* socket_handler);
+    void OnSocketStarted(const void* sender);
     void OnSocketShutdown(const Poco::AutoPtr<Poco::Net::ShutdownNotification>& n);
 
     Thread* thread = nullptr;

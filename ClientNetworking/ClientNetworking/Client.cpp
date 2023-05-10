@@ -39,12 +39,10 @@ void Client::Connect(const SocketAddress& address)
     state = ClientState::Connecting;
 
     client_thread = new ClientThread(*protocol, this, address);
-    thread = new Thread();
+    client_thread->OnStarted += delegate(this, &Client::OnSocketStarted);
 
+    thread = new Thread();
     thread->start(client_thread);
-    client_thread->OnStarted.wait(); // block current thread and wait
-    client_thread->reactor.addEventHandler(client_thread->socket, NObserver(*this, &Client::OnSocketShutdown));
-    OnConnected();
 }
 
 
@@ -78,8 +76,19 @@ void Client::ReceiveMessage(Message* message, ClientSocketHandler* socket_handle
 }
 
 
+void Client::OnSocketStarted(const void* sender)
+{
+    client_thread->reactor.addEventHandler(client_thread->socket, NObserver(*this, &Client::OnSocketShutdown));
+
+    state = ClientState::Connected;
+
+    OnConnected(this);
+}
+
+
 void Client::OnSocketShutdown(const Poco::AutoPtr<Poco::Net::ShutdownNotification>& n)
 {
+    client_thread->reactor.removeEventHandler(client_thread->socket, NObserver(*this, &Client::OnSocketShutdown));
     client_thread->stop();
 
     state = ClientState::Disconnected;
