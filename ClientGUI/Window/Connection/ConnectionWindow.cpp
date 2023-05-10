@@ -11,6 +11,8 @@
 #include "../../Tools/Console.h"
 #include "ClientNetworking/Client.h"
 #include "../../Tools/Log.h"
+#include "Protocol/Messages/ClientAuthorizeMessage.h"
+#include "Protocol/Messages/MessageFactory.h"
 #include "Protocol/Messages/ServerAuthorizeMessage.h"
 
 using namespace std;
@@ -171,7 +173,8 @@ void ConnectionWindow::OnReceiveMessage(const void* sender, Message*& message)
 
 void ConnectionWindow::OnConnected(const void* sender)
 {
-    std::string mess = Poco::format("a|%s;", std::string(user_name));
+
+    std::string mess = ClientAuthorizeMessage::Serialize(user_name);
     client->Send(mess.c_str());
 
     if (Window* chat_window = window_manager->GetWindowByTitle("Chat"))

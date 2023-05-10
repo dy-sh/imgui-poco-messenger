@@ -6,6 +6,7 @@
 struct ServerErrorMessage : Message
 {
     static const std::string type;
+    static const char prefix;
 
     inline const static std::string NOT_AUTHORIZED = "E|0|Not authorized;\r\n";
 
@@ -13,12 +14,18 @@ struct ServerErrorMessage : Message
     std::string message;
 
 
-    ServerErrorMessage(char prefix) : Message(prefix)
+    ServerErrorMessage() : Message()
     {
     }
 
+    bool Matches(const char* buffer, size_t from, size_t size) const override
+    {
+        // check message starts from type and |, example "A|...."
+        return buffer[from] == prefix && buffer[from + 1] == '|';
+    }
 
-    bool Parse(const char* buffer, size_t from, size_t size) override
+
+    bool Deserialize(const char* buffer, size_t from, size_t size) override
     {
         try
         {

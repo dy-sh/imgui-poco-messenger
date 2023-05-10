@@ -17,9 +17,11 @@
 // ;Auser1;Thello; - authotize "user1" and say "hello"
 // ;;;;Auser1;;;Thello; - also valid messages, ";" will be ignored
 
-constexpr char DELIMITER = ';';
+
 
 struct SimpleProtocol : public IProtocol
 {
+    inline static char DELIMITER = ';';
+    
     std::pair<std::unique_ptr<Message>, size_t> ParseMessage(const char* buffer, size_t buffer_size) override;
 };

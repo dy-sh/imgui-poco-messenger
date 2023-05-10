@@ -47,12 +47,12 @@ std::pair<std::unique_ptr<Message>, size_t> SimpleProtocol::ParseMessage(const c
     }
 
     // parse message
-    for (auto& [type, messageCreator] : MessageFactory::message_factory)
+    for (auto& [type, message_creator] : MessageFactory::message_factory)
     {
-        if (messageCreator()->Matches(buffer, from, size)) //todo don't create new instances each time to match
+        if (message_creator()->Matches(buffer, from, size)) //todo don't create new instances each time to match
         {
-            auto message = std::move(messageCreator());
-            if (message->Parse(buffer, from, size))
+            auto message = std::move(message_creator());
+            if (message->Deserialize(buffer, from, size))
             {
                 return {std::move(message), from + size};
             }

@@ -12,18 +12,18 @@ struct InvalidMessage : Message
     std::string text;
 
 
-    InvalidMessage(char prefix) : Message(prefix)
+    InvalidMessage() : Message()
     {
     }
 
 
-    InvalidMessage(const char* buffer, size_t from, size_t size): Message('I')
+    InvalidMessage(const char* buffer, size_t from, size_t size): Message()
     {
         text = std::string(buffer + from, size - 1);
     }
 
 
-    bool Parse(const char* buffer, size_t from, size_t size) override
+    bool Deserialize(const char* buffer, size_t from, size_t size) override
     {
         try
         {

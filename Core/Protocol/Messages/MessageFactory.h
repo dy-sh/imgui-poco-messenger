@@ -17,12 +17,14 @@ struct MessageFactory
 template <typename T>
 struct MessageRegistrar
 {
-    MessageRegistrar(char prefix)
+    MessageRegistrar()
     {
-        MessageFactory::message_factory[T::type] = [prefix] { return std::make_unique<T>(prefix); };
+        MessageFactory::message_factory[T::type] = []{ return std::make_unique<T>(); };
     }
 };
 
 #define REGISTER_MESSAGE(TypeName, Prefix, Name) \
 const std::string TypeName::type = Name;\
-static MessageRegistrar<TypeName> TypeName##Registrar(Prefix);
+const char TypeName::prefix = Prefix;\
+static MessageRegistrar<TypeName> TypeName##Registrar{};
+

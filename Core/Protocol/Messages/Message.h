@@ -6,7 +6,7 @@
 
 struct Message
 {
-    Message(char prefix) : prefix(prefix)
+    Message()
     {
     }
 
@@ -16,16 +16,7 @@ struct Message
     }
 
 
-    virtual bool Matches(const char* buffer, size_t from, size_t size) const
-    {
-        // check message starts from type and |, example "A|...."
-        return buffer[from] == prefix && buffer[from + 1] == '|';
-    }
-
-
-    virtual bool Parse(const char* buffer, size_t from, size_t size) { return false; }
+    virtual bool Matches(const char* buffer, size_t from, size_t size) const { return false; }
+    virtual bool Deserialize(const char* buffer, size_t from, size_t size) { return false; }
     virtual std::string to_str() const { return ""; }
-
-private:
-    const char prefix;
 };

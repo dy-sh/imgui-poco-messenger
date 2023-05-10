@@ -8,16 +8,22 @@
 struct ClientTextMessage : Message
 {
     static const std::string type;
+    static const char prefix;
 
     std::string text;
 
 
-    ClientTextMessage(char prefix) : Message(prefix)
+    ClientTextMessage() : Message()
     {
     }
 
+    bool Matches(const char* buffer, size_t from, size_t size) const override
+    {
+        // check message starts from type and |, example "A|...."
+        return buffer[from] == prefix && buffer[from + 1] == '|';
+    }
 
-    bool Parse(const char* buffer, size_t from, size_t size) override
+    bool Deserialize(const char* buffer, size_t from, size_t size) override
     {
         try
         {

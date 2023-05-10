@@ -4,20 +4,27 @@
 #include <string>
 
 #include "Message.h"
+#include "../SimpleProtocol.h"
 
 struct ClientAuthorizeMessage : Message
 {
     static const std::string type;
+    static const char prefix;
 
     std::string user_name;
 
 
-    ClientAuthorizeMessage(char prefix) : Message(prefix)
+    ClientAuthorizeMessage() : Message()
     {
     }
 
+    bool Matches(const char* buffer, size_t from, size_t size) const override
+    {
+        // check message starts from type and |, example "A|...."
+        return buffer[from] == prefix && buffer[from + 1] == '|';
+    }
 
-    bool Parse(const char* buffer, size_t from, size_t size) override
+    bool Deserialize(const char* buffer, size_t from, size_t size) override
     {
         try
         {
@@ -28,6 +35,12 @@ struct ClientAuthorizeMessage : Message
         {
             return false;
         }
+    }
+
+
+    static std::string Serialize(std::string user_name) 
+    {
+        return std::string(1, prefix) + "|" + user_name + SimpleProtocol::DELIMITER;
     }
 
 

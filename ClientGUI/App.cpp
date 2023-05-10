@@ -103,23 +103,23 @@ void App::ShowDebugToolbar()
             if (Window* console = window_manager.GetWindowByTitle("Console"))
             {
                 bool show_console = console->IsVisible();
-                ImGui::MenuItem("Console (Alt + C)", NULL, &show_console);
+                ImGui::MenuItem("Console (Alt + C)", nullptr, &show_console);
                 console->SetVisible(show_console);
             }
 
             if (Window* console = window_manager.GetWindowByTitle("Log"))
             {
                 bool show_log = console->IsVisible();
-                ImGui::MenuItem("Log (Alt + X)", NULL, &show_log);
+                ImGui::MenuItem("Log (Alt + X)", nullptr, &show_log);
                 console->SetVisible(show_log);
             }
 
-            ImGui::MenuItem("Metrics/Debugger", NULL, &show_app_metrics);
-            ImGui::MenuItem("Debug Log", NULL, &show_app_debug_log);
-            ImGui::MenuItem("Stack Tool", NULL, &show_app_stack_tool);
-            ImGui::MenuItem("Style Editor", NULL, &show_app_style_editor);
-            ImGui::MenuItem("About Dear ImGui", NULL, &show_app_about);
-            ImGui::MenuItem("Demo Window", NULL, &show_demo_window);
+            ImGui::MenuItem("Metrics/Debugger", nullptr, &show_app_metrics);
+            ImGui::MenuItem("Debug Log", nullptr, &show_app_debug_log);
+            ImGui::MenuItem("Stack Tool", nullptr, &show_app_stack_tool);
+            ImGui::MenuItem("Style Editor", nullptr, &show_app_style_editor);
+            ImGui::MenuItem("About Dear ImGui", nullptr, &show_app_about);
+            ImGui::MenuItem("Demo Window", nullptr, &show_demo_window);
             if (ImGui::MenuItem("Exit (Esc)"))
             {
                 Exit();
