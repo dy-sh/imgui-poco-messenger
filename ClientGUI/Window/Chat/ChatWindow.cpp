@@ -23,7 +23,7 @@ static int TextEditCallbackStub(ImGuiInputTextCallbackData* data)
 
 
 ChatWindow::ChatWindow(const std::string& title, bool visible, Client* client)
-    : Window(title, visible, {700, 400}), client{client}
+    : MaximizedWindow(title, visible), client{client}
 {
     commands_executor = new ConsoleCommandsExecutor(this);
     client->OnReceiveMessage += delegate(this, &ChatWindow::OnReceiveMessage);
@@ -62,6 +62,11 @@ void ChatWindow::Print(const char* fmt, ...)
 
 void ChatWindow::RenderContent()
 {
+    ImGui::Spacing();
+    ImGui::Spacing();
+    ImGui::Spacing();
+
+
     // As a specific feature guaranteed by the library, after calling Begin() the last Item represent the title bar.
     // So e.g. IsItemHovered() will return true when hovering the title bar.
     // Here we create a context menu only available from the title bar.
@@ -74,152 +79,188 @@ void ChatWindow::RenderContent()
         ImGui::EndPopup();
     }
 
-    // TODO: display items starting from the bottom
 
-    if (ImGui::SmallButton("Clear"))
+    // Room list
+    ImGui::BeginGroup();
+
+    ImGui::BeginChild("left top pane", ImVec2(200, -ImGui::GetFrameHeightWithSpacing()), true);
+    for (int i = 1; i <= 3; i++)
     {
-        Clear();
-    }
-    ImGui::SameLine();
-    bool copy_to_clipboard = ImGui::SmallButton("Copy");
-    ImGui::SameLine();
-    if (ImGui::SmallButton("Help"))
-    {
-        commands_executor->ExecCommand("/HELP");
-    }
-
-    static bool spam = false;
-    ImGui::SameLine();
-    if (ImGui::SmallButton("Spam"))
-        spam = !spam;
-    if (spam)
-        Print("Spam %f", ImGui::GetTime());
-
-    //    ImGui::Separator();
-
-    // Options menu
-    if (ImGui::BeginPopup("Options"))
-    {
-        ImGui::Checkbox("Auto-scroll", &auto_scroll);
-        ImGui::EndPopup();
-    }
-
-    // Options, Filter
-    ImGui::SameLine();
-    if (ImGui::SmallButton("Options"))
-        ImGui::OpenPopup("Options");
-    ImGui::SameLine();
-    filter.Draw("Search", 180);
-    ImGui::Separator();
-
-    // Reserve enough left-over height for 1 separator + 1 input text
-    const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
-    if (ImGui::BeginChild(
-        "ScrollingRegion", ImVec2(0, -footer_height_to_reserve), false, ImGuiWindowFlags_HorizontalScrollbar))
-    {
-        if (ImGui::BeginPopupContextWindow())
-        {
-            if (ImGui::Selectable("Clear"))
-                Clear();
-            ImGui::EndPopup();
-        }
-
-        // Display every line as a separate entry so we can change their color or add custom widgets.
-        // If you only want raw text you can use ImGui::TextUnformatted(log.begin(), log.end());
-        // NB- if you have thousands of entries this approach may be too inefficient and may require user-side clipping
-        // to only process visible items. The clipper will automatically measure the height of your first item and then
-        // "seek" to display only items in the visible area.
-        // To use the clipper we can replace your standard loop:
-        //      for (int i = 0; i < Items.Size; i++)
-        //   With:
-        //      ImGuiListClipper clipper;
-        //      clipper.Begin(Items.Size);
-        //      while (clipper.Step())
-        //         for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++)
-        // - That your items are evenly spaced (same height)
-        // - That you have cheap random access to your elements (you can access them given their index,
-        //   without processing all the ones before)
-        // You cannot this code as-is if a filter is active because it breaks the 'cheap random-access' property.
-        // We would need random-access on the post-filtered list.
-        // A typical application wanting coarse clipping and filtering may want to pre-compute an array of indices
-        // or offsets of items that passed the filtering test, recomputing this array when user changes the filter,
-        // and appending newly elements as they are inserted. This is left as a task to the user until we can manage
-        // to improve this example code!
-        // If your items are of variable height:
-        // - Split them into same height items would be simpler and facilitate random-seeking into your list.
-        // - Consider using manual call to IsRectVisible() and skipping extraneous decoration from your items.
-        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1)); // Tighten spacing
-        if (copy_to_clipboard)
-            ImGui::LogToClipboard();
-        for (int i = 0; i < items.Size; i++)
-        {
-            const char* item = items[i];
-            if (!filter.PassFilter(item))
-                continue;
-
-            // Normally you would store more information in your item than just a string.
-            // (e.g. make Items[] an array of structure, store color/type etc.)
-            ImVec4 color;
-            bool has_color = false;
-            if (strstr(item, "[err]"))
-            {
-                color = chat_colors.ErrorColor;
-                has_color = true;
-            }
-            else if (strstr(item, "[wrn]"))
-            {
-                color = chat_colors.WarningColor;
-                has_color = true;
-            }
-            else if (strncmp(item, "# ", 2) == 0) // user command
-            {
-                color = ImVec4(1.0f, 0.8f, 0.6f, 1.0f);
-                has_color = true;
-            }
-            if (has_color)
-                ImGui::PushStyleColor(ImGuiCol_Text, color);
-            ImGui::TextUnformatted(item);
-            if (has_color)
-                ImGui::PopStyleColor();
-        }
-        if (copy_to_clipboard)
-            ImGui::LogFinish();
-
-        // Keep up at the bottom of the scroll region if we were already at the bottom at the beginning of the frame.
-        // Using a scrollbar or mouse-wheel will take away from the bottom edge.
-        if (scroll_to_bottom || (auto_scroll && ImGui::GetScrollY() >= ImGui::GetScrollMaxY()))
-            ImGui::SetScrollHereY(1.0f);
-        scroll_to_bottom = false;
-
-        ImGui::PopStyleVar();
+        char label[128];
+        sprintf(label, "Room %d", i);
+        if (ImGui::Selectable(label, room_selected == i))
+            room_selected = i;
     }
     ImGui::EndChild();
-    ImGui::Separator();
-
-
-    // Auto-focus on text field
-    ImGui::SetItemDefaultFocus();
-    if (set_focus_on_textfield)
+    if (ImGui::Button("<", ImVec2(200.0f, 0)))
     {
-        ImGui::SetKeyboardFocusHere(); // Auto focus next widget
-        set_focus_on_textfield = false;
+        if (client)
+        {
+            client->Disconnect();
+        }
     }
-
-    ImGuiInputTextFlags input_text_flags = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_EscapeClearsAll
-        | ImGuiInputTextFlags_CallbackCompletion
-        | ImGuiInputTextFlags_CallbackHistory;
-    if (ImGui::InputText("Message", input_buf, IM_ARRAYSIZE(input_buf), input_text_flags, &TextEditCallbackStub,
-                         (void*)this))
-    {
-        ProceedMessageTextField();
-        set_focus_on_textfield = true;
-    }
-
+    ImGui::EndGroup();
     ImGui::SameLine();
-    if (ImGui::Button("Send"))
+
+    // Chat
     {
-        ProceedMessageTextField();
-        set_focus_on_textfield = true;
+        ImGui::BeginGroup();
+        ImGui::BeginChild("item view", ImVec2(0, -ImGui::GetFrameHeightWithSpacing()));
+        // Leave room for 1 line below us
+        ImGui::Text("Room: %d", room_selected);
+        ImGui::Separator();
+
+
+        {
+            if (search)
+            {
+                filter.Draw("Search", 180);
+                ImGui::Separator();
+            }
+
+            // Reserve enough left-over height for 1 separator + 1 input text
+            const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing()-30;
+            bool copy_to_clipboard = false;
+
+            if (ImGui::BeginChild(
+                "ScrollingRegion", ImVec2(0, -footer_height_to_reserve), false, ImGuiWindowFlags_HorizontalScrollbar))
+            {
+                if (ImGui::BeginPopupContextWindow())
+                {
+                    ImGui::Checkbox("Auto-scroll", &auto_scroll);
+                    ImGui::Checkbox("Search", &search);
+
+   
+
+                    if (ImGui::Selectable("Clear"))
+                    {
+                        Clear();
+                    }
+                    if (ImGui::Selectable("Copy"))
+                    {
+                        copy_to_clipboard = true;
+                    }
+                    if (ImGui::Selectable("Help"))
+                    {
+                        commands_executor->ExecCommand("/HELP");
+                    }
+                    if (ImGui::Selectable("Spam"))
+                    {
+                        spam = !spam;
+                    }
+                    ImGui::EndPopup();
+                }
+
+
+                // Display every line as a separate entry so we can change their color or add custom widgets.
+                // If you only want raw text you can use ImGui::TextUnformatted(log.begin(), log.end());
+                // NB- if you have thousands of entries this approach may be too inefficient and may require user-side clipping
+                // to only process visible items. The clipper will automatically measure the height of your first item and then
+                // "seek" to display only items in the visible area.
+                // To use the clipper we can replace your standard loop:
+                //      for (int i = 0; i < Items.Size; i++)
+                //   With:
+                //      ImGuiListClipper clipper;
+                //      clipper.Begin(Items.Size);
+                //      while (clipper.Step())
+                //         for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++)
+                // - That your items are evenly spaced (same height)
+                // - That you have cheap random access to your elements (you can access them given their index,
+                //   without processing all the ones before)
+                // You cannot this code as-is if a filter is active because it breaks the 'cheap random-access' property.
+                // We would need random-access on the post-filtered list.
+                // A typical application wanting coarse clipping and filtering may want to pre-compute an array of indices
+                // or offsets of items that passed the filtering test, recomputing this array when user changes the filter,
+                // and appending newly elements as they are inserted. This is left as a task to the user until we can manage
+                // to improve this example code!
+                // If your items are of variable height:
+                // - Split them into same height items would be simpler and facilitate random-seeking into your list.
+                // - Consider using manual call to IsRectVisible() and skipping extraneous decoration from your items.
+                ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1)); // Tighten spacing
+                if (copy_to_clipboard)
+                    ImGui::LogToClipboard();
+                for (int i = 0; i < items.Size; i++)
+                {
+                    const char* item = items[i];
+                    if (!filter.PassFilter(item))
+                        continue;
+
+                    // Normally you would store more information in your item than just a string.
+                    // (e.g. make Items[] an array of structure, store color/type etc.)
+                    ImVec4 color;
+                    bool has_color = false;
+                    if (strstr(item, "[err]"))
+                    {
+                        color = chat_colors.ErrorColor;
+                        has_color = true;
+                    }
+                    else if (strstr(item, "[wrn]"))
+                    {
+                        color = chat_colors.WarningColor;
+                        has_color = true;
+                    }
+                    else if (strncmp(item, "# ", 2) == 0) // user command
+                    {
+                        color = ImVec4(1.0f, 0.8f, 0.6f, 1.0f);
+                        has_color = true;
+                    }
+                    if (has_color)
+                        ImGui::PushStyleColor(ImGuiCol_Text, color);
+                    ImGui::TextUnformatted(item);
+                    if (has_color)
+                        ImGui::PopStyleColor();
+                }
+                if (copy_to_clipboard)
+                    ImGui::LogFinish();
+
+                // Keep up at the bottom of the scroll region if we were already at the bottom at the beginning of the frame.
+                // Using a scrollbar or mouse-wheel will take away from the bottom edge.
+                if (scroll_to_bottom || (auto_scroll && ImGui::GetScrollY() >= ImGui::GetScrollMaxY()))
+                    ImGui::SetScrollHereY(1.0f);
+                scroll_to_bottom = false;
+
+                ImGui::PopStyleVar();
+            }
+            ImGui::EndChild();
+            ImGui::Separator();
+        }
+        if (spam)
+        {
+            std::string s = Poco::format("Spam %f", ImGui::GetTime());
+            Send(s.c_str());
+        }
+
+        ImGui::EndChild();
+
+        // Auto-focus on text field
+        ImGui::SetItemDefaultFocus();
+        if (set_focus_on_textfield)
+        {
+            ImGui::SetKeyboardFocusHere(); // Auto focus next widget
+            set_focus_on_textfield = false;
+        }
+
+        ImGui::SetNextItemWidth(ImGui::GetFrameHeightWithSpacing() - 270);
+        ImGuiInputTextFlags input_text_flags = ImGuiInputTextFlags_EnterReturnsTrue |
+            ImGuiInputTextFlags_EscapeClearsAll
+            | ImGuiInputTextFlags_CallbackCompletion
+            | ImGuiInputTextFlags_CallbackHistory;
+        if (ImGui::InputText(" ", input_buf, IM_ARRAYSIZE(input_buf), input_text_flags, &TextEditCallbackStub,
+                             (void*)this))
+        {
+            ProceedMessageTextField();
+            set_focus_on_textfield = true;
+        }
+
+        ImGui::SameLine();
+        if (ImGui::Button("Send", ImVec2(200.0f, 0)))
+        {
+            ProceedMessageTextField();
+            set_focus_on_textfield = true;
+        }
+
+
+        ImGui::EndGroup();
     }
 }
 

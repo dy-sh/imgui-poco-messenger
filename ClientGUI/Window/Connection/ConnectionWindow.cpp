@@ -4,14 +4,13 @@
 #include "Poco/Net/SocketAddress.h"
 #include "ConnectionWindow.h"
 
-#include <sstream>
 
-#include "../Tools/Debug.h"
+#include "../../Tools/Debug.h"
 #include "imgui.h"
-#include "WindowManager.h"
-#include "../Tools/Console.h"
+#include "../WindowManager.h"
+#include "../../Tools/Console.h"
 #include "ClientNetworking/Client.h"
-#include "../Tools/Log.h"
+#include "../../Tools/Log.h"
 #include "Protocol/Messages/ServerAuthorizeMessage.h"
 
 using namespace std;
@@ -38,8 +37,8 @@ ConnectionWindow::ConnectionWindow(const std::string& title, bool visible, Windo
 
 
     //todo temporary
-    // SocketAddress address = SocketAddress(server_address, server_port);
-    // client->Connect(address);
+    SocketAddress address = SocketAddress(server_address, server_port);
+    client->Connect(address);
 }
 
 
@@ -126,17 +125,6 @@ void ConnectionWindow::RenderContent()
     //     }
     // }
 
-    // if (ImGui::Button("Authorization"))
-    // {
-    //     if (window_manager)
-    //     {
-    //         if (Window* loginWindow = window_manager->GetWindowByTitle("Login"))
-    //         {
-    //             loginWindow->ToggleVisible();
-    //         }
-    //     }
-    // }
-    //
     // if (ImGui::Button("Add Log message"))
     // {
     //     LOG("Simple %d message example", 123);
@@ -188,6 +176,7 @@ void ConnectionWindow::OnConnected(const void* sender)
 
     if (Window* chat_window = window_manager->GetWindowByTitle("Chat"))
     {
+        this->SetVisible(false);
         chat_window->SetVisible(true);
     }
 }
@@ -199,6 +188,7 @@ void ConnectionWindow::OnDisconnected(const void* sender)
 
     if (Window* chat_window = window_manager->GetWindowByTitle("Chat"))
     {
+        this->SetVisible(true);
         chat_window->SetVisible(false);
     }
 }

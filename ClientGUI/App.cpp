@@ -10,8 +10,7 @@
 #include "Tools/Log.h"
 #include "Window//Chat/ChatWindow.h"
 #include "Window/WindowManager.h"
-#include "Window/LoginWindow.h"
-#include "Window/ConnectionWindow.h"
+#include "Window/Connection/ConnectionWindow.h"
 
 App::App()
 {
@@ -20,7 +19,6 @@ App::App()
     window_manager.AddWindow(std::make_unique<ConnectionWindow>("Main",  true, &window_manager, client));
     window_manager.AddWindow(std::make_unique<ConsoleWindow>("Console", false));
     window_manager.AddWindow(std::make_unique<LogWindow>("Log", false));
-    window_manager.AddWindow(std::make_unique<LoginWindow>("Login", false));
     window_manager.AddWindow(std::make_unique<ChatWindow>("Chat", false, client));
 }
 
@@ -64,7 +62,9 @@ void App::Render()
     }
 
     if (show_debug_toolbar)
+    {
         ShowDebugToolbar();
+    }
 
     window_manager.Render();
 

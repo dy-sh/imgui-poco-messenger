@@ -1,7 +1,7 @@
 // Copyright 2023 Dmitry Savosh <d.savosh@gmail.com>
 
 #pragma once
-#include "Window.h"
+#include "../Window.h"
 
 
 struct Message;
