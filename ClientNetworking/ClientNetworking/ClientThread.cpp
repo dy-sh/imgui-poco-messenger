@@ -17,10 +17,8 @@ void ClientThread::run()
         OnStarted.set();
         
         reactor.run(); // thread will be blocked here
-        // socket.shutdown();
-        socket.close();
-        delete handler;
-        handler = nullptr;
+
+        stop();
     }
     catch (Poco::Exception& e)
     {

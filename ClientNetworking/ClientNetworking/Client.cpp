@@ -40,10 +40,10 @@ void Client::Disconnect()
         client_thread->stop();
         thread->join();
     }
-    delete thread;
-    thread = nullptr;
+    // delete thread;
+    // thread = nullptr;
     // delete clientThread; - no need because called automatically from Thread
-    client_thread = nullptr;
+    // client_thread = nullptr;
 }
 
 

@@ -30,7 +30,7 @@ ClientSocketHandler::~ClientSocketHandler()
     reactor.removeEventHandler(socket, NObserver(*this, &ClientSocketHandler::OnSocketReadable));
     reactor.removeEventHandler(socket, NObserver(*this, &ClientSocketHandler::OnSocketWritable));
     reactor.removeEventHandler(socket, NObserver(*this, &ClientSocketHandler::OnSocketShutdown));
-
+    
     fifo_out.readable -= delegate(this, &ClientSocketHandler::OnFIFOOutReadable);
     fifo_in.writable -= delegate(this, &ClientSocketHandler::OnFIFOInWritable);
 }
@@ -118,7 +118,7 @@ void ClientSocketHandler::OnSocketWritable(const AutoPtr<WritableNotification>& 
 
 void ClientSocketHandler::OnSocketShutdown(const AutoPtr<ShutdownNotification>& n)
 {
-    // delete this;
+
 }
 
 void ClientSocketHandler::Send(const char* text)
