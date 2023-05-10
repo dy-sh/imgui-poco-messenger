@@ -3,6 +3,8 @@
 #include <iostream>
 #include <Poco/Thread.h>
 #include <Poco/Net/SocketAddress.h>
+#include <Poco/Net/SocketNotification.h>
+
 #include "Poco/BasicEvent.h"
 #include "Poco/Delegate.h"
 
@@ -26,15 +28,18 @@ public:
     void Disconnect();
     void Send(const char* str);
 
-    void ReceiveText(const ClientTextMessage& text_message, ClientSocketHandler* socket_handler);
-    void ReceiveMessage(Message* message, ClientSocketHandler* socket_handler);
-
     BasicEvent<void> OnConnected;
     BasicEvent<void> OnDisconnected;
     BasicEvent<Message*> OnReceiveMessage;
 
 private:
+    void ReceiveText(const ClientTextMessage& text_message, ClientSocketHandler* socket_handler);
+    void ReceiveMessage(Message* message, ClientSocketHandler* socket_handler);
+    void OnSocketShutdown(const Poco::AutoPtr<Poco::Net::ShutdownNotification>& n);
+
     Thread* thread = nullptr;
     ClientThread* client_thread = nullptr;
     IProtocol* protocol = nullptr;
+
+    friend ClientSocketHandler;
 };

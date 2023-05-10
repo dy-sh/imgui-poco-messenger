@@ -6,6 +6,7 @@
 #include "Protocol/IProtocol.h"
 
 
+
 ClientSocketHandler::ClientSocketHandler(StreamSocket& socket, SocketReactor& reactor, IProtocol& protocol,
                              Client* client):
     socket(socket),
@@ -60,7 +61,7 @@ void ClientSocketHandler::OnFIFOInWritable(bool& b)
     }
 }
 
-void ClientSocketHandler::OnSocketReadable(const AutoPtr<ReadableNotification>& pNf)
+void ClientSocketHandler::OnSocketReadable(const AutoPtr<ReadableNotification>& n)
 {
     try
     {
@@ -97,7 +98,7 @@ void ClientSocketHandler::OnSocketReadable(const AutoPtr<ReadableNotification>& 
 
 
 
-void ClientSocketHandler::OnSocketWritable(const AutoPtr<WritableNotification>& pNf)
+void ClientSocketHandler::OnSocketWritable(const AutoPtr<WritableNotification>& n)
 {
     try
     {
@@ -115,10 +116,9 @@ void ClientSocketHandler::OnSocketWritable(const AutoPtr<WritableNotification>& 
 }
 
 
-void ClientSocketHandler::OnSocketShutdown(const AutoPtr<ShutdownNotification>& pNf)
+void ClientSocketHandler::OnSocketShutdown(const AutoPtr<ShutdownNotification>& n)
 {
-    client->OnDisconnected(this);
-    delete this;
+    // delete this;
 }
 
 void ClientSocketHandler::Send(const char* text)

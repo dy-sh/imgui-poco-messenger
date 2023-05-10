@@ -29,6 +29,7 @@ void Client::Connect(const SocketAddress& address)
     thread->start(client_thread);
     client_thread->OnStarted.wait(); // block current thread and wait
     OnConnected();
+    client_thread->reactor.addEventHandler(client_thread->socket, NObserver(*this, &Client::OnSocketShutdown));
 }
 
 
@@ -62,6 +63,12 @@ void Client::ReceiveText(const ClientTextMessage& text_message, ClientSocketHand
 void Client::ReceiveMessage(Message* message, ClientSocketHandler* socket_handler)
 {
     OnReceiveMessage(this,message);
+}
+
+
+void Client::OnSocketShutdown(const Poco::AutoPtr<Poco::Net::ShutdownNotification>& n)
+{
+    OnDisconnected(this);
 }
 
 

@@ -54,9 +54,9 @@ public:
     
     void OnFIFOOutReadable(bool& b);
     void OnFIFOInWritable(bool& b);
-    void OnSocketReadable(const AutoPtr<ReadableNotification>& pNf);
-    void OnSocketWritable(const AutoPtr<WritableNotification>& pNf);
-    void OnSocketShutdown(const AutoPtr<ShutdownNotification>& pNf);
+    void OnSocketReadable(const AutoPtr<ReadableNotification>& n);
+    void OnSocketWritable(const AutoPtr<WritableNotification>& n);
+    void OnSocketShutdown(const AutoPtr<ShutdownNotification>& n);
     
     void Send(const char* text);
 
