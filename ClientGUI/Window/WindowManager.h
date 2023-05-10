@@ -16,6 +16,7 @@ public:
     void AddWindow(std::unique_ptr<Window> window);
     
     void RemoveWindow(Window* window);
+    void RemoveAllWindows();
     
     Window* GetWindowByTitle(const std::string& title);
     

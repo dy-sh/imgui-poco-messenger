@@ -36,6 +36,12 @@ void WindowManager::RemoveWindow(Window* window)
 }
 
 
+void WindowManager::RemoveAllWindows()
+{
+    windows.clear();
+}
+
+
 Window* WindowManager::GetWindowByTitle(const std::string& title)
 {
     for (auto& window : windows)

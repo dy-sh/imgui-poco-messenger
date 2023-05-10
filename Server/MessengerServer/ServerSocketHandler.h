@@ -35,7 +35,7 @@ private:
     FIFOBuffer fifo_out;
 
     IProtocol* protocol = nullptr;
-    Server* messenger = nullptr;
+    Server* server = nullptr;
     ServerUser* user = nullptr;
 
 public:

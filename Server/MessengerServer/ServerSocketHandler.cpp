@@ -20,7 +20,7 @@ ServerSocketHandler::ServerSocketHandler(StreamSocket& socket, SocketReactor& re
     fifo_in(BUFFER_SIZE, true),
     fifo_out(BUFFER_SIZE, true),
     protocol{&protocol},
-    messenger{&server}
+    server{&server}
 {
     Application& app = Application::instance();
     app.logger().information("Connection from " + socket.peerAddress().toString());
@@ -44,6 +44,9 @@ ServerSocketHandler::~ServerSocketHandler()
     catch (...)
     {
     }
+
+    server->OnSocketShutdown(this);
+
 
     reactor.removeEventHandler(socket, NObserver(*this, &ServerSocketHandler::OnSocketReadable));
     reactor.removeEventHandler(socket, NObserver(*this, &ServerSocketHandler::OnSocketWritable));
@@ -97,7 +100,7 @@ void ServerSocketHandler::OnSocketReadable(const AutoPtr<ReadableNotification>& 
                 auto [message, size] = protocol->ParseMessage(fifo_in.begin(), fifo_in.used());
                 if (size > 0)
                 {
-                    messenger->ReceiveMessage(message.get(), this);
+                    server->ReceiveMessage(message.get(), this);
                     fifo_in.drain(size);
                 }
                 else break;

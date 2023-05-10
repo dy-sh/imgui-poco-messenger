@@ -15,8 +15,8 @@
 
 App::App()
 {
-    client = new Client();
     style = std::make_unique<DefaultStyle>();
+    client = new Client();
     window_manager.AddWindow(std::make_unique<MainWindow>("Main",  true, &window_manager, client));
     window_manager.AddWindow(std::make_unique<ConsoleWindow>("Console", false));
     window_manager.AddWindow(std::make_unique<LogWindow>("Log", false));
@@ -27,6 +27,7 @@ App::App()
 
 App::~App()
 {
+    window_manager.RemoveAllWindows(); // it important to destroy windows before client
     delete client;
 }
 

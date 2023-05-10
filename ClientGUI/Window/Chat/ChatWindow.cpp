@@ -25,17 +25,17 @@ static int TextEditCallbackStub(ImGuiInputTextCallbackData* data)
 ChatWindow::ChatWindow(const std::string& title, bool visible, Client* client)
     : Window(title, visible, {700, 400}), client{client}
 {
-    client->OnReceiveMessage += delegate(this, &ChatWindow::OnReceiveMessage);
     commands_executor = new ConsoleCommandsExecutor(this);
+    client->OnReceiveMessage += delegate(this, &ChatWindow::OnReceiveMessage);
     Clear();
 }
 
 
 ChatWindow::~ChatWindow()
 {
+    delete commands_executor;
     client->OnReceiveMessage -= delegate(this, &ChatWindow::OnReceiveMessage);
     Clear();
-    delete commands_executor;
 }
 
 

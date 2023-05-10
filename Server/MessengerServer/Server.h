@@ -5,6 +5,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <Poco/Mutex.h>
 
 struct Message;
 struct ClientTextMessage;
@@ -17,12 +18,14 @@ class Server
 public:
     std::vector<ServerUser*> GetAllAuthorizedUsers();
 
-    void ReceiveMessage(Message* message, ServerSocketHandler* socketHandler);
+    void ReceiveMessage(Message* message, ServerSocketHandler* socket_handler);
+    void OnSocketShutdown(ServerSocketHandler* socket_handler);
 
 private:
     size_t last_user_id{0};
     std::map<std::string, ServerUser*> users;
+    Poco::FastMutex users_mutex;
     // std::vector<TextMessage> messages;
-    void AuthorizeUser(ClientAuthorizeMessage& message, ServerSocketHandler* socketHandler);
-    void ReceiveText(ClientTextMessage& message, ServerSocketHandler* socketHandler);
+    void AuthorizeUser(ClientAuthorizeMessage& message, ServerSocketHandler* socket_handler);
+    void ReceiveText(ClientTextMessage& message, ServerSocketHandler* socket_handler);
 };
