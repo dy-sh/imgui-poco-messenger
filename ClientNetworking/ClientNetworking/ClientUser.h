@@ -9,8 +9,8 @@ class ClientSocketHandler;
 struct ClientUser
 {
     size_t id;
-    std::string nickname;
-    std::vector<ClientSocketHandler*> socketHandlers;
+    std::string user_name;
+    std::vector<ClientSocketHandler*> socket_handlers;
 
     bool IsAuthorized() const { return id > 0; }
 };

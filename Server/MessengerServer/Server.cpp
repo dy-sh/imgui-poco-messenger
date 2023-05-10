@@ -1,6 +1,9 @@
 ﻿// Copyright 2023 Dmitry Savosh <d.savosh@gmail.com>
 
 #include "Server.h"
+
+#include <Poco/Util/Application.h>
+
 #include "ServerSocketHandler.h"
 #include "Protocol/Messages/ClientAuthorizeMessage.h"
 #include "Protocol/Messages/InvalidMessage.h"
@@ -8,6 +11,7 @@
 #include "ServerUser.h"
 #include "Protocol/Messages/ServerErrorMessage.h"
 
+using Poco::Util::Application;
 
 std::vector<ServerUser*> Server::GetAllAuthorizedUsers()
 {
@@ -147,7 +151,6 @@ void Server::ReceiveText(ClientTextMessage& message, ServerSocketHandler* socket
         {
             if (!auth_user_socket) continue;
 
-            std::cout << "!!!!  socket:" << &auth_user_socket << std::endl;
             auth_user_socket->Send(
                 "T|"
                 + std::to_string(user->id) + "|"

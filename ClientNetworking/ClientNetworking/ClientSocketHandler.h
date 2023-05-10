@@ -62,7 +62,7 @@ public:
 
 
     StreamSocket socket;
-    SocketStream stream;
+    SocketStream socket_stream;
     SocketReactor& reactor;
     FIFOBuffer fifo_in;
     FIFOBuffer fifo_out;

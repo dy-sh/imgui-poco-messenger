@@ -21,20 +21,10 @@ Client::~Client()
 
 void Client::Connect(const SocketAddress& address)
 {
-    if (state == ClientState::Connecting || state == ClientState::Connected)
+    if (state == ClientState::Connecting || state == ClientState::Connected || client_thread != nullptr)
     {
         Disconnect();
         return;
-    }
-
-    if (client_thread)
-    {
-        client_thread->OnSocketOpened -= delegate(this, &Client::OnSocketOpened);
-        client_thread->OnSocketClosed -= delegate(this, &Client::OnSocketClosed);
-        delete thread;
-        thread = nullptr;
-        // delete client_thread; - no need because called automatically from Thread
-        client_thread = nullptr;
     }
 
     state = ClientState::Connecting;
@@ -88,12 +78,15 @@ void Client::OnSocketOpened(const void* sender)
 
 void Client::OnSocketClosed(const void* sender)
 {
+    client_thread->OnSocketOpened -= delegate(this, &Client::OnSocketOpened);
+    client_thread->OnSocketClosed -= delegate(this, &Client::OnSocketClosed);
     client_thread->stop();
+    delete thread;
+    thread = nullptr;
+    // delete client_thread; - no need because called automatically from Thread
+    client_thread = nullptr;
 
     state = ClientState::Disconnected;
 
     OnDisconnected(this);
 }
-
-
-

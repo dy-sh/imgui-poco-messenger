@@ -3,13 +3,14 @@
 #include "ClientSocketHandler.h"
 
 #include "Client.h"
+#include "ClientUser.h"
 #include "Protocol/IProtocol.h"
 
 
 ClientSocketHandler::ClientSocketHandler(StreamSocket& socket, SocketReactor& reactor, IProtocol& protocol,
                                          Client* client):
     socket(socket),
-    stream(socket),
+    socket_stream(socket),
     reactor(reactor),
     fifo_in(BUFFER_SIZE, true),
     fifo_out(BUFFER_SIZE, true),
@@ -86,13 +87,14 @@ void ClientSocketHandler::OnSocketReadable(const AutoPtr<ReadableNotification>& 
         }
         else
         {
-            std::cerr << "ClientSocketHandler exception on reading: socket.receiveBytes == 0"<< std::endl;
+            std::cerr << "ClientSocketHandler exception on reading: socket.receiveBytes == 0" << std::endl;
             client->Disconnect();
         }
     }
     catch (Poco::Exception& exc)
     {
-        std::cerr << "ClientSocketHandler exception on reading [" << exc.code() << "]: " << exc.displayText() << std::endl;
+        std::cerr << "ClientSocketHandler exception on reading [" << exc.code() << "]: " << exc.displayText() <<
+            std::endl;
         client->Disconnect();
     }
 }
@@ -104,13 +106,15 @@ void ClientSocketHandler::OnSocketWritable(const AutoPtr<WritableNotification>& 
     {
         std::string s(fifo_out.begin(), fifo_out.used());
         s.erase(std::remove_if(s.begin(), s.end(), [](char c) { return c == '\n' || c == '\r'; }), s.end());
-        std::cout << "SENDING: " << s << std::endl;
+
+        std::cout << "SENDING TO SERVER: " << s << std::endl;
 
         socket.sendBytes(fifo_out);
     }
     catch (Poco::Exception& exc)
     {
-        std::cerr << "ClientSocketHandler exception on writing [" << exc.code() << "]: " << exc.displayText() << std::endl;
+        std::cerr << "ClientSocketHandler exception on writing [" << exc.code() << "]: " << exc.displayText() <<
+            std::endl;
         client->Disconnect();
     }
 }
@@ -123,8 +127,11 @@ void ClientSocketHandler::OnSocketShutdown(const AutoPtr<ShutdownNotification>& 
 
 void ClientSocketHandler::Send(const char* text)
 {
-    // stream << text << std::endl;
+    std::cout << "SENDING TO SERVER: " << text << std::endl;
+    
+    // working fast
+    socket_stream << text << std::endl;
 
-
-    fifo_out.write(text, std::string(text).size());
+    // working slow with long thread block
+    // fifo_out.write(text, std::string(text).size());
 }

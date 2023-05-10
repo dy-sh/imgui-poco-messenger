@@ -7,11 +7,13 @@
 #include <Poco/Util/Application.h>
 
 #include "Server.h"
+#include "ServerUser.h"
 #include "Protocol/IProtocol.h"
 
 using Poco::Util::Application;
 using Poco::NObserver;
 using Poco::delegate;
+
 
 ServerSocketHandler::ServerSocketHandler(StreamSocket& socket, SocketReactor& reactor,
                                          IProtocol& protocol, Server& server):
@@ -22,9 +24,7 @@ ServerSocketHandler::ServerSocketHandler(StreamSocket& socket, SocketReactor& re
     protocol{&protocol},
     server{&server}
 {
-    Application& app = Application::instance();
-    app.logger().information("Connection from " + socket.peerAddress().toString());
-    std::cout << "NEW SOCKET: " << this << std::endl;
+    Application::instance().logger().information("Connection from " + socket.peerAddress().toString());
 
     reactor.addEventHandler(socket, NObserver(*this, &ServerSocketHandler::OnSocketReadable));
     reactor.addEventHandler(socket, NObserver(*this, &ServerSocketHandler::OnSocketShutdown));
@@ -93,7 +93,15 @@ void ServerSocketHandler::OnSocketReadable(const AutoPtr<ReadableNotification>& 
             size_t new_pos = fifo_in.used() - len;
             std::string s(fifo_in.begin() + new_pos, len);
             s.erase(std::remove_if(s.begin(), s.end(), [](char c) { return c == '\n' || c == '\r'; }), s.end());
-            Application::instance().logger().information("RECEIVED: " + s);
+
+            if (user)
+            {
+                Application::instance().logger().information("RECEIVED FROM [" + user->user_name + "]: " + s);
+            }
+            else
+            {
+                Application::instance().logger().information("RECEIVED FROM UNAUTHORIZED USER: " + s);
+            }
 
             while (true)
             {
@@ -113,7 +121,8 @@ void ServerSocketHandler::OnSocketReadable(const AutoPtr<ReadableNotification>& 
     }
     catch (Poco::Exception& exc)
     {
-        Application::instance().logger().error( "ServerSocketHandler exception on reading [" + std::to_string(exc.code()) + "]: " + exc.displayText());
+        Application::instance().logger().error(
+            "ServerSocketHandler exception on reading [" + std::to_string(exc.code()) + "]: " + exc.displayText());
         delete this;
     }
 }
@@ -125,13 +134,22 @@ void ServerSocketHandler::OnSocketWritable(const AutoPtr<WritableNotification>& 
     {
         std::string s(fifo_out.begin(), fifo_out.used());
         s.erase(std::remove_if(s.begin(), s.end(), [](char c) { return c == '\n' || c == '\r'; }), s.end());
-        Application::instance().logger().information("SENDING: " + s);
+
+        if (user)
+        {
+            Application::instance().logger().information("SENDING TO [" + user->user_name + "]: " + s);
+        }
+        else
+        {
+            Application::instance().logger().information("SENDING TO UNAUTHORIZED USER: " + s);
+        }
 
         socket.sendBytes(fifo_out);
     }
     catch (Poco::Exception& exc)
     {
-        Application::instance().logger().error( "ServerSocketHandler exception on writing [" + std::to_string(exc.code()) + "]: " + exc.displayText());
+        Application::instance().logger().error(
+            "ServerSocketHandler exception on writing [" + std::to_string(exc.code()) + "]: " + exc.displayText());
         delete this;
     }
 }
