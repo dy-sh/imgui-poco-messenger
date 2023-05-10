@@ -129,9 +129,11 @@ void ClientSocketHandler::Send(const char* text)
 {
     std::cout << "SENDING TO SERVER: " << text << std::endl;
     
-    // working fast
-    socket_stream << text << std::endl;
+    // working fast but cant check if socket closed and dont using mutex
+    // socket_stream << text << std::endl;
 
-    // working slow with long thread block
-    // fifo_out.write(text, std::string(text).size());
+
+    // working slow with long thread block, but safe
+    //todo sent to another thread using NotificationQueue for preventing blocking UI thread
+    fifo_out.write(text, std::string(text).size());
 }
