@@ -80,6 +80,6 @@ public:
 protected:
     float OriginalWindowRounding;
 
-    virtual void MaximizeMainWindow();
-    virtual void FinishMaximizeMainWindow();
+    virtual void MaximizeWindow();
+    virtual void FinishMaximizeWindow();
 };

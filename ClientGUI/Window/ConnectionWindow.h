@@ -8,11 +8,11 @@ struct Message;
 class WindowManager;
 class Client;
 
-class MainWindow : public MaximizedWindow
+class ConnectionWindow : public MaximizedWindow
 {
 public:
-    MainWindow(const std::string& title, bool visible, WindowManager* window_manager, Client* client);
-    ~MainWindow();
+    ConnectionWindow(const std::string& title, bool visible, WindowManager* window_manager, Client* client);
+    ~ConnectionWindow();
 
     void RenderContent() override;
     void OnExit() override;

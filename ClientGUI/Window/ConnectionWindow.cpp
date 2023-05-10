@@ -2,7 +2,7 @@
 
 #include "Poco/Net/StreamSocket.h"
 #include "Poco/Net/SocketAddress.h"
-#include "MainWindow.h"
+#include "ConnectionWindow.h"
 
 #include <sstream>
 
@@ -18,14 +18,14 @@ using namespace std;
 using namespace Poco::Net;
 
 
-MainWindow::MainWindow(const std::string& title, bool visible, WindowManager* window_manager, Client* client):
+ConnectionWindow::ConnectionWindow(const std::string& title, bool visible, WindowManager* window_manager, Client* client):
     MaximizedWindow(title, visible), client{client}, window_manager{window_manager}
 {
     options.no_bring_to_front = true;
 
-    client->OnReceiveMessage += delegate(this, &MainWindow::OnReceiveMessage);
-    client->OnConnected += delegate(this, &MainWindow::OnConnected);
-    client->OnDisconnected += delegate(this, &MainWindow::OnDisconnected);
+    client->OnReceiveMessage += delegate(this, &ConnectionWindow::OnReceiveMessage);
+    client->OnConnected += delegate(this, &ConnectionWindow::OnConnected);
+    client->OnDisconnected += delegate(this, &ConnectionWindow::OnDisconnected);
 
 
     int random_num = std::rand() % 1000;
@@ -43,15 +43,15 @@ MainWindow::MainWindow(const std::string& title, bool visible, WindowManager* wi
 }
 
 
-MainWindow::~MainWindow()
+ConnectionWindow::~ConnectionWindow()
 {
-    client->OnReceiveMessage -= delegate(this, &MainWindow::OnReceiveMessage);
-    client->OnConnected -= delegate(this, &MainWindow::OnConnected);
-    client->OnDisconnected -= delegate(this, &MainWindow::OnDisconnected);
+    client->OnReceiveMessage -= delegate(this, &ConnectionWindow::OnReceiveMessage);
+    client->OnConnected -= delegate(this, &ConnectionWindow::OnConnected);
+    client->OnDisconnected -= delegate(this, &ConnectionWindow::OnDisconnected);
 }
 
 
-void MainWindow::RenderContent()
+void ConnectionWindow::RenderContent()
 {
     if (client->GetState() == ClientState::Disconnected)
     {
@@ -163,7 +163,7 @@ void MainWindow::RenderContent()
 }
 
 
-void MainWindow::OnExit()
+void ConnectionWindow::OnExit()
 {
     if (client)
     {
@@ -172,7 +172,7 @@ void MainWindow::OnExit()
 }
 
 
-void MainWindow::OnReceiveMessage(const void* sender, Message*& message)
+void ConnectionWindow::OnReceiveMessage(const void* sender, Message*& message)
 {
     if (auto auth_mess = dynamic_cast<ServerAuthorizeMessage*>(message))
     {
@@ -181,7 +181,7 @@ void MainWindow::OnReceiveMessage(const void* sender, Message*& message)
 }
 
 
-void MainWindow::OnConnected(const void* sender)
+void ConnectionWindow::OnConnected(const void* sender)
 {
     std::string mess = Poco::format("a|%s;", std::string(user_name));
     client->Send(mess.c_str());
@@ -193,7 +193,7 @@ void MainWindow::OnConnected(const void* sender)
 }
 
 
-void MainWindow::OnDisconnected(const void* sender)
+void ConnectionWindow::OnDisconnected(const void* sender)
 {
     authorized = false;
 

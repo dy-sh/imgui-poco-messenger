@@ -68,7 +68,7 @@ void MaximizedWindow::Render()
 {
     if (visible)
     {
-        MaximizeMainWindow();
+        MaximizeWindow();
 
         ImGui::Begin(title.c_str(), &visible, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize |
                      ImGuiWindowFlags_NoBringToFrontOnFocus);
@@ -77,12 +77,12 @@ void MaximizedWindow::Render()
 
         ImGui::End();
 
-        FinishMaximizeMainWindow();
+        FinishMaximizeWindow();
     }
 }
 
 
-void MaximizedWindow::MaximizeMainWindow()
+void MaximizedWindow::MaximizeWindow()
 {
 #ifdef IMGUI_HAS_VIEWPORT
         ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -100,7 +100,7 @@ void MaximizedWindow::MaximizeMainWindow()
 }
 
 
-void MaximizedWindow::FinishMaximizeMainWindow()
+void MaximizedWindow::FinishMaximizeWindow()
 {
     ImGuiStyle* style = &ImGui::GetStyle();
     style->WindowRounding = OriginalWindowRounding;

@@ -11,13 +11,13 @@
 #include "Window//Chat/ChatWindow.h"
 #include "Window/WindowManager.h"
 #include "Window/LoginWindow.h"
-#include "Window/MainWindow.h"
+#include "Window/ConnectionWindow.h"
 
 App::App()
 {
     style = std::make_unique<DefaultStyle>();
     client = new Client();
-    window_manager.AddWindow(std::make_unique<MainWindow>("Main",  true, &window_manager, client));
+    window_manager.AddWindow(std::make_unique<ConnectionWindow>("Main",  true, &window_manager, client));
     window_manager.AddWindow(std::make_unique<ConsoleWindow>("Console", false));
     window_manager.AddWindow(std::make_unique<LogWindow>("Log", false));
     window_manager.AddWindow(std::make_unique<LoginWindow>("Login", false));
