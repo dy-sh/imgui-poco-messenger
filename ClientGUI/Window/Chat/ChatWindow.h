@@ -3,9 +3,12 @@
 #pragma once
 
 
+#include <map>
+#include <vector>
 #include <Poco/AbstractDelegate.h>
 
 #include "imgui.h"
+#include "Room.h"
 #include "../Window.h"
 #include "../../Tools/Console/IConsoleWindow.h"
 
@@ -27,7 +30,7 @@ public:
     ConsoleCommandsExecutor* commands_executor;
 
     char input_buf[256]{};
-    ImVector<char*> items;
+    std::map<int, std::unique_ptr<Room>> rooms;
     ImGuiTextFilter filter;
     bool auto_scroll = true;
     bool scroll_to_bottom = false;
@@ -43,6 +46,7 @@ public:
     void Clear() override;
     void Print(const char* fmt, ...) override;
     void Print(std::string fmt, ...);
+    void Print(int room_id, std::string fmt, ...);
     void ClearFilter() override { filter.Clear(); }
     void RenderContent() override;
     void Send(std::string message);
@@ -50,6 +54,8 @@ public:
     void ProceedMessageTextField();
     int MessageTextEditCallback(ImGuiInputTextCallbackData* data);
     void OnReceiveMessage(const void* sender, Message*& message);
+    Room* GetRoom(int id, bool add_if_not_exist = true);
+    Room* GetActiveRoom();
 
 private:
     Client* client;

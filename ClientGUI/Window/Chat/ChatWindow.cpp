@@ -45,9 +45,14 @@ ChatWindow::~ChatWindow()
 
 void ChatWindow::Clear()
 {
-    for (int i = 0; i < items.Size; i++)
-        free(items[i]);
-    items.clear();
+    for (auto& [id,room] : rooms)
+    {
+        for (int i = 0; i < room->items.size(); i++)
+        {
+            free(room->items[i]);
+        }
+        room->items.clear();
+    }
 }
 
 
@@ -59,7 +64,9 @@ void ChatWindow::Print(const char* fmt, ...)
     vsnprintf(buf, IM_ARRAYSIZE(buf), fmt, args);
     buf[IM_ARRAYSIZE(buf) - 1] = 0;
     va_end(args);
-    items.push_back(Strdup(buf));
+
+    Room* room = GetActiveRoom();
+    room->items.push_back(Strdup(buf));
 }
 
 
@@ -71,7 +78,23 @@ void ChatWindow::Print(std::string fmt, ...)
     vsnprintf(buf, IM_ARRAYSIZE(buf), fmt.c_str(), args);
     buf[IM_ARRAYSIZE(buf) - 1] = 0;
     va_end(args);
-    items.push_back(Strdup(buf));
+
+    Room* room = GetActiveRoom();
+    room->items.push_back(Strdup(buf));
+}
+
+
+void ChatWindow::Print(int room_id, std::string fmt, ...)
+{
+    char buf[1024];
+    va_list args;
+    va_start(args, fmt);
+    vsnprintf(buf, IM_ARRAYSIZE(buf), fmt.c_str(), args);
+    buf[IM_ARRAYSIZE(buf) - 1] = 0;
+    va_end(args);
+
+    Room* room = GetRoom(room_id, true);
+    room->items.push_back(Strdup(buf));
 }
 
 
@@ -193,10 +216,15 @@ void ChatWindow::RenderContent()
                 // - Consider using manual call to IsRectVisible() and skipping extraneous decoration from your items.
                 ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1)); // Tighten spacing
                 if (copy_to_clipboard)
-                    ImGui::LogToClipboard();
-                for (int i = 0; i < items.Size; i++)
                 {
-                    const char* item = items[i];
+                    ImGui::LogToClipboard();
+                }
+
+                Room* room = GetActiveRoom();
+
+                for (int i = 0; i < room->items.size(); i++)
+                {
+                    const char* item = room->items[i];
                     if (!filter.PassFilter(item))
                         continue;
 
@@ -279,11 +307,13 @@ void ChatWindow::RenderContent()
     }
 }
 
+
 void ChatWindow::Send(std::string message)
 {
     std::string mess = ClientTextMessage::Serialize(selected_room_id, message);
     client->Send(mess);
 }
+
 
 void ChatWindow::Send(const char* message)
 {
@@ -334,7 +364,7 @@ void ChatWindow::OnReceiveMessage(const void* sender, Message*& message)
 {
     if (auto mess = dynamic_cast<ServerTextMessage*>(message))
     {
-        Print(mess->user_name + " : " + mess->text);
+        Print(mess->room_id, mess->user_name + " : " + mess->text);
     }
     else if (auto mess = dynamic_cast<ServerJoinMessage*>(message))
     {
@@ -352,4 +382,30 @@ void ChatWindow::OnReceiveMessage(const void* sender, Message*& message)
     {
         Print(message->to_str());
     }
+}
+
+
+Room* ChatWindow::GetRoom(int id, bool add_if_not_exist)
+{
+    auto it = rooms.find(id);
+    if (it != rooms.end())
+    {
+        return it->second.get();
+    }
+    else
+    {
+        if (add_if_not_exist)
+        {
+            auto room = std::make_unique<Room>();
+            rooms.emplace(id, std::move(room));
+            return rooms[id].get();
+        }
+    }
+    return nullptr;
+}
+
+
+Room* ChatWindow::GetActiveRoom()
+{
+    return ChatWindow::GetRoom(selected_room_id, true);
 }

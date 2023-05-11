@@ -568,6 +568,7 @@
     <ClInclude Include="Theme\Style.h" />
     <ClInclude Include="Utils\Utils.h" />
     <ClInclude Include="Window\Chat\ChatWindow.h" />
+    <ClInclude Include="Window\Chat\Room.h" />
     <ClInclude Include="Window\Connection\ConnectionWindow.h" />
     <ClInclude Include="Window\Window.h" />
     <ClInclude Include="Window\WindowManager.h" />
