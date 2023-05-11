@@ -12,7 +12,6 @@
 #include "ClientNetworking/Client.h"
 #include "../../Tools/Log.h"
 #include "Protocol/Messages/ClientAuthorizeMessage.h"
-#include "Protocol/Messages/MessageFactory.h"
 #include "Protocol/Messages/ServerAuthorizeMessage.h"
 
 using namespace std;

@@ -42,6 +42,7 @@ public:
 
     void Clear() override;
     void Print(const char* fmt, ...) override;
+    void Print(std::string fmt, ...);
     void ClearFilter() override { filter.Clear(); }
     void RenderContent() override;
     void Send(const char* message);

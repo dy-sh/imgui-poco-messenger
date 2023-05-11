@@ -4,8 +4,8 @@
 
 #include <stdexcept>
 
-#include "Messages/InvalidMessage.h"
-#include "Messages/MessageFactory.h"
+#include "InvalidMessage.h"
+#include "MessageFactory.h"
 
 
 std::pair<std::unique_ptr<Message>, size_t> SimpleProtocol::ParseMessage(const char* buffer, size_t buffer_size)
@@ -49,7 +49,8 @@ std::pair<std::unique_ptr<Message>, size_t> SimpleProtocol::ParseMessage(const c
     // parse message
     for (auto& [type, message_creator] : MessageFactory::message_factory)
     {
-        if (message_creator()->Matches(buffer, from, size)) //todo don't create new instances each time to match
+        std::unique_ptr<Message> m = message_creator();
+        if (m->Matches(buffer, from, size)) //todo don't create new instances each time to match
         {
             auto message = std::move(message_creator());
             if (message->Deserialize(buffer, from, size))

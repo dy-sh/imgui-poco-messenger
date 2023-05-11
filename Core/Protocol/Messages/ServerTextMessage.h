@@ -1,7 +1,7 @@
 ﻿// Copyright 2023 Dmitry Savosh <d.savosh@gmail.com>
 
 #pragma once
-#include "Message.h"
+#include "../Message.h"
 #include "../SimpleProtocol.h"
 
 struct ServerTextMessage : Message

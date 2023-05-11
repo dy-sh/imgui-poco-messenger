@@ -4,7 +4,7 @@
 #include "../Message.h"
 #include "../SimpleProtocol.h"
 
-struct ServerAuthorizeMessage : Message
+struct ServerJoinMessage : Message
 {
     static const std::string type;
     static const char prefix;
@@ -63,6 +63,8 @@ struct ServerAuthorizeMessage : Message
 
     std::string to_str() const override
     {
-        return "AUTHORIZED: id: " + std::to_string(user_id) + " username: " + user_name;
+        return "JOIN: id: " + std::to_string(user_id) + " username: " + user_name;
     }
 };
+
+

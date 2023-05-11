@@ -10,7 +10,10 @@
 #include "../../Utils/Utils.h"
 #include "../../Tools/Console/ConsoleCommandsExecutor.h"
 #include "ClientNetworking/Client.h"
-#include "Protocol/Messages/Message.h"
+#include "Protocol/Message.h"
+#include "Protocol/Messages/ServerAuthorizeMessage.h"
+#include "Protocol/Messages/ServerJoinMessage.h"
+#include "Protocol/Messages/ServerLeaveMessage.h"
 #include "Protocol/Messages/ServerTextMessage.h"
 using Poco::delegate;
 
@@ -49,11 +52,22 @@ void ChatWindow::Clear()
 
 void ChatWindow::Print(const char* fmt, ...)
 {
-    // FIXME-OPT
     char buf[1024];
     va_list args;
     va_start(args, fmt);
     vsnprintf(buf, IM_ARRAYSIZE(buf), fmt, args);
+    buf[IM_ARRAYSIZE(buf) - 1] = 0;
+    va_end(args);
+    items.push_back(Strdup(buf));
+}
+
+
+void ChatWindow::Print(std::string fmt, ...)
+{
+    char buf[1024];
+    va_list args;
+    va_start(args, fmt);
+    vsnprintf(buf, IM_ARRAYSIZE(buf), fmt.c_str(), args);
     buf[IM_ARRAYSIZE(buf) - 1] = 0;
     va_end(args);
     items.push_back(Strdup(buf));
@@ -119,7 +133,8 @@ void ChatWindow::RenderContent()
             }
 
             // Reserve enough left-over height for 1 separator + 1 input text
-            const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing()-30;
+            const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing()
+                - 30;
             bool copy_to_clipboard = false;
 
             if (ImGui::BeginChild(
@@ -130,7 +145,6 @@ void ChatWindow::RenderContent()
                     ImGui::Checkbox("Auto-scroll", &auto_scroll);
                     ImGui::Checkbox("Search", &search);
 
-   
 
                     if (ImGui::Selectable("Clear"))
                     {
@@ -313,13 +327,24 @@ int ChatWindow::MessageTextEditCallback(ImGuiInputTextCallbackData* data)
 
 void ChatWindow::OnReceiveMessage(const void* sender, Message*& message)
 {
-    if (auto text_mess = dynamic_cast<ServerTextMessage*>(message))
+    if (auto mess = dynamic_cast<ServerTextMessage*>(message))
     {
-        std::string mess = text_mess->user_name + " > " + text_mess->text;
-        Print(mess.c_str());
+        Print(mess->user_name + " : " + mess->text);
+    }
+    else if (auto mess = dynamic_cast<ServerJoinMessage*>(message))
+    {
+        Print(mess->user_name + " joined.");
+    }
+    else if (auto mess = dynamic_cast<ServerLeaveMessage*>(message))
+    {
+        Print(mess->user_name + " leave.");
+    }
+    else if (auto mess = dynamic_cast<ServerAuthorizeMessage*>(message))
+    {
+        // Print( "Joined.");
     }
     else
     {
-        Print(message->to_str().c_str());
+        Print(message->to_str());
     }
 }

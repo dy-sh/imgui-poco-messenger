@@ -21,6 +21,7 @@ public:
     void ReceiveMessage(Message* message, ServerSocketHandler* socket_handler);
     void OnSocketShutdown(ServerSocketHandler* socket_handler);
 
+    void Broadcast(std::string message);
 private:
     size_t last_user_id{0};
     std::map<std::string, ServerUser*> users;

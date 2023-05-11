@@ -3,7 +3,7 @@
 #pragma once
 #include <string>
 
-#include "Message.h"
+#include "../Message.h"
 #include "../SimpleProtocol.h"
 
 struct ClientTextMessage : Message

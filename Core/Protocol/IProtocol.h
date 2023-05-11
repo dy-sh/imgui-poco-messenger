@@ -3,7 +3,7 @@
 #pragma once
 #include <memory>
 
-#include "Messages/Message.h"
+#include "Message.h"
 
 
 struct IProtocol
