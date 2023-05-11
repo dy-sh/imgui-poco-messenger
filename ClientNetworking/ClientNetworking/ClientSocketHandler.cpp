@@ -131,7 +131,10 @@ void ClientSocketHandler::OnSocketShutdown(const AutoPtr<ShutdownNotification>& 
 
 void ClientSocketHandler::Send(std::string text)
 {
-    std::cout << "SENDING TO SERVER: " << text << std::endl;
+    std::string s(text);
+    s.erase(std::remove_if(s.begin(), s.end(), [](char c) { return c == '\n' || c == '\r'; }), s.end());
+
+    std::cout << "SENDING TO SERVER: " << s << std::endl;
 
     // working fast
     try

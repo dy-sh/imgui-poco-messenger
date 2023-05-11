@@ -38,8 +38,8 @@ ConnectionWindow::ConnectionWindow(const std::string& title, bool visible, Windo
 
 
     //todo remove temporary auto connection on start
-    SocketAddress address = SocketAddress(server_address, server_port);
-    client->Connect(address);
+    // SocketAddress address = SocketAddress(server_address, server_port);
+    // client->Connect(address);
 }
 
 
