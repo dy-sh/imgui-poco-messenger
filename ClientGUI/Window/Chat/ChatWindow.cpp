@@ -125,9 +125,13 @@ void ChatWindow::RenderContent()
     for (int i = 1; i <= 3; i++)
     {
         char label[128];
-        sprintf(label, "Room %d", i);
+        std::string new_mess = GetRoom(i)->new_messages ? "(*)" : "";
+        sprintf(label, "Room %d %s", i, new_mess.c_str());
         if (ImGui::Selectable(label, selected_room_id == i))
+        {
             selected_room_id = i;
+            GetRoom(selected_room_id)->new_messages = false;
+        }
     }
     ImGui::EndChild();
     if (ImGui::Button("<", ImVec2(200.0f, 0)))
@@ -365,6 +369,10 @@ void ChatWindow::OnReceiveMessage(const void* sender, Message*& message)
     if (auto mess = dynamic_cast<ServerTextMessage*>(message))
     {
         Print(mess->room_id, mess->user_name + " : " + mess->text);
+        if (selected_room_id != mess->room_id)
+        {
+            GetRoom(mess->room_id)->new_messages = true;
+        }
     }
     else if (auto mess = dynamic_cast<ServerJoinMessage*>(message))
     {
