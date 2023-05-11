@@ -86,7 +86,7 @@ public:
     {
         while (!stop_flag)
         {
-            Notification::Ptr pNotification(queue.waitDequeueNotification(1000));
+            Notification::Ptr pNotification(queue.waitDequeueNotification(100));
             if (pNotification)
             {
                 SocketWriteNotification* pWriteNotification = dynamic_cast<SocketWriteNotification*>(pNotification.
@@ -95,10 +95,6 @@ public:
                 {
                     pWriteNotification->write();
                 }
-            }
-            else
-            {
-                break;
             }
         }
         std::cout << "Socket writing thread finished" << std::endl;
@@ -146,7 +142,10 @@ public:
     Client* client = nullptr;
     ClientUser* user = nullptr;
 
-    NotificationQueue writer_queue;
-    SocketWriterWorker writer_worker;
-    Thread writer_thread;
+private:
+    Poco::Mutex socket_mutex;
+
+    // NotificationQueue writer_queue;
+    // SocketWriterWorker writer_worker;
+    // Thread writer_thread;
 };

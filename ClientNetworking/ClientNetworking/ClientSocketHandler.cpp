@@ -15,8 +15,8 @@ ClientSocketHandler::ClientSocketHandler(StreamSocket& socket, SocketReactor& re
     fifo_in(BUFFER_SIZE, true),
     fifo_out(BUFFER_SIZE, true),
     protocol{&protocol},
-    client{client},
-    writer_worker{fifo_out, writer_queue}
+    client{client}
+    // writer_worker{fifo_out, writer_queue}
 {
     reactor.addEventHandler(socket, NObserver(*this, &ClientSocketHandler::OnSocketReadable));
     reactor.addEventHandler(socket, NObserver(*this, &ClientSocketHandler::OnSocketShutdown));
@@ -24,7 +24,7 @@ ClientSocketHandler::ClientSocketHandler(StreamSocket& socket, SocketReactor& re
     fifo_out.readable += delegate(this, &ClientSocketHandler::OnFIFOOutReadable);
     fifo_in.writable += delegate(this, &ClientSocketHandler::OnFIFOInWritable);
 
-    writer_thread.start(writer_worker);
+    // writer_thread.start(writer_worker);
 }
 
 
@@ -133,49 +133,49 @@ void ClientSocketHandler::Send(std::string text)
 {
     std::cout << "SENDING TO SERVER: " << text << std::endl;
 
-    // working fast but cant check if socket closed and dont using mutex
-    // try
-    // {
-    //     if (socket_stream.good())
-    //     {
-    //         socket_stream << text << std::endl;
-    //
-    //         if (!socket_stream.good())
-    //         {
-    //             std::cerr << "ClientSocketHandler exception on writing: socket closed." << std::endl;
-    //             Stop();
-    //             client->Disconnect();
-    //         }
-    //     }
-    //     else
-    //     {
-    //         std::cerr << "ClientSocketHandler exception on writing: socket closed." << std::endl;
-    //         Stop();
-    //         client->Disconnect();
-    //     }
-    // }
-    // catch (Poco::Exception& exc)
-    // {
-    //     std::cerr << "ClientSocketHandler exception on writing [" << exc.code() << "]: " << exc.displayText() <<
-    //         std::endl;
-    //     Stop();
-    //     client->Disconnect();
-    // }
+    // working fast
+    try
+    {
+        if (socket_stream.good())
+        {
+            {
+                Poco::Mutex::ScopedLock lock(socket_mutex);
+                socket_stream << text << std::endl;
+            }
+    
+            if (!socket_stream.good())
+            {
+                std::cerr << "ClientSocketHandler exception on writing: socket closed." << std::endl;
+                client->Disconnect();
+            }
+        }
+        else
+        {
+            std::cerr << "ClientSocketHandler exception on writing: socket closed." << std::endl;
+            client->Disconnect();
+        }
+    }
+    catch (Poco::Exception& exc)
+    {
+        std::cerr << "ClientSocketHandler exception on writing [" << exc.code() << "]: " << exc.displayText() <<
+            std::endl;
+        client->Disconnect();
+    }
 
 
 
-    // working slow with long thread block, but safe
+    // working slow with long thread block, but safe using mutex
     //todo sent to another thread using NotificationQueue for preventing blocking UI thread
     // fifo_out.write(text.c_str(), text.size());
 
 
-    // best way is to use separate thread for writing to buffer
-    writer_queue.enqueueNotification(new SocketWriteNotification(fifo_out, text.c_str(), text.size()));
+    // using separate thread for writing to buffer
+    // writer_queue.enqueueNotification(new SocketWriteNotification(fifo_out, text.c_str(), text.size()));
 }
 
 
 void ClientSocketHandler::Stop()
 {
-    writer_worker.stop();
-    writer_thread.join(200);
+    // writer_worker.stop();
+    // writer_thread.join(200);
 }
