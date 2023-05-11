@@ -37,9 +37,9 @@ ConnectionWindow::ConnectionWindow(const std::string& title, bool visible, Windo
     std::snprintf(user_name, sizeof(user_name), "%s%d", "User", rand() % 10000);
 
 
-    //todo temporary
-    SocketAddress address = SocketAddress(server_address, server_port);
-    client->Connect(address);
+    //todo remove temporary auto connection on start
+    // SocketAddress address = SocketAddress(server_address, server_port);
+    // client->Connect(address);
 }
 
 
