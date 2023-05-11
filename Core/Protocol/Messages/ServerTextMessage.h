@@ -28,9 +28,9 @@ struct ServerTextMessage : Message
             int parsing_part = 0;
             size_t parsing_from = from + 2; // skip header with message type
 
-            for (size_t x = parsing_from; x <= size; ++x)
+            for (size_t x = parsing_from; x <= from + size; ++x)
             {
-                if (buffer[x] == '|' || x == size)
+                if (buffer[x] == '|' || x == from + size)
                 {
                     if (parsing_part == 0)
                     {
@@ -43,7 +43,7 @@ struct ServerTextMessage : Message
                     }
                     else if (parsing_part == 2)
                     {
-                        text = std::string(buffer + parsing_from, x - parsing_from + 1);
+                        text = std::string(buffer + parsing_from, x - parsing_from - 1);
                     }
                     parsing_from = x + 1;
                     parsing_part++;

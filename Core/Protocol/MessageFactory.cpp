@@ -5,25 +5,25 @@
 std::map<std::string, std::function<std::unique_ptr<Message>()>> MessageFactory::message_factory;
 
 #include "Messages/ClientAuthorizeMessage.h"
-REGISTER_MESSAGE(ClientAuthorizeMessage, 'a', "Client_Authorize")
+REGISTER_MESSAGE(ClientAuthorizeMessage, 'a')
 
 #include "Messages/ServerAuthorizeMessage.h"
-REGISTER_MESSAGE(ServerAuthorizeMessage, 'A', "Server_Authorize");
+REGISTER_MESSAGE(ServerAuthorizeMessage, 'A');
 
 
 #include "Messages/ClientTextMessage.h"
-REGISTER_MESSAGE(ClientTextMessage, 't', "Client_Text");
+REGISTER_MESSAGE(ClientTextMessage, 't');
 
 #include "Messages/ServerTextMessage.h"
-REGISTER_MESSAGE(ServerTextMessage, 'T', "Server_Text");
+REGISTER_MESSAGE(ServerTextMessage, 'T');
 
 
 #include "Messages/ServerErrorMessage.h"
-REGISTER_MESSAGE(ServerErrorMessage, 'E', "Server_Error");
+REGISTER_MESSAGE(ServerErrorMessage, 'E');
 
 
 #include "Messages/ServerJoinMessage.h"
-REGISTER_MESSAGE(ServerJoinMessage, 'J', "Server_Join");
+REGISTER_MESSAGE(ServerJoinMessage, 'J');
 
 #include "Messages/ServerLeaveMessage.h"
-REGISTER_MESSAGE(ServerLeaveMessage, 'L', "Server_Leave");
+REGISTER_MESSAGE(ServerLeaveMessage, 'L');

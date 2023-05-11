@@ -27,9 +27,9 @@ struct ServerJoinMessage : Message
             int parsing_part = 0;
             size_t parsing_from = from + 2; // skip header with message type
 
-            for (size_t x = parsing_from; x <= size; ++x)
+            for (size_t x = parsing_from; x <= from + size; ++x)
             {
-                if (buffer[x] == '|' || x == size)
+                if (buffer[x] == '|' || x == from + size)
                 {
                     if (parsing_part == 0)
                     {
@@ -66,5 +66,3 @@ struct ServerJoinMessage : Message
         return "JOIN: id: " + std::to_string(user_id) + " username: " + user_name;
     }
 };
-
-
