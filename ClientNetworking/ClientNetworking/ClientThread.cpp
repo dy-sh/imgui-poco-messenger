@@ -11,6 +11,12 @@ void ClientThread::run()
     std::cout << "Connection thread started" << std::endl;
     try
     {
+        if (handler)
+        {
+            delete handler;
+            handler = nullptr;
+        }
+        
         socket.connect(address);
         handler = new ClientSocketHandler(socket, reactor, protocol, client);
 
@@ -34,11 +40,9 @@ void ClientThread::stop()
 {
     if (handler)
     {
+        handler->Stop();
         reactor.stop();
-        socket.shutdown();
         socket.close();
-        delete handler;
-        handler = nullptr;
     }
 }
 
@@ -46,5 +50,7 @@ void ClientThread::stop()
 ClientThread::~ClientThread()
 {
     stop();
+    delete handler;
+    handler = nullptr;
     std::cout << "Connection thread destructed" << std::endl;
 }

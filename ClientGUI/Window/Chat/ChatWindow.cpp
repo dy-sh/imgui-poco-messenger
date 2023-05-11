@@ -394,7 +394,7 @@ void ChatWindow::OnReceiveMessage(const void* sender, Message*& message)
     }
     else if (auto mess = dynamic_cast<ServerLeaveMessage*>(message))
     {
-        Print(mess->user_name + " leave.");
+        Print(mess->user_name + " left.");
     }
     else if (auto mess = dynamic_cast<ServerAuthorizeMessage*>(message))
     {
