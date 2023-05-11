@@ -27,19 +27,13 @@ struct ServerJoinMessage : Message
             int parsing_part = 0;
             size_t parsing_from = from + 2; // skip header with message type
 
-            for (size_t x = parsing_from; x <= from + size; ++x)
+            for (size_t x = parsing_from; x <= from + size - 1; ++x)
             {
-                if (buffer[x] == '|' || x == from + size)
+                if (buffer[x] == '|' || x == from + size - 1)
                 {
-                    if (parsing_part == 0)
-                    {
-                        std::string num = std::string(buffer + parsing_from, x - parsing_from);
-                        user_id = std::stoi(num);
-                    }
-                    else if (parsing_part == 1)
-                    {
-                        user_name = std::string(buffer + parsing_from, x - parsing_from - 1);
-                    }
+                    PARSE_INT(user_id, 0)
+                    PARSE_STRING(user_name, 1)
+
                     parsing_from = x + 1;
                     parsing_part++;
                 }
@@ -56,8 +50,10 @@ struct ServerJoinMessage : Message
 
     static std::string Serialize(int user_id, std::string user_name)
     {
-        return std::string(1, prefix) + "|" + std::to_string(user_id) + "|" + user_name + SimpleProtocol::DELIMITER +
-            "\r\n";
+        return std::string(1, prefix)
+            + "|" + std::to_string(user_id)
+            + "|" + user_name
+            + SimpleProtocol::DELIMITER + "\r\n";
     }
 
 

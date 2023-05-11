@@ -31,7 +31,7 @@ public:
     ImGuiTextFilter filter;
     bool auto_scroll = true;
     bool scroll_to_bottom = false;
-    int room_selected = 1;
+    int selected_room_id = 1;
     bool spam = false;
     bool search = false;
 
@@ -45,6 +45,7 @@ public:
     void Print(std::string fmt, ...);
     void ClearFilter() override { filter.Clear(); }
     void RenderContent() override;
+    void Send(std::string message);
     void Send(const char* message);
     void ProceedMessageTextField();
     int MessageTextEditCallback(ImGuiInputTextCallbackData* data);

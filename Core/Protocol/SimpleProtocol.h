@@ -25,3 +25,18 @@ struct SimpleProtocol : public IProtocol
     
     std::pair<std::unique_ptr<Message>, size_t> ParseMessage(const char* buffer, size_t buffer_size) override;
 };
+
+
+
+#define PARSE_INT(VariableName, PartNum) \
+if (parsing_part == PartNum) \
+{ \
+    std::string num = std::string(buffer + parsing_from, x - parsing_from); \
+    VariableName = std::stoi(num); \
+}
+
+#define PARSE_STRING(VariableName, PartNum) \
+if (parsing_part == PartNum) \
+{ \
+    VariableName = std::string(buffer + parsing_from, x - parsing_from ); \
+}

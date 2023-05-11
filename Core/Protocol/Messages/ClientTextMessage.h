@@ -11,6 +11,7 @@ struct ClientTextMessage : Message
     static const std::string type;
     static const char prefix;
 
+    int room_id;
     std::string text;
 
 
@@ -25,8 +26,22 @@ struct ClientTextMessage : Message
     {
         try
         {
-            text = std::string(buffer + from + 2, size - 3);
-            return true;
+            int parsing_part = 0;
+            size_t parsing_from = from + 2; // skip header with message type
+
+            for (size_t x = parsing_from; x <= from + size - 1; ++x)
+            {
+                if (buffer[x] == '|' || x == from + size - 1)
+                {
+                    PARSE_INT(room_id, 0)
+                    PARSE_STRING(text, 1)
+
+                    parsing_from = x + 1;
+                    parsing_part++;
+                }
+            }
+
+            return parsing_part = 2; // validate all parts parsed
         }
         catch (...)
         {
@@ -35,9 +50,12 @@ struct ClientTextMessage : Message
     }
 
 
-    static std::string Serialize(std::string text)
+    static std::string Serialize(int room_id, std::string text)
     {
-        return std::string(1, prefix) + "|" + text + SimpleProtocol::DELIMITER + "\r\n";
+        return std::string(1, prefix)
+            + "|" + std::to_string(room_id)
+            + "|" + text
+            + SimpleProtocol::DELIMITER + "\r\n";
     }
 
 

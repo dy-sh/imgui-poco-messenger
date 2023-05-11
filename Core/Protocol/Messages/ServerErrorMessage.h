@@ -29,19 +29,13 @@ struct ServerErrorMessage : Message
             int parsing_part = 0;
             size_t parsing_from = from + 2; // skip header with message type
 
-            for (size_t x = parsing_from; x <= from + size; ++x)
+            for (size_t x = parsing_from; x <= from + size - 1; ++x)
             {
-                if (buffer[x] == '|' || x == from + size)
+                if (buffer[x] == '|' || x == from + size - 1)
                 {
-                    if (parsing_part == 0)
-                    {
-                        std::string num = std::string(buffer + parsing_from, x - parsing_from);
-                        error_id = std::stoi(num);
-                    }
-                    else if (parsing_part == 1)
-                    {
-                        message = std::string(buffer + parsing_from, x - parsing_from - 1);
-                    }
+                    PARSE_INT(error_id, 0)
+                    PARSE_STRING(message, 1)
+
                     parsing_from = x + 1;
                     parsing_part++;
                 }
@@ -58,8 +52,10 @@ struct ServerErrorMessage : Message
 
     static std::string Serialize(int error_id, std::string message)
     {
-        return std::string(1, prefix) + "|" + std::to_string(error_id) + "|" + message + SimpleProtocol::DELIMITER +
-            "\r\n";
+        return std::string(1, prefix)
+            + "|" + std::to_string(error_id)
+            + "|" + message
+            + SimpleProtocol::DELIMITER + "\r\n";
     }
 
 

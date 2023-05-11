@@ -37,7 +37,8 @@ struct ClientAuthorizeMessage : Message
 
     static std::string Serialize(std::string user_name)
     {
-        return std::string(1, prefix) + "|" + user_name + SimpleProtocol::DELIMITER + "\r\n";
+        return std::string(1, prefix)
+        + "|" + user_name + SimpleProtocol::DELIMITER + "\r\n";
     }
 
 

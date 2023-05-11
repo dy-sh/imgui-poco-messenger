@@ -11,6 +11,7 @@
 #include "../../Tools/Console/ConsoleCommandsExecutor.h"
 #include "ClientNetworking/Client.h"
 #include "Protocol/Message.h"
+#include "Protocol/Messages/ClientTextMessage.h"
 #include "Protocol/Messages/ServerAuthorizeMessage.h"
 #include "Protocol/Messages/ServerJoinMessage.h"
 #include "Protocol/Messages/ServerLeaveMessage.h"
@@ -102,8 +103,8 @@ void ChatWindow::RenderContent()
     {
         char label[128];
         sprintf(label, "Room %d", i);
-        if (ImGui::Selectable(label, room_selected == i))
-            room_selected = i;
+        if (ImGui::Selectable(label, selected_room_id == i))
+            selected_room_id = i;
     }
     ImGui::EndChild();
     if (ImGui::Button("<", ImVec2(200.0f, 0)))
@@ -121,7 +122,7 @@ void ChatWindow::RenderContent()
         ImGui::BeginGroup();
         ImGui::BeginChild("item view", ImVec2(0, -ImGui::GetFrameHeightWithSpacing()));
         // Leave room for 1 line below us
-        ImGui::Text("Room: %d", room_selected);
+        ImGui::Text("Room: %d", selected_room_id);
         ImGui::Separator();
 
 
@@ -241,7 +242,7 @@ void ChatWindow::RenderContent()
         if (spam)
         {
             std::string s = Poco::format("Spam %f", ImGui::GetTime());
-            Send(s.c_str());
+            Send(s);
         }
 
         ImGui::EndChild();
@@ -278,11 +279,15 @@ void ChatWindow::RenderContent()
     }
 }
 
+void ChatWindow::Send(std::string message)
+{
+    std::string mess = ClientTextMessage::Serialize(selected_room_id, message);
+    client->Send(mess);
+}
 
 void ChatWindow::Send(const char* message)
 {
-    std::string mess = Poco::format("t|%s;", std::string(message));
-    client->Send(mess.c_str());
+    Send(std::string(message));
 }
 
 

@@ -10,6 +10,7 @@ struct ServerTextMessage : Message
     static const char prefix;
 
     int user_id = 0;
+    int room_id = 0;
     std::string user_name;
     std::string text;
 
@@ -28,29 +29,21 @@ struct ServerTextMessage : Message
             int parsing_part = 0;
             size_t parsing_from = from + 2; // skip header with message type
 
-            for (size_t x = parsing_from; x <= from + size; ++x)
+            for (size_t x = parsing_from; x <= from + size - 1; ++x)
             {
-                if (buffer[x] == '|' || x == from + size)
+                if (buffer[x] == '|' || x == from + size - 1)
                 {
-                    if (parsing_part == 0)
-                    {
-                        std::string num = std::string(buffer + parsing_from, x - parsing_from);
-                        user_id = std::stoi(num);
-                    }
-                    else if (parsing_part == 1)
-                    {
-                        user_name = std::string(buffer + parsing_from, x - parsing_from);
-                    }
-                    else if (parsing_part == 2)
-                    {
-                        text = std::string(buffer + parsing_from, x - parsing_from - 1);
-                    }
+                    PARSE_INT(user_id, 0)
+                    PARSE_INT(room_id, 1)
+                    PARSE_STRING(user_name, 2)
+                    PARSE_STRING(text, 3)
+
                     parsing_from = x + 1;
                     parsing_part++;
                 }
             }
 
-            return parsing_part = 3; // validate all parts parsed
+            return parsing_part = 4; // validate all parts parsed
         }
         catch (...)
         {
@@ -59,10 +52,14 @@ struct ServerTextMessage : Message
     }
 
 
-    static std::string Serialize(int user_id, std::string user_name, std::string text)
+    static std::string Serialize(int user_id, int room_id, std::string user_name, std::string text)
     {
-        return std::string(1, prefix) + "|" + std::to_string(user_id) + "|" + user_name + "|" + text +
-            SimpleProtocol::DELIMITER + "\r\n";
+        return std::string(1, prefix)
+            + "|" + std::to_string(user_id)
+            + "|" + std::to_string(room_id)
+            + "|" + user_name
+            + "|" + text
+            + SimpleProtocol::DELIMITER + "\r\n";
     }
 
 

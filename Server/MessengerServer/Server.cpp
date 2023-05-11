@@ -174,6 +174,6 @@ void Server::ReceiveText(ClientTextMessage& message, ServerSocketHandler* socket
     Application::instance().logger().information("Received text message from [" + user->user_name + "]");
 
     //broadcast message to all users
-    string mess = ServerTextMessage::Serialize(user->id, user->user_name, message.text);
+    string mess = ServerTextMessage::Serialize(user->id, message.room_id, user->user_name, message.text);
     Broadcast(mess);
 }
