@@ -35,6 +35,7 @@ public:
     void Connect(const Poco::Net::SocketAddress& address);
     void Disconnect();
     void Send(const char* str);
+    void Send(std::string str);
 
     BasicEvent<void> OnConnected;
     BasicEvent<void> OnDisconnected;

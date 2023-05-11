@@ -4,6 +4,7 @@
 #include <string>
 
 #include "Message.h"
+#include "../SimpleProtocol.h"
 
 struct ClientTextMessage : Message
 {
@@ -13,15 +14,12 @@ struct ClientTextMessage : Message
     std::string text;
 
 
-    ClientTextMessage() : Message()
-    {
-    }
-
     bool Matches(const char* buffer, size_t from, size_t size) const override
     {
         // check message starts from type and |, example "A|...."
         return buffer[from] == prefix && buffer[from + 1] == '|';
     }
+
 
     bool Deserialize(const char* buffer, size_t from, size_t size) override
     {
@@ -34,6 +32,12 @@ struct ClientTextMessage : Message
         {
             return false;
         }
+    }
+
+
+    static std::string Serialize(std::string text)
+    {
+        return std::string(1, prefix) + "|" + text + SimpleProtocol::DELIMITER + "\r\n";
     }
 
 

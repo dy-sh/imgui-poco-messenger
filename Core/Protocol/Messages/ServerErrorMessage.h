@@ -2,6 +2,7 @@
 
 #pragma once
 #include "Message.h"
+#include "../SimpleProtocol.h"
 
 struct ServerErrorMessage : Message
 {
@@ -13,10 +14,6 @@ struct ServerErrorMessage : Message
     int error_id = 0;
     std::string message;
 
-
-    ServerErrorMessage() : Message()
-    {
-    }
 
     bool Matches(const char* buffer, size_t from, size_t size) const override
     {
@@ -56,6 +53,13 @@ struct ServerErrorMessage : Message
         {
             return false;
         }
+    }
+
+
+    static std::string Serialize(int error_id, std::string message)
+    {
+        return std::string(1, prefix) + "|" + std::to_string(error_id) + "|" + message + SimpleProtocol::DELIMITER +
+            "\r\n";
     }
 
 

@@ -59,6 +59,7 @@ public:
     void OnSocketShutdown(const AutoPtr<ShutdownNotification>& n);
     
     void Send(const char* text);
+    void Send(std::string text);
 
 
     StreamSocket socket;

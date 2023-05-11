@@ -2,25 +2,23 @@
 
 #pragma once
 #include "Message.h"
+#include "../SimpleProtocol.h"
 
 struct ServerAuthorizeMessage : Message
 {
     static const std::string type;
     static const char prefix;
-    
+
     int user_id = 0;
     std::string user_name;
 
-
-    ServerAuthorizeMessage() : Message()
-    {
-    }
 
     bool Matches(const char* buffer, size_t from, size_t size) const override
     {
         // check message starts from type and |, example "A|...."
         return buffer[from] == prefix && buffer[from + 1] == '|';
     }
+
 
     bool Deserialize(const char* buffer, size_t from, size_t size) override
     {
@@ -53,6 +51,13 @@ struct ServerAuthorizeMessage : Message
         {
             return false;
         }
+    }
+
+
+    static std::string Serialize(int user_id, std::string user_name)
+    {
+        return std::string(1, prefix) + "|" + std::to_string(user_id) + "|" + user_name + SimpleProtocol::DELIMITER +
+            "\r\n";
     }
 
 

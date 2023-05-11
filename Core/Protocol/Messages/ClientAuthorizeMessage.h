@@ -14,15 +14,12 @@ struct ClientAuthorizeMessage : Message
     std::string user_name;
 
 
-    ClientAuthorizeMessage() : Message()
-    {
-    }
-
     bool Matches(const char* buffer, size_t from, size_t size) const override
     {
         // check message starts from type and |, example "A|...."
         return buffer[from] == prefix && buffer[from + 1] == '|';
     }
+
 
     bool Deserialize(const char* buffer, size_t from, size_t size) override
     {
@@ -38,9 +35,9 @@ struct ClientAuthorizeMessage : Message
     }
 
 
-    static std::string Serialize(std::string user_name) 
+    static std::string Serialize(std::string user_name)
     {
-        return std::string(1, prefix) + "|" + user_name + SimpleProtocol::DELIMITER;
+        return std::string(1, prefix) + "|" + user_name + SimpleProtocol::DELIMITER + "\r\n";
     }
 
 

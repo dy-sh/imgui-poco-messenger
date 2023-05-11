@@ -9,7 +9,9 @@
 #include "Protocol/Messages/InvalidMessage.h"
 #include "Protocol/Messages/ClientTextMessage.h"
 #include "ServerUser.h"
+#include "Protocol/Messages/ServerAuthorizeMessage.h"
 #include "Protocol/Messages/ServerErrorMessage.h"
+#include "Protocol/Messages/ServerTextMessage.h"
 
 using Poco::Util::Application;
 
@@ -122,7 +124,9 @@ void Server::AuthorizeUser(ClientAuthorizeMessage& message, ServerSocketHandler*
     std::cout << "Users on server: " << users.size() << std::endl;
 
     socket_handler->SetUser(user);
-    socket_handler->Send("A|" + std::to_string(user->id) + "|" + user->user_name + ";\r\n");
+
+    std::string mess = ServerAuthorizeMessage::Serialize(user->id,user->user_name);
+    socket_handler->Send(mess);
 }
 
 
@@ -151,11 +155,8 @@ void Server::ReceiveText(ClientTextMessage& message, ServerSocketHandler* socket
         {
             if (!auth_user_socket) continue;
 
-            auth_user_socket->Send(
-                "T|"
-                + std::to_string(user->id) + "|"
-                + user->user_name + "|"
-                + message.text + ";\r\n");
+            std::string mess = ServerTextMessage::Serialize(user->id,user->user_name,message.text);
+            auth_user_socket->Send(mess);
         }
     }
 }

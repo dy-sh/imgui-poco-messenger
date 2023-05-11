@@ -315,7 +315,7 @@ void ChatWindow::OnReceiveMessage(const void* sender, Message*& message)
 {
     if (auto text_mess = dynamic_cast<ServerTextMessage*>(message))
     {
-        std::string mess = text_mess->user_name + "> " + text_mess->text;
+        std::string mess = text_mess->user_name + " > " + text_mess->text;
         Print(mess.c_str());
     }
     else

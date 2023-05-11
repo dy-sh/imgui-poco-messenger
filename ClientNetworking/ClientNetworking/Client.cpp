@@ -57,6 +57,15 @@ void Client::Send(const char* str)
 }
 
 
+void Client::Send(std::string str)
+{
+    if (client_thread && client_thread->handler)
+    {
+        client_thread->handler->Send(str);
+    }
+}
+
+
 void Client::ReceiveText(const ClientTextMessage& text_message, ClientSocketHandler* socket_handler)
 {
 }

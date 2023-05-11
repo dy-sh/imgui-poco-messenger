@@ -175,7 +175,7 @@ void ConnectionWindow::OnConnected(const void* sender)
 {
 
     std::string mess = ClientAuthorizeMessage::Serialize(user_name);
-    client->Send(mess.c_str());
+    client->Send(mess);
 
     if (Window* chat_window = window_manager->GetWindowByTitle("Chat"))
     {
