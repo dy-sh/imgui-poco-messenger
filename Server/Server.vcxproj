@@ -172,6 +172,7 @@
   <ItemGroup>
     <ClInclude Include="MessengerServer\App.h" />
     <ClInclude Include="MessengerServer\Server.h" />
+    <ClInclude Include="MessengerServer\ServerRoom.h" />
     <ClInclude Include="MessengerServer\ServerSocketHandler.h" />
     <ClInclude Include="MessengerServer\ServerSocketAcceptor.h" />
     <ClInclude Include="MessengerServer\ServerUser.h" />

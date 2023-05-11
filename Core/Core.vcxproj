@@ -240,11 +240,14 @@
     <ClInclude Include="Protocol\Message.h" />
     <ClInclude Include="Protocol\MessageFactory.h" />
     <ClInclude Include="Protocol\Messages\ClientAuthorizeMessage.h" />
+    <ClInclude Include="Protocol\Messages\ClientCreateRoomMessage.h" />
+    <ClInclude Include="Protocol\Messages\ClientGetRoomsMessage.h" />
     <ClInclude Include="Protocol\Messages\ClientTextMessage.h" />
     <ClInclude Include="Protocol\Messages\ServerAuthorizeMessage.h" />
     <ClInclude Include="Protocol\Messages\ServerErrorMessage.h" />
     <ClInclude Include="Protocol\Messages\ServerJoinMessage.h" />
     <ClInclude Include="Protocol\Messages\ServerLeaveMessage.h" />
+    <ClInclude Include="Protocol\Messages\ServerRoomListMessage.h" />
     <ClInclude Include="Protocol\Messages\ServerTextMessage.h" />
     <ClInclude Include="Protocol\SimpleProtocol.h" />
   </ItemGroup>

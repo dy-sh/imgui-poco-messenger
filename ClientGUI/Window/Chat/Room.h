@@ -7,4 +7,5 @@ struct Room
 {
     std::vector<char*> items;
     bool new_messages = false;
+    std::string name = "";
 };

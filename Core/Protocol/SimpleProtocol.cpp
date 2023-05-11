@@ -63,3 +63,4 @@ std::pair<std::unique_ptr<Message>, size_t> SimpleProtocol::ParseMessage(const c
     auto message = std::make_unique<InvalidMessage>(buffer, from, size);
     return {std::move(message), from + size};
 }
+

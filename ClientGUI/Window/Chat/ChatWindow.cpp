@@ -11,12 +11,17 @@
 #include "../../Tools/Console/ConsoleCommandsExecutor.h"
 #include "ClientNetworking/Client.h"
 #include "Protocol/Message.h"
+#include "Protocol/Messages/ClientCreateRoomMessage.h"
+#include "Protocol/Messages/ClientGetRoomsMessage.h"
 #include "Protocol/Messages/ClientTextMessage.h"
 #include "Protocol/Messages/ServerAuthorizeMessage.h"
 #include "Protocol/Messages/ServerJoinMessage.h"
 #include "Protocol/Messages/ServerLeaveMessage.h"
+#include "Protocol/Messages/ServerRoomListMessage.h"
 #include "Protocol/Messages/ServerTextMessage.h"
 using Poco::delegate;
+using std::string;
+using std::to_string;
 
 
 static int TextEditCallbackStub(ImGuiInputTextCallbackData* data)
@@ -122,23 +127,32 @@ void ChatWindow::RenderContent()
     ImGui::BeginGroup();
 
     ImGui::BeginChild("left top pane", ImVec2(200, -ImGui::GetFrameHeightWithSpacing()), true);
-    for (int i = 1; i <= 3; i++)
+    for (auto& [room_id,room] : rooms)
     {
         char label[128];
-        std::string new_mess = GetRoom(i)->new_messages ? "(*)" : "";
-        sprintf(label, "Room %d %s", i, new_mess.c_str());
-        if (ImGui::Selectable(label, selected_room_id == i))
+        std::string new_mess = GetRoom(room_id)->new_messages ? "(*)" : "";
+        sprintf(label, "%s %s", room->name.c_str(), new_mess.c_str());
+        if (ImGui::Selectable(label, selected_room_id == room_id))
         {
-            selected_room_id = i;
+            selected_room_id = room_id;
             GetRoom(selected_room_id)->new_messages = false;
         }
     }
     ImGui::EndChild();
-    if (ImGui::Button("<", ImVec2(200.0f, 0)))
+    if (ImGui::Button("<", ImVec2(90.0f, 0)))
     {
         if (client)
         {
             client->Disconnect();
+        }
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("+", ImVec2(90.0f, 0)))
+    {
+        if (client)
+        {
+            std::string mess = ClientCreateRoomMessage::Serialize("Room");
+            client->Send(mess);
         }
     }
     ImGui::EndGroup();
@@ -385,6 +399,17 @@ void ChatWindow::OnReceiveMessage(const void* sender, Message*& message)
     else if (auto mess = dynamic_cast<ServerAuthorizeMessage*>(message))
     {
         // Print( "Joined.");
+        std::string m = ClientGetRoomsMessage::Serialize();
+        client->Send(m);
+    }
+    else if (auto mess = dynamic_cast<ServerRoomListMessage*>(message))
+    {
+        for (int x = 0; x < mess->room_ids.size(); x++)
+        {
+            int id = mess->room_ids[x];
+            string name = mess->room_names[x];
+            GetRoom(id)->name = name;
+        }
     }
     else
     {

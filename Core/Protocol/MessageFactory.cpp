@@ -27,3 +27,14 @@ REGISTER_MESSAGE(ServerJoinMessage, 'J');
 
 #include "Messages/ServerLeaveMessage.h"
 REGISTER_MESSAGE(ServerLeaveMessage, 'L');
+
+
+#include "Messages/ClientCreateRoomMessage.h"
+REGISTER_MESSAGE(ClientCreateRoomMessage, 'c');
+
+#include "Messages/ClientGetRoomsMessage.h"
+REGISTER_MESSAGE(ClientGetRoomsMessage, 'r');
+
+#include "Messages/ServerRoomListMessage.h"
+REGISTER_MESSAGE(ServerRoomListMessage, 'R');
+

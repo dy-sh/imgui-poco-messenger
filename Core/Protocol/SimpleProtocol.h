@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include "IProtocol.h"
 
 // This is simple text protocol for client-server communication
@@ -18,14 +20,12 @@
 // ;;;;Auser1;;;Thello; - also valid messages, ";" will be ignored
 
 
-
 struct SimpleProtocol : public IProtocol
 {
     inline static char DELIMITER = ';';
-    
+
     std::pair<std::unique_ptr<Message>, size_t> ParseMessage(const char* buffer, size_t buffer_size) override;
 };
-
 
 
 #define PARSE_INT(VariableName, PartNum) \
@@ -39,4 +39,65 @@ if (parsing_part == PartNum) \
 if (parsing_part == PartNum) \
 { \
     VariableName = std::string(buffer + parsing_from, x - parsing_from ); \
+}
+
+
+static std::string SERIALIZE_VECTOR_STR(std::vector<std::string> vec)
+{
+    std::string res = "";
+
+    for (auto& s : vec)
+    {
+        res.append(s + "/");
+    }
+    return res;
+}
+
+
+static std::vector<std::string> DESERIALIZE_VECTOR_STR(std::string str)
+{
+    std::vector<std::string> res;
+
+    int from = 0;
+    for (int x = 0; x < str.size(); x++)
+    {
+        if (str[x] == '/')
+        {
+            std::string s(str.c_str() + from, x - from);
+            res.push_back(s);
+            from = x + 1;
+        }
+    }
+    return res;
+}
+
+
+static std::string SERIALIZE_VECTOR_INT(std::vector<int> vec)
+{
+    std::string res = "";
+
+    for (auto& s : vec)
+    {
+        res.append(std::to_string(s) + "/");
+    }
+    return res;
+}
+
+
+static std::vector<int> DESERIALIZE_VECTOR_INT(std::string str)
+{
+    std::vector<int> res;
+
+    int from = 0;
+    for (int x = 0; x < str.size(); x++)
+    {
+        if (str[x] == '/')
+        {
+            std::string s(str.c_str() + from, x - from);
+            int num = std::stoi(s);
+            res.push_back(num);
+            from = x + 1;
+        }
+    }
+    return res;
 }

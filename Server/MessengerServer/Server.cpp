@@ -9,15 +9,26 @@
 #include "Protocol/InvalidMessage.h"
 #include "Protocol/Messages/ClientTextMessage.h"
 #include "ServerUser.h"
+#include "ServerRoom.h"
+#include "Protocol/Messages/ClientCreateRoomMessage.h"
+#include "Protocol/Messages/ClientGetRoomsMessage.h"
 #include "Protocol/Messages/ServerAuthorizeMessage.h"
 #include "Protocol/Messages/ServerErrorMessage.h"
 #include "Protocol/Messages/ServerJoinMessage.h"
 #include "Protocol/Messages/ServerLeaveMessage.h"
+#include "Protocol/Messages/ServerRoomListMessage.h"
 #include "Protocol/Messages/ServerTextMessage.h"
 
 using Poco::Util::Application;
 using std::string;
 using std::to_string;
+
+
+Server::Server()
+{
+    rooms[1] = std::make_unique<ServerRoom>(1, "Room 1");
+    last_room_id = 1;
+}
 
 
 std::vector<ServerUser*> Server::GetAllAuthorizedUsers()
@@ -54,6 +65,14 @@ void Server::ReceiveMessage(Message* message, ServerSocketHandler* socket_handle
     else if (const auto text_mess = dynamic_cast<ClientTextMessage*>(message))
     {
         ReceiveText(*text_mess, socket_handler);
+    }
+    else if (const auto create_room_mess = dynamic_cast<ClientCreateRoomMessage*>(message))
+    {
+        ReceiveCreateRoom(*create_room_mess, socket_handler);
+    }
+    else if (const auto get_rooms_mess = dynamic_cast<ClientGetRoomsMessage*>(message))
+    {
+        ReceiveGetRooms(*get_rooms_mess, socket_handler);
     }
     else if (const auto inv_mess = dynamic_cast<InvalidMessage*>(message))
     {
@@ -176,4 +195,61 @@ void Server::ReceiveText(ClientTextMessage& message, ServerSocketHandler* socket
     //broadcast message to all users
     string mess = ServerTextMessage::Serialize(user->id, message.room_id, user->user_name, message.text);
     Broadcast(mess);
+}
+
+
+void Server::GetSerializedRooms(string& mess)
+{
+    std::vector<int> room_ids;
+    std::vector<std::string> room_names;
+
+    for (auto& [id,room] : rooms)
+    {
+        room_ids.push_back(room->id);
+        room_names.push_back(room->name);
+    }
+
+    mess = ServerRoomListMessage::Serialize(room_ids, room_names);
+}
+
+
+void Server::ReceiveCreateRoom(const ClientCreateRoomMessage& message, ServerSocketHandler* socket_handler)
+{
+    const ServerUser* user = socket_handler->GetUser();
+    if (!user || !user->IsAuthorized())
+    {
+        Application::instance().logger().error("ERROR: Received text message from unauthorized user.");
+        socket_handler->Send(ServerErrorMessage::NOT_AUTHORIZED);
+        return;
+    }
+
+    Application::instance().logger().information("Received create room message from [" + user->user_name + "]");
+
+
+    //todo get unique room name from client (check message.room_name)
+    int room_id = ++last_room_id;
+    std::string room_name = "Room " + to_string(room_id);
+    rooms[last_room_id] = std::make_unique<ServerRoom>(last_room_id, room_name);
+
+    string mess;
+    GetSerializedRooms(mess);
+    Broadcast(mess);
+}
+
+
+void Server::ReceiveGetRooms(const ClientGetRoomsMessage& message, ServerSocketHandler* socket_handler)
+{
+    const ServerUser* user = socket_handler->GetUser();
+    if (!user || !user->IsAuthorized())
+    {
+        Application::instance().logger().error("ERROR: Received text message from unauthorized user.");
+        socket_handler->Send(ServerErrorMessage::NOT_AUTHORIZED);
+        return;
+    }
+
+    Application::instance().logger().information("Received get rooms message from [" + user->user_name + "]");
+
+    string mess;
+    GetSerializedRooms(mess);
+    socket_handler->Send(mess);
 }
